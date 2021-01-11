@@ -137,7 +137,7 @@ components:
       properties:
         name:
           type: string
-          example: 'artzi_5cm'
+          example: 'amsterdam_5cm'
         tilesPath:
           type: string
           example: '/path/to/tiles/directory/in/bucket/'
@@ -147,7 +147,7 @@ components:
           example: 18
         description:
           type: string
-          example: 'description for artzi layer'
+          example: 'description for germany layer'
     bestLayer:
       type: object
       required:
@@ -155,7 +155,7 @@ components:
       properties:
         name:
           type: string
-          example: 'artzi_5cm'
+          example: 'amsterdam_5cm'
     best:
       type: array
       items:
@@ -166,7 +166,7 @@ components:
         properties:
           name:
             type: string
-            example: 'artzi_5cm'
+            example: 'amsterdam_5cm'
           zIndex:
             type: number
             format: integer
