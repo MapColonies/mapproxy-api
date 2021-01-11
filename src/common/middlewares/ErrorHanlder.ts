@@ -23,7 +23,7 @@ export class ErrorHandler {
       if (err instanceof BadRequest) {
         status = StatusCodes.BAD_REQUEST;
         body = {
-          message: 'request validation failed', 
+          message: 'request validation failed',
           validationErrors: err.errors,
         };
       } else if (err instanceof HttpError) {

@@ -1,4 +1,3 @@
-
 import HttpStatus from 'http-status-codes';
 import { HttpError } from './httpError';
 
