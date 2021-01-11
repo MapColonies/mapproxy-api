@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
-  title: service-name
-  description: basic template for map colonies service
+  title: mapproxy-api
+  description: rest api service to manage layers in mapproxy
   version: 1.0.0
   license:
     name: MIT
@@ -9,37 +9,116 @@ info:
 servers:
   - url: http://localhost:8080
 paths:
-  /resourceName:
+  /layer:
     get:
-      operationId: getResourceName
+      operationId: getLayer
       tags:
-        - resourceName
-      summary: gets the resource
+        - Layer
+      summary: get exiting layer
       responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/resource'
+                $ref: '#/components/schemas/layer'
+        500:
+          description: Ineternal Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
     post:
-      operationId: createResource
+      operationId: addLayer
       tags:
-        - resourceName
-      summary: creates a new record of type resource
+        - Layer
+      summary: add layer to mapproxy
       responses:
         201:
           description: created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/resource'
+                $ref: '#/components/schemas/layer'
         400:
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
+        500:
+          description: Ineternal Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /best:
+    get:
+      operationId: getBest
+      tags:
+        - Best
+      summary: get best layers
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/best'
+        500:
+          description: Ineternal Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+    post:
+      operationId: addBestLayer
+      tags:
+        - Best
+      summary: add layer to best
+      responses:
+        201:
+          description: created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bestLayer'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        500:
+          description: Ineternal Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+    put:
+      operationId: manageBest
+      tags:
+        - Best
+      summary: reorder best layers
+      responses:
+        204:
+          description: updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/best'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        500:
+          description: Ineternal Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'            
 components:
   schemas:
     error:
@@ -49,17 +128,46 @@ components:
       properties:
         message:
           type: string
-    resource:
+    layer:
       type: object
       required:
-        - id
         - name
-        - description
+        - tilesPath
+        - maxZoomLevel
       properties:
-        id:
-          type: number
-          format: int64
         name:
           type: string
+          example: 'artzi_5cm'
+        tilesPath:
+          type: string
+          example: '/path/to/tiles/directory/in/bucket/'
+        maxZoomLevel:
+          type: number
+          format: integer
+          example: 18
         description:
           type: string
+          example: 'description for artzi layer'
+    bestLayer:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: 'artzi_5cm'
+    best:
+      type: array
+      items:
+        type: object
+        required:
+          - name
+          - zIndex
+        properties:
+          name:
+            type: string
+            example: 'artzi_5cm'
+          zIndex:
+            type: number
+            format: integer
+            example: 1
