@@ -14,7 +14,7 @@ paths:
       operationId: getLayer
       tags:
         - Layer
-      summary: get exiting layer
+      summary: get existing layer
       responses:
         200:
           description: OK
@@ -54,7 +54,7 @@ paths:
                 $ref: '#/components/schemas/error'
   /best:
     get:
-      operationId: getBest
+      operationId: getLayers
       tags:
         - Best
       summary: get best layers
@@ -72,7 +72,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/error'
     post:
-      operationId: addBestLayer
+      operationId: addLayer
       tags:
         - Best
       summary: add layer to best
@@ -96,7 +96,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/error'
     put:
-      operationId: manageBest
+      operationId: setZOrder
       tags:
         - Best
       summary: reorder best layers
@@ -137,7 +137,7 @@ components:
       properties:
         name:
           type: string
-          example: 'artzi_5cm'
+          example: 'amsterdam_5cm'
         tilesPath:
           type: string
           example: '/path/to/tiles/directory/in/bucket/'
@@ -147,7 +147,7 @@ components:
           example: 18
         description:
           type: string
-          example: 'description for artzi layer'
+          example: 'description for germany layer'
     bestLayer:
       type: object
       required:
@@ -155,7 +155,7 @@ components:
       properties:
         name:
           type: string
-          example: 'artzi_5cm'
+          example: 'amsterdam_5cm'
     best:
       type: array
       items:
@@ -166,7 +166,7 @@ components:
         properties:
           name:
             type: string
-            example: 'artzi_5cm'
+            example: 'amsterdam_5cm'
           zIndex:
             type: number
             format: integer
