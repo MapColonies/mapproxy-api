@@ -14,7 +14,7 @@ paths:
       operationId: getLayer
       tags:
         - Layer
-      summary: get exiting layer
+      summary: get existing layer
       responses:
         200:
           description: OK
