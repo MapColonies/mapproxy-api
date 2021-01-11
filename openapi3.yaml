@@ -72,7 +72,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/error'
     post:
-      operationId: addLayer
+      operationId: addLayerToBest
       tags:
         - Best
       summary: add layer to best
