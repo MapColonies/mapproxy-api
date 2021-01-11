@@ -1,0 +1,14 @@
+{
+  "openapiConfig": {
+    "filePath": "./openapi3.yaml",
+    "basePath": "/docs",
+    "jsonPath": "/api.json",
+    "uiPath": "/api"
+  },
+  "logger": {
+    "level": "info"
+  },
+  "server": {
+    "port": "8080"
+  }
+}

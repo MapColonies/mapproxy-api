@@ -1,0 +1,65 @@
+openapi: 3.0.1
+info:
+  title: service-name
+  description: basic template for map colonies service
+  version: 1.0.0
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+servers:
+  - url: http://localhost:8080
+paths:
+  /resourceName:
+    get:
+      operationId: getResourceName
+      tags:
+        - resourceName
+      summary: gets the resource
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource'
+    post:
+      operationId: createResource
+      tags:
+        - resourceName
+      summary: creates a new record of type resource
+      responses:
+        201:
+          description: created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/resource'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+components:
+  schemas:
+    error:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+    resource:
+      type: object
+      required:
+        - id
+        - name
+        - description
+      properties:
+        id:
+          type: number
+          format: int64
+        name:
+          type: string
+        description:
+          type: string

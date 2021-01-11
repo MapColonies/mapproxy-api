@@ -1,0 +1,9 @@
+.nyc_output
+tests
+.circlei
+.github
+coverage
+node_modules
+.prettierrc.json
+commitlint.config.json
+README.md

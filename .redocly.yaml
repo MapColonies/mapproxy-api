@@ -1,0 +1,32 @@
+lint:
+  plugins:
+    # This section is where you can import local plugins.
+    # We don't support community plugins.
+    # You don't need to import our built-in plugins and rules.
+    # Omit this section if you don't have custom plugins.
+    # - './local-plugin.js'
+
+  extends:
+    # This section is where you choose the base configurations.
+    # You may override specific settings in the subsequent sections.
+    - recommended # This is the default (and built in) configuration. If it is too strict, try `minimal`.
+
+  resolve:
+    # Use this when you have external links in your definition that are not publicly accessible.
+    # Not required for Redocly API registry links.
+    # We recommend using environment variables for when possible.
+
+  preprocessors:
+    # Preprocessors are rarely indicated -- avoid if possible.
+    # This section can be omitted.
+
+  rules:
+    boolean-parameter-prefixes:
+      severity: error
+      prefixes: ['should', 'is', 'has']
+    no-unused-components:
+      severity: error
+
+  decorators:
+    # Decorators modify the the definition after validation is complete, only in the bundling process.
+    # This section can be omitted if you don't use decorators.

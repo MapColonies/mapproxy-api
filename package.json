@@ -1,0 +1,81 @@
+{
+  "name": "service-name",
+  "version": "1.0.0",
+  "description": "This is template for map colonies typescript service",
+  "main": "./src/index.ts",
+  "scripts": {
+    "test:unit": "jest --config=./tests/configurations/unit/jest.config.js",
+    "test:integration": "jest --config=./tests/configurations/integration/jest.config.js",
+    "prettier": "prettier --check .",
+    "prettier:fix": "prettier --write .",
+    "prelint:fix": "npm run prettier:fix",
+    "lint:openapi": "openapi lint ./openapi3.yaml",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "release": "standard-version",
+    "test": "npm run test:unit && npm run test:integration",
+    "prebuild": "npm run clean",
+    "build": "tsc --project tsconfig.build.json  && npm run assets:copy",
+    "start": "npm run build && cd dist && node ./index.js",
+    "assets:copy": "copyfiles -f ./config/* ./dist/config && copyfiles -f ./openapi3.yaml ./dist/ && copyfiles ./package.json dist",
+    "clean": "rimraf dist"
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "author": "MapColonies",
+  "license": "ISC",
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "dependencies": {
+    "@map-colonies/error-express-handler": "^1.0.2",
+    "@map-colonies/mc-logger": "^1.2.1",
+    "@map-colonies/mc-model-types": "^1.0.1",
+    "@map-colonies/mc-probe": "^1.0.0",
+    "config": "^3.3.3",
+    "express": "^4.17.1",
+    "express-openapi-validator": "^4.9.5",
+    "http-status-codes": "^2.1.4",
+    "js-yaml": "^3.14.1",
+    "reflect-metadata": "^0.1.13",
+    "swagger-ui-express": "^4.1.5",
+    "tsyringe": "^4.4.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^9.1.1",
+    "@commitlint/config-conventional": "^10.0.0",
+    "@map-colonies/eslint-config": "^1.1.0",
+    "@redocly/openapi-cli": "^1.0.0-beta.25",
+    "@types/config": "0.0.36",
+    "@types/express": "^4.17.8",
+    "@types/jest": "^26.0.19",
+    "@types/js-yaml": "^3.12.5",
+    "@types/multer": "^1.4.5",
+    "@types/supertest": "^2.0.10",
+    "@types/swagger-ui-express": "^4.1.2",
+    "@types/yamljs": "^0.2.31",
+    "commitlint": "^9.1.2",
+    "copyfiles": "^2.3.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^7.8.1",
+    "husky": "^4.2.5",
+    "jest": "^26.6.3",
+    "jest-create-mock-instance": "^1.1.0",
+    "jest-html-reporters": "^2.0.3",
+    "nodemon": "^2.0.6",
+    "prettier": "^2.2.1",
+    "rimraf": "^3.0.2",
+    "standard-version": "^9.0.0",
+    "supertest": "^6.0.1",
+    "ts-jest": "^26.3.0",
+    "typescript": "^3.8.3"
+  }
+}
