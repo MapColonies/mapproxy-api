@@ -54,7 +54,7 @@ paths:
                 $ref: '#/components/schemas/error'
   /best:
     get:
-      operationId: getBest
+      operationId: getLayers
       tags:
         - Best
       summary: get best layers
