@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-types */
 import { readFileSync, writeFileSync } from 'fs';
 import { safeLoad, safeDump } from 'js-yaml';
 import config from 'config';

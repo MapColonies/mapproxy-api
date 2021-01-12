@@ -12,7 +12,6 @@ function registerExternalValues(): void {
   const logger = new MCLogger(loggerConfig, service);
   container.register(Services.CONFIG, { useValue: config });
   container.register(Services.LOGGER, { useValue: logger });
-  //container.register(Services.MAPPROXY, { useValue: })
   container.register<Probe>(Probe, { useFactory: (container) => new Probe(container.resolve(Services.LOGGER), {}) });
 }
 
