@@ -16,7 +16,7 @@ describe('resourceName', function () {
 
   describe('Happy Path', function () {
     it('should return 200 status code and the resource', async function () {
-      const response = await requestSender.getResource();
+      const response = await requestSender.getLayer();
 
       expect(response.status).toBe(httpStatusCodes.OK);
 
