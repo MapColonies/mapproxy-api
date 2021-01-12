@@ -10,10 +10,7 @@ type GetLayerHandler = RequestHandler<undefined, LayerPostRequest>;
 
 @injectable()
 export class LayersController {
-  public constructor(
-    @inject(Services.LOGGER) private readonly logger: ILogger,
-    @inject(LayersManager) private readonly manager: LayersManager
-  ) {}
+  public constructor(@inject(Services.LOGGER) private readonly logger: ILogger, @inject(LayersManager) private readonly manager: LayersManager) {}
   public getLayer: GetLayerHandler = (req, res) => {
     return res.status(httpStatus.OK).json(this.manager.getLayer());
   };

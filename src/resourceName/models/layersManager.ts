@@ -2,14 +2,13 @@ import { inject, injectable } from 'tsyringe';
 import { Services } from '../../common/constants';
 import { ILogger, LayerPostRequest } from '../../common/interfaces';
 
-
 const mockLayer: LayerPostRequest = {
   id: 1,
   name: 'amsterdam_5cm',
   tilesPath: '/path/to/s3/directory/tile',
   maxZoomLevel: 18,
-  description: 'amsterdam 5m layer discription'
-}
+  description: 'amsterdam 5m layer discription',
+};
 
 @injectable()
 export class LayersManager {
@@ -19,7 +18,9 @@ export class LayersManager {
     return mockLayer;
   }
   public addLayer(newLayer: LayerPostRequest): LayerPostRequest {
-    this.logger.log('info', `add layer request`)
-    return mockLayer
+    this.logger.log('info', `add layer request`);
+    this.logger.log('info', newLayer.name);
+    
+    return mockLayer;
   }
 }

@@ -7,5 +7,8 @@
   },
   "server": {
     "port": "SERVER_PORT"
+  },
+  "mapproxy": {
+    "yamlFilePath": "MAPPROXY_YAML_FILEPATH"
   }
 }

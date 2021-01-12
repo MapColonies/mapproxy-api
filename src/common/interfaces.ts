@@ -16,6 +16,10 @@ export interface OpenApiConfig {
   uiPath: string;
 }
 
+export interface MapProxyConfig {
+  yamlFilePath: string;
+}
+
 export interface LayerPostRequest {
   id?: number;
   name: string;
