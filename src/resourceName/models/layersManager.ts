@@ -1,14 +1,7 @@
 import { inject, injectable } from 'tsyringe';
 import { Services } from '../../common/constants';
 import { ILogger, LayerPostRequest } from '../../common/interfaces';
-
-const mockLayer: LayerPostRequest = {
-  id: 1,
-  name: 'amsterdam_5cm',
-  tilesPath: '/path/to/s3/directory/tile',
-  maxZoomLevel: 18,
-  description: 'amsterdam 5m layer discription',
-};
+import { mockLayer } from '../../common/data/mock/mockLayer';
 
 @injectable()
 export class LayersManager {
