@@ -10,5 +10,8 @@
   },
   "server": {
     "port": "8080"
+  },
+  "mapproxy": {
+    "yamlFilePath": "/mnt/c0f2c847-0852-4b10-b537-7f26af9534fa/geomaptest/mapproxy/mapproxy.yaml"
   }
 }

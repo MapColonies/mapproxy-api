@@ -1,6 +1,6 @@
 import httpStatusCodes from 'http-status-codes';
 import { container } from 'tsyringe';
-import { IResourceNameModel } from '../../../src/resourceName/models/resourceNameManager';
+import { LayerPostRequest } from '../../../src/common/interfaces';
 
 import { registerTestValues } from '../testContainerConfig';
 import * as requestSender from './helpers/requestSender';
@@ -20,10 +20,12 @@ describe('resourceName', function () {
 
       expect(response.status).toBe(httpStatusCodes.OK);
 
-      const resource = response.body as IResourceNameModel;
+      const resource = response.body as LayerPostRequest;
       expect(resource.id).toEqual(1);
-      expect(resource.name).toEqual('ronin');
-      expect(resource.description).toEqual('can you do a logistics run?');
+      expect(resource.name).toEqual('amsterdam_5cm');
+      expect(resource.maxZoomLevel).toEqual(18);
+      expect(resource.tilesPath).toEqual('/path/to/s3/directory/tile');
+      expect(resource.description).toEqual('amsterdam 5m layer discription');
     });
   });
   describe('Bad Path', function () {

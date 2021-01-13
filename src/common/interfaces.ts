@@ -15,3 +15,15 @@ export interface OpenApiConfig {
   jsonPath: string;
   uiPath: string;
 }
+
+export interface MapProxyConfig {
+  yamlFilePath: string;
+}
+
+export interface LayerPostRequest {
+  id?: number;
+  name: string;
+  tilesPath: string;
+  maxZoomLevel?: number;
+  description: string;
+}
