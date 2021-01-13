@@ -11,9 +11,7 @@ export class LayersManager {
     return mockLayer;
   }
   public addLayer(newLayer: LayerPostRequest): LayerPostRequest {
-    this.logger.log('info', `add layer request`);
-    this.logger.log('info', newLayer.name);
-
+    this.logger.log('info', `add layer request: ${newLayer.name}`);
     return mockLayer;
   }
 }
