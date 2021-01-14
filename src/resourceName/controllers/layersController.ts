@@ -11,11 +11,17 @@ type GetLayerHandler = RequestHandler<undefined, LayerPostRequest>;
 @injectable()
 export class LayersController {
   public constructor(@inject(Services.LOGGER) private readonly logger: ILogger, @inject(LayersManager) private readonly manager: LayersManager) {}
+
   public getLayer: GetLayerHandler = (req, res) => {
     return res.status(httpStatus.OK).json(this.manager.getLayer());
   };
-  public addLayer: CreateLayerHandler = (req, res) => {
-    const layer = this.manager.addLayer(req.body);
-    return res.status(httpStatus.CREATED).json(layer);
+
+  public addLayer: CreateLayerHandler = (req, res, next) => {
+    try {
+      this.manager.addLayer(req.body);
+      return res.status(httpStatus.CREATED);
+    } catch (error) {
+      next(error);
+    }
   };
 }

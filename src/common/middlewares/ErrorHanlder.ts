@@ -5,6 +5,7 @@ import { StatusCodes } from 'http-status-codes';
 import { Services } from '../constants';
 import { ILogger } from '../interfaces';
 import { HttpError } from '../exceptions/http/httpError';
+import { ConfilctError } from '../exceptions/http/confilctError';
 
 @injectable()
 export class ErrorHandler {
@@ -26,13 +27,17 @@ export class ErrorHandler {
           message: 'request validation failed',
           validationErrors: err.errors,
         };
+      } else if (err instanceof ConfilctError) {
+        status = err.status;
+        body = {
+          message: err.message,
+        };
       } else if (err instanceof HttpError) {
         status = err.status;
         body = {
           message: err.message,
         };
       } else {
-        this.logger.log('error', `${req.method} request to ${req.originalUrl}  has failed with error: ${err.message}`);
         status = StatusCodes.INTERNAL_SERVER_ERROR;
         if (process.env.NODE_ENV === 'development') {
           body = {
@@ -45,6 +50,7 @@ export class ErrorHandler {
           };
         }
       }
+      this.logger.log('error', `${req.method} request to ${req.originalUrl}  has failed with error: ${err.message}`);
       res.status(status).json(body);
     };
   }
