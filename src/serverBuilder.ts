@@ -5,7 +5,7 @@ import { container, inject, injectable } from 'tsyringe';
 import { RequestLogger } from './common/middlewares/RequestLogger';
 import { Services } from './common/constants';
 import { IConfig, ILogger } from './common/interfaces';
-import { layersRouterFactory } from './resourceName/routes/layersRouterFactory';
+import { layersRouterFactory } from './layers/routes/layersRouterFactory';
 import { openapiRouterFactory } from './common/routes/openapi';
 import { ErrorHandler } from './common/middlewares/ErrorHanlder';
 

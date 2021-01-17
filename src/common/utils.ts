@@ -6,9 +6,9 @@ import { IMapProxyConfig, IMapProxyJsonDocument } from './interfaces';
 const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
 
 // read mapproxy yaml config file and convert it into a json object
-export function convertYamlToJson(): IMapProxyJsonDocument {
+export function convertYamlToJson(yamlFilePath: string): IMapProxyJsonDocument {
   try {
-    const yamlContent: string = readFileSync(mapproxyConfig.yamlFilePath, 'utf8');
+    const yamlContent: string = readFileSync(yamlFilePath, 'utf8');
     const jsonDocument: IMapProxyJsonDocument = safeLoad(yamlContent) as IMapProxyJsonDocument;
     return jsonDocument;
   } catch (error) {
@@ -28,19 +28,9 @@ export function convertJsonToYaml(jsonDocument: IMapProxyJsonDocument): string {
 }
 
 // write new content in mapproxy yaml config file
-export function replaceYamlFileContent(yamlContent: string): void {
+export function replaceYamlFileContent(yamlFilePath: string, yamlContent: string): void {
   try {
-    writeFileSync(mapproxyConfig.yamlFilePath, yamlContent, 'utf8');
-  } catch (error) {
-    throw new Error(error);
-  }
-}
-
-// check if requested layer name is already exists in mapproxy config file (layer name must be unique)
-export function isLayerNameExists(jsonDocument:IMapProxyJsonDocument, layerName: string): boolean {
-  try {
-    const publishedLayers: string[] = Object.keys(jsonDocument.caches);
-    return publishedLayers.includes(layerName);
+    writeFileSync(yamlFilePath, yamlContent, 'utf8');
   } catch (error) {
     throw new Error(error);
   }

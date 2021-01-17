@@ -3,7 +3,7 @@ import { inject, injectable } from 'tsyringe';
 import { Services } from '../../common/constants';
 import { ILogger, ILayerPostRequest, IMapProxyCache, IMapProxyJsonDocument, IMapProxyLayer, IMapProxyConfig } from '../../common/interfaces';
 import { mockLayer } from '../../common/data/mock/mockLayer';
-import { convertJsonToYaml, convertYamlToJson, isLayerNameExists, replaceYamlFileContent } from '../../common/utils';
+import { convertJsonToYaml, convertYamlToJson, replaceYamlFileContent } from '../../common/utils';
 import { ConfilctError } from '../../common/exceptions/http/confilctError';
 @injectable()
 export class LayersManager {
@@ -19,9 +19,9 @@ export class LayersManager {
 
   public addLayer(layerRequest: ILayerPostRequest): void {
     this.logger.log('info', `Add layer request: ${layerRequest.name}`);
-    const jsonDocument: IMapProxyJsonDocument = convertYamlToJson();
+    const jsonDocument: IMapProxyJsonDocument = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
 
-    if (isLayerNameExists(jsonDocument, layerRequest.name)) {
+    if (this.isLayerNameExists(jsonDocument, layerRequest.name)) {
       throw new ConfilctError(`Layer name '${layerRequest.name}' is already exists`);
     }
 
@@ -45,7 +45,17 @@ export class LayersManager {
     jsonDocument.layers.push(newLayer);
 
     const yamlContent = convertJsonToYaml(jsonDocument);
-    replaceYamlFileContent(yamlContent);
+    replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
     this.logger.log('info', `Successfully added layer: ${layerRequest.name}`);
+  }
+
+  // check if requested layer name is already exists in mapproxy config file (layer name must be unique)
+  public isLayerNameExists(jsonDocument: IMapProxyJsonDocument, layerName: string): boolean {
+    try {
+      const publishedLayers: string[] = Object.keys(jsonDocument.caches);
+      return publishedLayers.includes(layerName);
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }
