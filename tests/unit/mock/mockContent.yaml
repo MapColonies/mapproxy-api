@@ -3,35 +3,50 @@ caches:
   amsterdam_5cm:
     sources: []
     grids:
-      - epsg4326dir
+    - epsg4326dir
     request_format: image/png
     upscale_tiles: 18
     cache:
       type: file
       directory: /path/to/s3/directory/tile
       directory_layout: tms
+  combined_layers:
+    sources:
+    - mock
+    - mock
+    - mock
+    grids:
+    - epsg4326dir
 layers:
-  - name: mock
-    title: title
-    sources:
-      - source
-  - name: mock2
-    title: title
-    sources:
-      - source
-  - name: amsterdam_5cm
-    title: amsterdam 5m layer discription
-    sources:
-      - amsterdam_5cm
-  - name: amsterdam_5cm
-    title: amsterdam 5m layer discription
-    sources:
-      - amsterdam_5cm
-  - name: amsterdam_5cm
-    title: amsterdam 5m layer discription
-    sources:
-      - amsterdam_5cm
-  - name: amsterdam_5cm
-    title: amsterdam 5m layer discription
-    sources:
-      - amsterdam_5cm
+- name: mock
+  title: title
+  sources:
+  - source
+- name: mock2
+  title: title
+  sources:
+  - source
+- name: amsterdam_5cm
+  title: amsterdam 5m layer discription
+  sources:
+  - amsterdam_5cm
+- name: amsterdam_5cm
+  title: amsterdam 5m layer discription
+  sources:
+  - amsterdam_5cm
+- name: amsterdam_5cm
+  title: amsterdam 5m layer discription
+  sources:
+  - amsterdam_5cm
+- name: amsterdam_5cm
+  title: amsterdam 5m layer discription
+  sources:
+  - amsterdam_5cm
+- name: amsterdam_5cm
+  title: amsterdam 5m layer discription
+  sources:
+  - amsterdam_5cm
+- name: amsterdam_5cm
+  title: amsterdam 5m layer discription
+  sources:
+  - amsterdam_5cm

@@ -64,3 +64,12 @@ export interface ILayerPostRequest {
   maxZoomLevel?: number;
   description: string;
 }
+
+export interface ILayerToBestRequest {
+  layerName: string;
+  bestName: string;
+}
+
+export interface IBestLayer {
+  layers: string[];
+}

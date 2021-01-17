@@ -12,7 +12,7 @@
     "port": "8080"
   },
   "mapproxy": {
-    "yamlFilePath": "tests/unit/mock/mockContent.yaml",
+    "yamlFilePath": "/home/shlomikoncha/Desktop/Repos/mapproxy-api/tests/unit/mock/mockContent.yaml",
     "cache": {
       "grids": ["epsg4326dir"],
       "request_format": "image/png",
