@@ -13,12 +13,12 @@ export class LayersManager {
   ) {}
 
   public getLayer(): ILayerPostRequest {
-    this.logger.log('info', 'get layer request');
+    this.logger.log('info', 'Get layer request');
     return mockLayer;
   }
 
   public addLayer(layerRequest: ILayerPostRequest): void {
-    this.logger.log('info', `add layer request: ${layerRequest.name}`);
+    this.logger.log('info', `Add layer request: ${layerRequest.name}`);
     const jsonDocument: IMapProxyJsonDocument = convertYamlToJson();
 
     if (isLayerNameExists(jsonDocument, layerRequest.name)) {
@@ -46,5 +46,6 @@ export class LayersManager {
 
     const yamlContent = convertJsonToYaml(jsonDocument);
     replaceYamlFileContent(yamlContent);
+    this.logger.log('info', `Successfully added layer: ${layerRequest.name}`);
   }
 }
