@@ -35,7 +35,3 @@ layers:
     title: amsterdam 5m layer discription
     sources:
       - amsterdam_5cm
-  - name: amsterdam_5cm
-    title: amsterdam 5m layer discription
-    sources:
-      - amsterdam_5cm

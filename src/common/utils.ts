@@ -1,9 +1,6 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { safeLoad, safeDump } from 'js-yaml';
-import config from 'config';
-import { IMapProxyConfig, IMapProxyJsonDocument } from './interfaces';
-
-const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
+import { IMapProxyJsonDocument } from './interfaces';
 
 // read mapproxy yaml config file and convert it into a json object
 export function convertYamlToJson(yamlFilePath: string): IMapProxyJsonDocument {

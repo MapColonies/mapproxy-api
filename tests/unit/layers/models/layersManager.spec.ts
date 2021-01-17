@@ -1,20 +1,15 @@
 import config from 'config';
 import { mockLayer } from '../../../../src/common/data/mock/mockLayer';
-import { IMapProxyConfig, IMapProxyJsonDocument } from '../../../../src/common/interfaces';
+import { IMapProxyConfig } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
-import { convertJsonToYaml, convertYamlToJson, replaceYamlFileContent } from '../../../../src/common/utils';
-import { BadRequestError } from '../../../../src/common/exceptions/http/badRequestError';
 import { ConfilctError } from '../../../../src/common/exceptions/http/confilctError';
 
 let layersManager: LayersManager;
-let jsonDocument: IMapProxyJsonDocument;
-const yamlFilePath = '/home/shlomikoncha/Desktop/Repos/mapproxy-api/tests/unit/mock/mockContent.yaml';
 
 const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
 describe('layersManager', () => {
   beforeEach(function () {
-    layersManager = new LayersManager({ log: jest.fn() }, { yamlFilePath: yamlFilePath, cache: mapproxyConfig.cache });
-    jsonDocument = convertYamlToJson(yamlFilePath);
+    layersManager = new LayersManager({ log: jest.fn() }, { yamlFilePath: mapproxyConfig.yamlFilePath, cache: mapproxyConfig.cache });
   });
   describe('#getLayer', () => {
     it('return the resource of id 1', function () {
@@ -39,7 +34,6 @@ describe('layersManager', () => {
     });
     it('should successfully add layer', function () {
       // mock
-      const isLayerNameExistsSpy = jest.spyOn(layersManager, 'isLayerNameExists');
       layersManager.isLayerNameExists = jest.fn().mockReturnValue(false);
       // action
       const action = () => layersManager.addLayer(mockLayer);
