@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { inject, injectable } from 'tsyringe';
 import { Services } from '../../common/constants';
-import { ILogger, LayerPostRequest, MapProxyCache, MapProxyJsonDocument, MapProxyLayer, IMapProxyConfig } from '../../common/interfaces';
+import { ILogger, ILayerPostRequest, IMapProxyCache, IMapProxyJsonDocument, IMapProxyLayer, IMapProxyConfig } from '../../common/interfaces';
 import { mockLayer } from '../../common/data/mock/mockLayer';
 import { convertJsonToYaml, convertYamlToJson, isLayerNameExists, replaceYamlFileContent } from '../../common/utils';
 import { ConfilctError } from '../../common/exceptions/http/confilctError';
@@ -12,20 +12,20 @@ export class LayersManager {
     @inject(Services.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig
   ) {}
 
-  public getLayer(): LayerPostRequest {
+  public getLayer(): ILayerPostRequest {
     this.logger.log('info', 'get layer request');
     return mockLayer;
   }
 
-  public addLayer(layerRequest: LayerPostRequest): void {
+  public addLayer(layerRequest: ILayerPostRequest): void {
     this.logger.log('info', `add layer request: ${layerRequest.name}`);
-    const jsonDocument: MapProxyJsonDocument = convertYamlToJson();
+    const jsonDocument: IMapProxyJsonDocument = convertYamlToJson();
 
     if (isLayerNameExists(jsonDocument, layerRequest.name)) {
       throw new ConfilctError(`Layer name '${layerRequest.name}' is already exists`);
     }
 
-    const newCache: MapProxyCache = {
+    const newCache: IMapProxyCache = {
       sources: [],
       grids: this.mapproxyConfig.cache.grids,
       request_format: this.mapproxyConfig.cache.request_format,
@@ -36,7 +36,7 @@ export class LayersManager {
         directory_layout: this.mapproxyConfig.cache.directory_layout,
       },
     };
-    const newLayer: MapProxyLayer = {
+    const newLayer: IMapProxyLayer = {
       name: layerRequest.name,
       title: layerRequest.description,
       sources: [layerRequest.name],

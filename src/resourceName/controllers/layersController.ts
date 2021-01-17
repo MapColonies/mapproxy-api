@@ -2,11 +2,11 @@ import { RequestHandler } from 'express';
 import httpStatus from 'http-status-codes';
 import { injectable, inject } from 'tsyringe';
 import { Services } from '../../common/constants';
-import { ILogger, LayerPostRequest } from '../../common/interfaces';
+import { ILogger, ILayerPostRequest } from '../../common/interfaces';
 import { LayersManager } from '../models/layersManager';
 
-type CreateLayerHandler = RequestHandler<undefined, LayerPostRequest, LayerPostRequest>;
-type GetLayerHandler = RequestHandler<undefined, LayerPostRequest>;
+type CreateLayerHandler = RequestHandler<undefined, ILayerPostRequest, ILayerPostRequest>;
+type GetLayerHandler = RequestHandler<undefined, ILayerPostRequest>;
 
 @injectable()
 export class LayersController {

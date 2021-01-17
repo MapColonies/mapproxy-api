@@ -29,35 +29,35 @@ export interface IMapProxyConfig {
   };
 }
 
-export interface MapProxyJsonDocument {
+export interface IMapProxyJsonDocument {
   services: JsonObject;
-  layers: MapProxyLayer[];
+  layers: IMapProxyLayer[];
   caches: JsonObject;
   grids: JsonObject;
   globals: JsonObject;
 }
 
-export interface MapProxyCacheSource {
+export interface IMapProxyCacheSource {
   type: string;
   directory: string;
   directory_layout: string;
 }
 
-export interface MapProxyCache {
+export interface IMapProxyCache {
   sources: string[];
   grids: string[];
   request_format: string;
   upscale_tiles: number;
-  cache: MapProxyCacheSource;
+  cache: IMapProxyCacheSource;
 }
 
-export interface MapProxyLayer {
+export interface IMapProxyLayer {
   name: string;
   title?: string;
   sources: string[];
 }
 
-export interface LayerPostRequest {
+export interface ILayerPostRequest {
   id?: number;
   name: string;
   tilesPath: string;
