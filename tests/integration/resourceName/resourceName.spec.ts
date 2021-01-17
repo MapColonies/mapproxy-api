@@ -1,6 +1,6 @@
 import httpStatusCodes from 'http-status-codes';
 import { container } from 'tsyringe';
-import { LayerPostRequest } from '../../../src/common/interfaces';
+import { ILayerPostRequest } from '../../../src/common/interfaces';
 
 import { registerTestValues } from '../testContainerConfig';
 import * as requestSender from './helpers/requestSender';
@@ -20,7 +20,7 @@ describe('resourceName', function () {
 
       expect(response.status).toBe(httpStatusCodes.OK);
 
-      const resource = response.body as LayerPostRequest;
+      const resource = response.body as ILayerPostRequest;
       expect(resource.id).toEqual(1);
       expect(resource.name).toEqual('amsterdam_5cm');
       expect(resource.maxZoomLevel).toEqual(18);

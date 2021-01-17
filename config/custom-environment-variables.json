@@ -9,6 +9,13 @@
     "port": "SERVER_PORT"
   },
   "mapproxy": {
-    "yamlFilePath": "MAPPROXY_YAML_FILEPATH"
+    "yamlFilePath": "MAPPROXY_YAML_FILEPATH",
+    "cache": {
+      "grids": "MAPPROXY_CACHE_GRIDS",
+      "request_format": "MAPPROXY_CACHE_REQUEST_FORMAT",
+      "upscale_tiles": "MAPPROXY_CACHE_UPSCALE_TILES",
+      "type": "MAPPROXY_CACHE_TYPE",
+      "directory_layout": "MAPPROXY_CACHE_DIRECTORY_LAYOUT"
+    }
   }
 }

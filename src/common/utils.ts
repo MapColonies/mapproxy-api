@@ -1,49 +1,34 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { safeLoad, safeDump } from 'js-yaml';
-import config from 'config';
-import { JsonObject } from 'swagger-ui-express';
-import { MapProxyConfig } from './interfaces';
-
-const mapproxyConfig = config.get<MapProxyConfig>('mapproxy');
+import { IMapProxyJsonDocument } from './interfaces';
 
 // read mapproxy yaml config file and convert it into a json object
-export function convertYamlToJson(): JsonObject {
+export function convertYamlToJson(yamlFilePath: string): IMapProxyJsonDocument {
   try {
-    const yamlContent: string = readFileSync(mapproxyConfig.yamlFilePath, 'utf8');
-    const jsonDocument: JsonObject = safeLoad(yamlContent) as JsonObject;
+    const yamlContent: string = readFileSync(yamlFilePath, 'utf8');
+    const jsonDocument: IMapProxyJsonDocument = safeLoad(yamlContent) as IMapProxyJsonDocument;
     return jsonDocument;
   } catch (error) {
-    throw new Error('Throw error message');
+    throw new Error(error);
   }
 }
 
 // read json object and convert it into a yaml content
-export function convertJsonToYaml(jsonDocument: JsonObject): void {
+export function convertJsonToYaml(jsonDocument: IMapProxyJsonDocument): string {
   try {
-    const yamlContent: string = safeDump(jsonDocument);
+    const yamlContent: string = safeDump(jsonDocument, { noArrayIndent: true });
+    return yamlContent;
     //TODO: add yaml content validation
-    console.log(yamlContent);
   } catch (error) {
-    throw new Error('Throw error message');
+    throw new Error(error);
   }
 }
 
 // write new content in mapproxy yaml config file
-export function replaceYamlFileContent(yamlContent: string): void {
+export function replaceYamlFileContent(yamlFilePath: string, yamlContent: string): void {
   try {
-    writeFileSync(mapproxyConfig.yamlFilePath, yamlContent, 'utf8');
-  } catch (e) {
-    throw new Error('Throw error message');
-  }
-}
-
-// check if requested layer name is already exists in mapproxy config file (layer name must be unique)
-export function uniqueNameValidation(layerName: string): boolean {
-  try {
-    const document: JsonObject = convertYamlToJson();
-    const publishedLayers: string[] = Object.keys(document.caches);
-    return publishedLayers.includes(layerName);
+    writeFileSync(yamlFilePath, yamlContent, 'utf8');
   } catch (error) {
-    throw new Error('Throw error message');
+    throw new Error(error);
   }
 }
