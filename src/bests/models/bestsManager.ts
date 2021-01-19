@@ -38,5 +38,5 @@ export class BestsManager {
 
     replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
     this.logger.log('info', `Successfully added layer: '${layerToBestRequest.layerName}' to best: '${layerToBestRequest.bestName}'`);
-    }
   }
+}

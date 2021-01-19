@@ -2,7 +2,7 @@
 import { inject, injectable } from 'tsyringe';
 import { Services } from '../../common/constants';
 import { ILogger, ILayerPostRequest, IMapProxyCache, IMapProxyJsonDocument, IMapProxyLayer, IMapProxyConfig } from '../../common/interfaces';
-import { mockLayer } from '../../../src/common/data/mock/mockLayer';
+import { mockLayer } from '../../common/data/mock/mockLayer';
 import { convertJsonToYaml, convertYamlToJson, replaceYamlFileContent } from '../../common/utils';
 import { ConfilctError } from '../../common/exceptions/http/confilctError';
 import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
@@ -49,5 +49,5 @@ export class LayersManager {
     const yamlContent = convertJsonToYaml(jsonDocument);
     replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
     this.logger.log('info', `Successfully added layer: ${layerRequest.name}`);
-    }
   }
+}
