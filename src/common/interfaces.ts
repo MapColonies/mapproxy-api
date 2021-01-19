@@ -48,9 +48,9 @@ export interface IMapProxyCache {
   [key: string]: any;
   sources: string[];
   grids: string[];
-  request_format?: string;
-  upscale_tiles?: number;
-  cache?: IMapProxyCacheSource;
+  request_format: string;
+  upscale_tiles: number;
+  cache: IMapProxyCacheSource;
 }
 
 export interface IMapProxyLayer {
