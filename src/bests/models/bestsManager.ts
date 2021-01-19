@@ -23,24 +23,20 @@ export class BestsManager {
     this.logger.log('info', `Add layer: ${layerToBestRequest.layerName} to best: ${layerToBestRequest.bestName} request`);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const jsonDocument: IMapProxyJsonDocument | undefined = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
-    if (jsonDocument) {
-      if (!isLayerNameExists(jsonDocument, layerToBestRequest.layerName)) {
-        throw new NoContentError(`Layer name '${layerToBestRequest.layerName}' is not exists`);
-      }
+    if (!isLayerNameExists(jsonDocument, layerToBestRequest.layerName)) {
+      throw new NoContentError(`Layer name '${layerToBestRequest.layerName}' is not exists`);
+    }
 
-      if (!isLayerNameExists(jsonDocument, layerToBestRequest.bestName)) {
-        throw new NoContentError(`Best name '${layerToBestRequest.bestName}' is not exists`);
-      }
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const bestCache: IMapProxyCache = jsonDocument.caches[layerToBestRequest.bestName];
-      bestCache.sources.push(layerToBestRequest.layerName);
+    if (!isLayerNameExists(jsonDocument, layerToBestRequest.bestName)) {
+      throw new NoContentError(`Best name '${layerToBestRequest.bestName}' is not exists`);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const bestCache: IMapProxyCache = jsonDocument.caches[layerToBestRequest.bestName];
+    bestCache.sources.push(layerToBestRequest.layerName);
 
-      const yamlContent: string | undefined = convertJsonToYaml(jsonDocument);
+    const yamlContent: string | undefined = convertJsonToYaml(jsonDocument);
 
-      if (yamlContent !== undefined) {
-        replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
-        this.logger.log('info', `Successfully added layer: '${layerToBestRequest.layerName}' to best: '${layerToBestRequest.bestName}'`);
-      }
+    replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
+    this.logger.log('info', `Successfully added layer: '${layerToBestRequest.layerName}' to best: '${layerToBestRequest.bestName}'`);
     }
   }
-}

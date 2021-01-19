@@ -21,36 +21,33 @@ export class LayersManager {
 
   public addLayer(layerRequest: ILayerPostRequest): void {
     this.logger.log('info', `Add layer request: ${layerRequest.name}`);
-    const jsonDocument: IMapProxyJsonDocument | undefined = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
-    if (jsonDocument) {
-      if (isLayerNameExists(jsonDocument, layerRequest.name)) {
-        throw new ConfilctError(`Layer name '${layerRequest.name}' is already exists`);
-      }
-      const newCache: IMapProxyCache = {
-        sources: [],
-        grids: this.mapproxyConfig.cache.grids,
-        request_format: this.mapproxyConfig.cache.request_format,
-        upscale_tiles: this.mapproxyConfig.cache.upscale_tiles,
-        cache: {
-          type: this.mapproxyConfig.cache.type,
-          directory: layerRequest.tilesPath,
-          directory_layout: this.mapproxyConfig.cache.directory_layout,
-        },
-      };
-      const newLayer: IMapProxyLayer = {
-        name: layerRequest.name,
-        title: layerRequest.description,
-        sources: [layerRequest.name],
-      };
+    const jsonDocument: IMapProxyJsonDocument = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
 
-      jsonDocument.caches[layerRequest.name] = newCache;
-      jsonDocument.layers.push(newLayer);
+    if (isLayerNameExists(jsonDocument, layerRequest.name)) {
+      throw new ConfilctError(`Layer name '${layerRequest.name}' is already exists`);
+    }
 
-      const yamlContent: string | undefined = convertJsonToYaml(jsonDocument);
-      if (yamlContent !== undefined) {
-        replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
-        this.logger.log('info', `Successfully added layer: ${layerRequest.name}`);
-      }
+    const newCache: IMapProxyCache = {
+      sources: [],
+      grids: this.mapproxyConfig.cache.grids,
+      request_format: this.mapproxyConfig.cache.request_format,
+      upscale_tiles: this.mapproxyConfig.cache.upscale_tiles,
+      cache: {
+        type: this.mapproxyConfig.cache.type,
+        directory: layerRequest.tilesPath,
+        directory_layout: this.mapproxyConfig.cache.directory_layout,
+      },
+    };
+    const newLayer: IMapProxyLayer = {
+      name: layerRequest.name,
+      title: layerRequest.description,
+      sources: [layerRequest.name],
+    };
+    jsonDocument.caches[layerRequest.name] = newCache;
+    jsonDocument.layers.push(newLayer);
+
+    const yamlContent = convertJsonToYaml(jsonDocument);
+    replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
+    this.logger.log('info', `Successfully added layer: ${layerRequest.name}`);
     }
   }
-}

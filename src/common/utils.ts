@@ -3,7 +3,7 @@ import { safeLoad, safeDump } from 'js-yaml';
 import { IMapProxyJsonDocument } from './interfaces';
 
 // read mapproxy yaml config file and convert it into a json object
-export function convertYamlToJson(yamlFilePath: string): IMapProxyJsonDocument | undefined {
+export function convertYamlToJson(yamlFilePath: string): IMapProxyJsonDocument {
   try {
     const yamlContent: string = readFileSync(yamlFilePath, 'utf8');
     const jsonDocument: IMapProxyJsonDocument = safeLoad(yamlContent) as IMapProxyJsonDocument;
@@ -14,7 +14,7 @@ export function convertYamlToJson(yamlFilePath: string): IMapProxyJsonDocument |
 }
 
 // read json object and convert it into a yaml content
-export function convertJsonToYaml(jsonDocument: IMapProxyJsonDocument): string | undefined {
+export function convertJsonToYaml(jsonDocument: IMapProxyJsonDocument): string {
   try {
     const yamlContent: string = safeDump(jsonDocument, { noArrayIndent: true });
     return yamlContent;
