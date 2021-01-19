@@ -12,12 +12,12 @@
     "port": "8080"
   },
   "mapproxy": {
-    "yamlFilePath": "/home/shlomikoncha/Desktop/Repos/mapproxy-api/tests/unit/mock/mockContent.yaml",
+    "yamlFilePath": "tests/unit/mock/mockContent.yaml",
     "cache": {
       "grids": ["epsg4326dir"],
       "request_format": "image/png",
       "upscale_tiles": 18,
-      "type": "file",
+      "type": "s3",
       "directory_layout": "tms"
     }
   }
