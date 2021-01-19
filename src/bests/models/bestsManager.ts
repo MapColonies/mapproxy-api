@@ -15,7 +15,7 @@ export class BestsManager {
 
   public getBest(): IBestLayer {
     this.logger.log('info', 'Get layer request');
-    const bestLayers: IBestLayer = {layers: ['mock', 'mock2', 'mock3']};
+    const bestLayers: IBestLayer = { layers: ['mock', 'mock2', 'mock3'] };
     return bestLayers;
   }
 
@@ -23,13 +23,13 @@ export class BestsManager {
     this.logger.log('info', `Add layer: ${layerToBestRequest.layerName} to best: ${layerToBestRequest.bestName} request`);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const jsonDocument: IMapProxyJsonDocument | undefined = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
-    if(jsonDocument){
-      if (!isLayerNameExists(jsonDocument, layerToBestRequest.layerName)){
+    if (jsonDocument) {
+      if (!isLayerNameExists(jsonDocument, layerToBestRequest.layerName)) {
         throw new NoContentError(`Layer name '${layerToBestRequest.layerName}' is not exists`);
       }
-  
-      if (!isLayerNameExists(jsonDocument, layerToBestRequest.bestName)){
-          throw new NoContentError(`Best name '${layerToBestRequest.bestName}' is not exists`);
+
+      if (!isLayerNameExists(jsonDocument, layerToBestRequest.bestName)) {
+        throw new NoContentError(`Best name '${layerToBestRequest.bestName}' is not exists`);
       }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const bestCache: IMapProxyCache = jsonDocument.caches[layerToBestRequest.bestName];
@@ -37,10 +37,10 @@ export class BestsManager {
 
       const yamlContent: string | undefined = convertJsonToYaml(jsonDocument);
 
-      if(yamlContent !== undefined){
+      if (yamlContent !== undefined) {
         replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
         this.logger.log('info', `Successfully added layer: '${layerToBestRequest.layerName}' to best: '${layerToBestRequest.bestName}'`);
       }
-    }  
+    }
   }
 }

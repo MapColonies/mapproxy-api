@@ -19,7 +19,7 @@ describe('layersManager', () => {
     convertJsonToYamlStub = jest.spyOn(utils, 'convertJsonToYaml');
     replaceYamlContentStub = jest.spyOn(utils, 'replaceYamlFileContent').mockReturnValueOnce(undefined);
   });
-  afterEach(() => {    
+  afterEach(() => {
     jest.clearAllMocks();
   });
   describe('#getLayer', () => {

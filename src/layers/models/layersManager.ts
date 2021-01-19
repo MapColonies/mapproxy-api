@@ -22,7 +22,7 @@ export class LayersManager {
   public addLayer(layerRequest: ILayerPostRequest): void {
     this.logger.log('info', `Add layer request: ${layerRequest.name}`);
     const jsonDocument: IMapProxyJsonDocument | undefined = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
-    if(jsonDocument){
+    if (jsonDocument) {
       if (isLayerNameExists(jsonDocument, layerRequest.name)) {
         throw new ConfilctError(`Layer name '${layerRequest.name}' is already exists`);
       }
@@ -42,15 +42,15 @@ export class LayersManager {
         title: layerRequest.description,
         sources: [layerRequest.name],
       };
-      
+
       jsonDocument.caches[layerRequest.name] = newCache;
       jsonDocument.layers.push(newLayer);
-  
+
       const yamlContent: string | undefined = convertJsonToYaml(jsonDocument);
-      if(yamlContent !== undefined){
+      if (yamlContent !== undefined) {
         replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
         this.logger.log('info', `Successfully added layer: ${layerRequest.name}`);
-      } 
+      }
     }
   }
 }

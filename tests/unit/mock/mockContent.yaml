@@ -3,7 +3,7 @@ caches:
   amsterdam_5cm:
     sources: []
     grids:
-    - epsg4326dir
+      - epsg4326dir
     request_format: image/png
     upscale_tiles: 18
     cache:
@@ -13,7 +13,7 @@ caches:
   mockLayerNameExists:
     sources: []
     grids:
-    - epsg4326dir
+      - epsg4326dir
     request_format: image/png
     upscale_tiles: 18
     cache:
@@ -22,13 +22,13 @@ caches:
       directory_layout: tms
   combined_layers:
     sources:
-    - mock
+      - mock
     grids:
-    - epsg4326dir
+      - epsg4326dir
   NameIsAlreadyExists:
     sources: []
     grids:
-    - epsg4326dir
+      - epsg4326dir
     request_format: image/png
     upscale_tiles: 18
     cache:
@@ -37,22 +37,22 @@ caches:
       directory_layout: tms
   existsBestName:
     sources:
-    - bluemar
-    - planet
-    - artzi
+      - bluemar
+      - planet
+      - artzi
     grids:
-    - epsg4326
-  
+      - epsg4326
+
 layers:
-- name: mock
-  title: title
-  sources:
-  - source
-- name: mock2
-  title: title
-  sources:
-  - source
-- name: amsterdam_5cm
-  title: amsterdam 5m layer discription
-  sources:
-  - amsterdam_5cm
+  - name: mock
+    title: title
+    sources:
+      - source
+  - name: mock2
+    title: title
+    sources:
+      - source
+  - name: amsterdam_5cm
+    title: amsterdam 5m layer discription
+    sources:
+      - amsterdam_5cm
