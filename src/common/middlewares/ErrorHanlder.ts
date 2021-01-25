@@ -6,6 +6,7 @@ import { Services } from '../constants';
 import { ILogger } from '../interfaces';
 import { HttpError } from '../exceptions/http/httpError';
 import { ConfilctError } from '../exceptions/http/confilctError';
+import { NoContentError } from '../exceptions/http/noContentError';
 
 @injectable()
 export class ErrorHandler {
@@ -28,6 +29,11 @@ export class ErrorHandler {
           validationErrors: err.errors,
         };
       } else if (err instanceof ConfilctError) {
+        status = err.status;
+        body = {
+          message: err.message,
+        };
+      } else if (err instanceof NoContentError) {
         status = err.status;
         body = {
           message: err.message,

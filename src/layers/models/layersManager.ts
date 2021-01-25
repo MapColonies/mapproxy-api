@@ -1,10 +1,21 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { inject, injectable } from 'tsyringe';
 import { Services } from '../../common/constants';
-import { ILogger, ILayerPostRequest, IMapProxyCache, IMapProxyJsonDocument, IMapProxyLayer, IMapProxyConfig } from '../../common/interfaces';
+import {
+  ILogger,
+  ILayerPostRequest,
+  IMapProxyCache,
+  IMapProxyJsonDocument,
+  IMapProxyLayer,
+  IMapProxyConfig,
+  ILayerToMosaicRequest,
+} from '../../common/interfaces';
 import { mockLayer } from '../../common/data/mock/mockLayer';
 import { convertJsonToYaml, convertYamlToJson, replaceYamlFileContent } from '../../common/utils';
 import { ConfilctError } from '../../common/exceptions/http/confilctError';
+import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
+import { NoContentError } from '../../common/exceptions/http/noContentError';
+
 @injectable()
 export class LayersManager {
   public constructor(
@@ -21,7 +32,7 @@ export class LayersManager {
     this.logger.log('info', `Add layer request: ${layerRequest.name}`);
     const jsonDocument: IMapProxyJsonDocument = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
 
-    if (this.isLayerNameExists(jsonDocument, layerRequest.name)) {
+    if (isLayerNameExists(jsonDocument, layerRequest.name)) {
       throw new ConfilctError(`Layer name '${layerRequest.name}' is already exists`);
     }
 
@@ -49,13 +60,24 @@ export class LayersManager {
     this.logger.log('info', `Successfully added layer: ${layerRequest.name}`);
   }
 
-  // check if requested layer name is already exists in mapproxy config file (layer name must be unique)
-  public isLayerNameExists(jsonDocument: IMapProxyJsonDocument, layerName: string): boolean {
-    try {
-      const publishedLayers: string[] = Object.keys(jsonDocument.caches);
-      return publishedLayers.includes(layerName);
-    } catch (error) {
-      throw new Error(error);
+  public addLayerToMosaic(layerToMosaicRequest: ILayerToMosaicRequest): void {
+    this.logger.log('info', `Add layer: ${layerToMosaicRequest.layerName} to mosaic: ${layerToMosaicRequest.mosaicName} request`);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const jsonDocument: IMapProxyJsonDocument | undefined = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
+    if (!isLayerNameExists(jsonDocument, layerToMosaicRequest.layerName)) {
+      throw new NoContentError(`Layer name '${layerToMosaicRequest.layerName}' is not exists`);
     }
+
+    if (!isLayerNameExists(jsonDocument, layerToMosaicRequest.mosaicName)) {
+      throw new NoContentError(`Mosaic name '${layerToMosaicRequest.mosaicName}' is not exists`);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const mosaicCache: IMapProxyCache = jsonDocument.caches[layerToMosaicRequest.mosaicName];
+    mosaicCache.sources.push(layerToMosaicRequest.layerName);
+
+    const yamlContent: string | undefined = convertJsonToYaml(jsonDocument);
+
+    replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
+    this.logger.log('info', `Successfully added layer: '${layerToMosaicRequest.layerName}' to mosaic: '${layerToMosaicRequest.mosaicName}'`);
   }
 }

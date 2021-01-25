@@ -32,7 +32,7 @@ export interface IMapProxyConfig {
 export interface IMapProxyJsonDocument {
   services: JsonObject;
   layers: IMapProxyLayer[];
-  caches: JsonObject;
+  caches: IMapProxyCache;
   grids: JsonObject;
   globals: JsonObject;
 }
@@ -44,6 +44,8 @@ export interface IMapProxyCacheSource {
 }
 
 export interface IMapProxyCache {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
   sources: string[];
   grids: string[];
   request_format: string;
@@ -63,4 +65,13 @@ export interface ILayerPostRequest {
   tilesPath: string;
   maxZoomLevel?: number;
   description: string;
+}
+
+export interface ILayerToMosaicRequest {
+  layerName: string;
+  mosaicName: string;
+}
+
+export interface IMosaicLayer {
+  layers: string[];
 }

@@ -28,6 +28,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
+
     post:
       operationId: addLayer
       tags:
@@ -52,19 +53,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-  /best:
+  /layer/mosiac:
     get:
       operationId: getLayers
       tags:
-        - Best
-      summary: get best layers
+        - Mosaic
+      summary: get mosaic layers
       responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/best'
+                $ref: '#/components/schemas/mosaic'
         500:
           description: Ineternal Error
           content:
@@ -72,17 +73,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/error'
     post:
-      operationId: addLayerToBest
+      operationId: addLayerToMosaic
       tags:
-        - Best
-      summary: add layer to best
+        - Mosaic
+      summary: add layer to mosaic
       responses:
         201:
           description: created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/bestLayer'
+                $ref: '#/components/schemas/mosaicLayer'
+        204:
+          description: no content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
         400:
           description: Bad Request
           content:
@@ -98,15 +105,15 @@ paths:
     put:
       operationId: setZOrder
       tags:
-        - Best
-      summary: reorder best layers
+        - Mosaic
+      summary: reorder mosaic layers
       responses:
         204:
           description: updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/best'
+                $ref: '#/components/schemas/mosaic'
         400:
           description: Bad Request
           content:
@@ -148,7 +155,7 @@ components:
         description:
           type: string
           example: 'description for germany layer'
-    bestLayer:
+    mosaicLayer:
       type: object
       required:
         - name
@@ -156,7 +163,7 @@ components:
         name:
           type: string
           example: 'amsterdam_5cm'
-    best:
+    mosaic:
       type: array
       items:
         type: object
