@@ -1,5 +1,5 @@
 import config from 'config';
-import { ILayerToBestRequest, IMapProxyConfig } from '../../../../src/common/interfaces';
+import { ILayerToMosaicRequest, IMapProxyConfig } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { ConfilctError } from '../../../../src/common/exceptions/http/confilctError';
 import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExists';
@@ -55,43 +55,43 @@ describe('layersManager', () => {
       expect(replaceYamlContentStub).toHaveBeenCalledTimes(1);
     });
   });
-  describe('#addLayerToBest', () => {
+  describe('#addLayerToMosaic', () => {
     it('should reject with no content error due layer name is not exists', function () {
       // mock
-      const mockLayerNotExistsToBestRequest: ILayerToBestRequest = {
+      const mockLayerNotExistsToMosaicRequest: ILayerToMosaicRequest = {
         layerName: 'layerNameIsNotExists',
-        bestName: 'bestMockName',
+        mosaicName: 'mosaicMockName',
       };
       // action
-      const action = () => layersManager.addLayerToBest(mockLayerNotExistsToBestRequest);
+      const action = () => layersManager.addLayerToMosaic(mockLayerNotExistsToMosaicRequest);
       // expectation
       expect(action).toThrow(NoContentError);
       expect(convertYamlToJsonstub).toHaveBeenCalledTimes(1);
       expect(convertJsonToYamlStub).not.toHaveBeenCalled();
       expect(replaceYamlContentStub).not.toHaveBeenCalled();
     });
-    it('should reject with no content error due best name is not exists', function () {
+    it('should reject with no content error due mosaic name is not exists', function () {
       // mock
-      const mockLayerToBestRequest: ILayerToBestRequest = {
+      const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
         layerName: 'mockLayerNameExists',
-        bestName: 'bestNameIsNotExists',
+        mosaicName: 'mosaicNameIsNotExists',
       };
       // action
-      const action = () => layersManager.addLayerToBest(mockLayerToBestRequest);
+      const action = () => layersManager.addLayerToMosaic(mockLayerToMosaicRequest);
       // expectation
       expect(action).toThrow(NoContentError);
       expect(convertYamlToJsonstub).toHaveBeenCalledTimes(1);
       expect(convertJsonToYamlStub).not.toHaveBeenCalled();
       expect(replaceYamlContentStub).not.toHaveBeenCalled();
     });
-    it('should successfully add layer to best', function () {
+    it('should successfully add layer to mosaic', function () {
       // mock
-      const mockLayerToBestRequest: ILayerToBestRequest = {
+      const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
         layerName: 'mockLayerNameExists',
-        bestName: 'existsBestName',
+        mosaicName: 'existsMosaicName',
       };
       // action
-      const action = () => layersManager.addLayerToBest(mockLayerToBestRequest);
+      const action = () => layersManager.addLayerToMosaic(mockLayerToMosaicRequest);
       // expectation
       expect(action).not.toThrow();
       expect(convertYamlToJsonstub).toHaveBeenCalledTimes(1);

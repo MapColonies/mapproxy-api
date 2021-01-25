@@ -2,12 +2,12 @@ import { RequestHandler } from 'express';
 import httpStatus from 'http-status-codes';
 import { injectable, inject } from 'tsyringe';
 import { Services } from '../../common/constants';
-import { ILogger, ILayerPostRequest, ILayerToBestRequest } from '../../common/interfaces';
+import { ILogger, ILayerPostRequest, ILayerToMosaicRequest } from '../../common/interfaces';
 import { LayersManager } from '../models/layersManager';
 
 type CreateLayerHandler = RequestHandler<undefined, ILayerPostRequest, ILayerPostRequest>;
 type GetLayerHandler = RequestHandler<undefined, ILayerPostRequest>;
-type CreateBestHandler = RequestHandler<undefined, ILayerToBestRequest, ILayerToBestRequest>;
+type CreateMosaicHandler = RequestHandler<undefined, ILayerToMosaicRequest, ILayerToMosaicRequest>;
 
 @injectable()
 export class LayersController {
@@ -26,9 +26,9 @@ export class LayersController {
     }
   };
 
-  public addLayerToBest: CreateBestHandler = (req, res, next) => {
+  public addLayerToMosaic: CreateMosaicHandler = (req, res, next) => {
     try {
-      this.manager.addLayerToBest(req.body);
+      this.manager.addLayerToMosaic(req.body);
       return res.status(httpStatus.CREATED);
     } catch (error) {
       next(error);

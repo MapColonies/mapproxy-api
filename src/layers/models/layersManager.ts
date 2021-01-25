@@ -8,7 +8,7 @@ import {
   IMapProxyJsonDocument,
   IMapProxyLayer,
   IMapProxyConfig,
-  ILayerToBestRequest,
+  ILayerToMosaicRequest,
 } from '../../common/interfaces';
 import { mockLayer } from '../../common/data/mock/mockLayer';
 import { convertJsonToYaml, convertYamlToJson, replaceYamlFileContent } from '../../common/utils';
@@ -60,24 +60,24 @@ export class LayersManager {
     this.logger.log('info', `Successfully added layer: ${layerRequest.name}`);
   }
 
-  public addLayerToBest(layerToBestRequest: ILayerToBestRequest): void {
-    this.logger.log('info', `Add layer: ${layerToBestRequest.layerName} to best: ${layerToBestRequest.bestName} request`);
+  public addLayerToMosaic(layerToMosaicRequest: ILayerToMosaicRequest): void {
+    this.logger.log('info', `Add layer: ${layerToMosaicRequest.layerName} to mosaic: ${layerToMosaicRequest.mosaicName} request`);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const jsonDocument: IMapProxyJsonDocument | undefined = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
-    if (!isLayerNameExists(jsonDocument, layerToBestRequest.layerName)) {
-      throw new NoContentError(`Layer name '${layerToBestRequest.layerName}' is not exists`);
+    if (!isLayerNameExists(jsonDocument, layerToMosaicRequest.layerName)) {
+      throw new NoContentError(`Layer name '${layerToMosaicRequest.layerName}' is not exists`);
     }
 
-    if (!isLayerNameExists(jsonDocument, layerToBestRequest.bestName)) {
-      throw new NoContentError(`Best name '${layerToBestRequest.bestName}' is not exists`);
+    if (!isLayerNameExists(jsonDocument, layerToMosaicRequest.mosaicName)) {
+      throw new NoContentError(`Mosaic name '${layerToMosaicRequest.mosaicName}' is not exists`);
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const bestCache: IMapProxyCache = jsonDocument.caches[layerToBestRequest.bestName];
-    bestCache.sources.push(layerToBestRequest.layerName);
+    const mosaicCache: IMapProxyCache = jsonDocument.caches[layerToMosaicRequest.mosaicName];
+    mosaicCache.sources.push(layerToMosaicRequest.layerName);
 
     const yamlContent: string | undefined = convertJsonToYaml(jsonDocument);
 
     replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
-    this.logger.log('info', `Successfully added layer: '${layerToBestRequest.layerName}' to best: '${layerToBestRequest.bestName}'`);
+    this.logger.log('info', `Successfully added layer: '${layerToMosaicRequest.layerName}' to mosaic: '${layerToMosaicRequest.mosaicName}'`);
   }
 }

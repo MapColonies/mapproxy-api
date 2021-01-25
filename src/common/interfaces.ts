@@ -67,11 +67,11 @@ export interface ILayerPostRequest {
   description: string;
 }
 
-export interface ILayerToBestRequest {
+export interface ILayerToMosaicRequest {
   layerName: string;
-  bestName: string;
+  mosaicName: string;
 }
 
-export interface IBestLayer {
+export interface IMosaicLayer {
   layers: string[];
 }

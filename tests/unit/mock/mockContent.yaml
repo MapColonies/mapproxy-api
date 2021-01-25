@@ -35,7 +35,7 @@ caches:
       type: s3
       directory: /path/to/s3/directory/tile
       directory_layout: tms
-  existsBestName:
+  existsMosaicName:
     sources:
       - bluemar
       - planet
