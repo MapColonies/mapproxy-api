@@ -28,6 +28,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
+                
     post:
       operationId: addLayer
       tags:
@@ -52,7 +53,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-  /best:
+  /layer/best:
     get:
       operationId: getLayers
       tags:
@@ -70,7 +71,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error'
+                $ref: '#/components/schemas/error'             
     post:
       operationId: addLayerToBest
       tags:
@@ -83,6 +84,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/bestLayer'
+        204:
+          description: no content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
         400:
           description: Bad Request
           content:

@@ -8,7 +8,6 @@ import { IConfig, ILogger } from './common/interfaces';
 import { layersRouterFactory } from './layers/routes/layersRouterFactory';
 import { openapiRouterFactory } from './common/routes/openapi';
 import { ErrorHandler } from './common/middlewares/ErrorHanlder';
-import { bestsRouterFactory } from './bests/routes/bestsRouterFactory';
 
 @injectable()
 export class ServerBuilder {
@@ -33,7 +32,6 @@ export class ServerBuilder {
 
   private buildRoutes(): void {
     this.serverInstance.use('/layer', layersRouterFactory(container));
-    this.serverInstance.use('/best', bestsRouterFactory(container));
     this.serverInstance.use('/', openapiRouterFactory(container));
   }
 

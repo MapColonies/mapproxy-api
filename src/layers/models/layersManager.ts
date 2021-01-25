@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { inject, injectable } from 'tsyringe';
 import { Services } from '../../common/constants';
-import { ILogger, ILayerPostRequest, IMapProxyCache, IMapProxyJsonDocument, IMapProxyLayer, IMapProxyConfig } from '../../common/interfaces';
+import { ILogger, ILayerPostRequest, IMapProxyCache, IMapProxyJsonDocument, IMapProxyLayer, IMapProxyConfig, ILayerToBestRequest } from '../../common/interfaces';
 import { mockLayer } from '../../common/data/mock/mockLayer';
 import { convertJsonToYaml, convertYamlToJson, replaceYamlFileContent } from '../../common/utils';
 import { ConfilctError } from '../../common/exceptions/http/confilctError';
 import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
+import { NoContentError } from '../../common/exceptions/http/noContentError';
 
 @injectable()
 export class LayersManager {
@@ -49,5 +50,26 @@ export class LayersManager {
     const yamlContent = convertJsonToYaml(jsonDocument);
     replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
     this.logger.log('info', `Successfully added layer: ${layerRequest.name}`);
+  }
+
+  public addLayerToBest(layerToBestRequest: ILayerToBestRequest): void {
+    this.logger.log('info', `Add layer: ${layerToBestRequest.layerName} to best: ${layerToBestRequest.bestName} request`);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const jsonDocument: IMapProxyJsonDocument | undefined = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
+    if (!isLayerNameExists(jsonDocument, layerToBestRequest.layerName)) {
+      throw new NoContentError(`Layer name '${layerToBestRequest.layerName}' is not exists`);
+    }
+
+    if (!isLayerNameExists(jsonDocument, layerToBestRequest.bestName)) {
+      throw new NoContentError(`Best name '${layerToBestRequest.bestName}' is not exists`);
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const bestCache: IMapProxyCache = jsonDocument.caches[layerToBestRequest.bestName];
+    bestCache.sources.push(layerToBestRequest.layerName);
+
+    const yamlContent: string | undefined = convertJsonToYaml(jsonDocument);
+
+    replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
+    this.logger.log('info', `Successfully added layer: '${layerToBestRequest.layerName}' to best: '${layerToBestRequest.bestName}'`);
   }
 }

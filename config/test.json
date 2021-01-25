@@ -1,1 +1,25 @@
-{}
+{
+    "openapiConfig": {
+      "filePath": "./openapi3.yaml",
+      "basePath": "/docs",
+      "jsonPath": "/api.json",
+      "uiPath": "/api"
+    },
+    "logger": {
+      "level": "info"
+    },
+    "server": {
+      "port": "8080"
+    },
+    "mapproxy": {
+      "yamlFilePath": "tests/unit/mock/mockContent.yaml",
+      "cache": {
+        "grids": ["epsg4326dir"],
+        "request_format": "image/png",
+        "upscale_tiles": 18,
+        "type": "s3",
+        "directory_layout": "tms"
+      }
+    }
+  }
+  
