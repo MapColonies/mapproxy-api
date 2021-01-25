@@ -2,13 +2,12 @@ import { RequestHandler } from 'express';
 import httpStatus from 'http-status-codes';
 import { injectable, inject } from 'tsyringe';
 import { Services } from '../../common/constants';
-import { ILogger, ILayerPostRequest, ILayerToBestRequest, IBestLayer } from '../../common/interfaces';
+import { ILogger, ILayerPostRequest, ILayerToBestRequest } from '../../common/interfaces';
 import { LayersManager } from '../models/layersManager';
 
 type CreateLayerHandler = RequestHandler<undefined, ILayerPostRequest, ILayerPostRequest>;
 type GetLayerHandler = RequestHandler<undefined, ILayerPostRequest>;
 type CreateBestHandler = RequestHandler<undefined, ILayerToBestRequest, ILayerToBestRequest>;
-type GetBestHandler = RequestHandler<undefined, IBestLayer>;
 
 @injectable()
 export class LayersController {

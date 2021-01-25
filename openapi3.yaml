@@ -28,7 +28,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-                
+
     post:
       operationId: addLayer
       tags:
@@ -71,7 +71,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error'             
+                $ref: '#/components/schemas/error'
     post:
       operationId: addLayerToBest
       tags:
