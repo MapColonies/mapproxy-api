@@ -9,9 +9,10 @@ import {
   IMapProxyLayer,
   IMapProxyConfig,
   ILayerToMosaicRequest,
+  IReorderMosaicRequest,
 } from '../../common/interfaces';
 import { mockLayer } from '../../common/data/mock/mockLayer';
-import { convertJsonToYaml, convertYamlToJson, replaceYamlFileContent } from '../../common/utils';
+import { convertJsonToYaml, convertYamlToJson, replaceYamlFileContent, sortArrayByZIndex } from '../../common/utils';
 import { ConfilctError } from '../../common/exceptions/http/confilctError';
 import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
 import { NoContentError } from '../../common/exceptions/http/noContentError';
@@ -79,5 +80,28 @@ export class LayersManager {
 
     replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
     this.logger.log('info', `Successfully added layer: '${layerToMosaicRequest.layerName}' to mosaic: '${layerToMosaicRequest.mosaicName}'`);
+  }
+
+  public reorderMosaic(reorderMosaicRequest: IReorderMosaicRequest): void {
+    this.logger.log('info', `Reorder mosaic: ${reorderMosaicRequest.mosaicName} request`);
+    const jsonDocument: IMapProxyJsonDocument | undefined = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
+    if (!isLayerNameExists(jsonDocument, reorderMosaicRequest.mosaicName)) {
+      throw new NoContentError(`Mosaic name '${reorderMosaicRequest.mosaicName}' is not exists`);
+    }
+    reorderMosaicRequest.layers.forEach((layer) => {
+      if (!isLayerNameExists(jsonDocument, layer.layerName)) {
+        throw new NoContentError(`layer name '${layer.layerName}' is not exists`);
+      }
+    });
+    
+    const sortedLayers: string[] = sortArrayByZIndex(reorderMosaicRequest.layers);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const mosaicCache: IMapProxyCache = jsonDocument.caches[reorderMosaicRequest.mosaicName];
+    mosaicCache.sources = sortedLayers;
+
+    const yamlContent: string | undefined = convertJsonToYaml(jsonDocument);
+
+    replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
+    this.logger.log('info', `Successfully reordered mosaic: '${reorderMosaicRequest.mosaicName}'`);
   }
 }
