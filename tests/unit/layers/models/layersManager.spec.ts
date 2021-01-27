@@ -105,8 +105,11 @@ describe('layersManager', () => {
     it('should successfully reorder mosaic layers by thier z-index', function () {
       // mock
       const mockReorderMosaicRequest: IReorderMosaicRequest = {
-        layers: [{layerName: 'amsterdam_5cm', zIndex: 1}, {layerName: 'NameIsAlreadyExists', zIndex: 0}],
-        mosaicName: 'existsMosaicName'
+        layers: [
+          { layerName: 'amsterdam_5cm', zIndex: 1 },
+          { layerName: 'NameIsAlreadyExists', zIndex: 0 },
+        ],
+        mosaicName: 'existsMosaicName',
       };
       // action
       const action = () => layersManager.reorderMosaic(mockReorderMosaicRequest);
@@ -120,8 +123,11 @@ describe('layersManager', () => {
     it('should reject with no content error due layer name is not exists', function () {
       // mock
       const mockReorderMosaicRequest: IReorderMosaicRequest = {
-        layers: [{layerName: 'amsterdam_5cm', zIndex: 1}, {layerName: 'LayerNameIsNotExists', zIndex: 0}],
-        mosaicName: 'existsMosaicName'
+        layers: [
+          { layerName: 'amsterdam_5cm', zIndex: 1 },
+          { layerName: 'LayerNameIsNotExists', zIndex: 0 },
+        ],
+        mosaicName: 'existsMosaicName',
       };
       // action
       const action = () => layersManager.reorderMosaic(mockReorderMosaicRequest);
@@ -135,8 +141,11 @@ describe('layersManager', () => {
     it('should reject with no content error due mosaic name is not exists', function () {
       // mock
       const mockReorderMosaicRequest: IReorderMosaicRequest = {
-        layers: [{layerName: 'amsterdam_5cm', zIndex: 1}, {layerName: 'NameIsAlreadyExists', zIndex: 0}],
-        mosaicName: 'NotExistsMosaicName'
+        layers: [
+          { layerName: 'amsterdam_5cm', zIndex: 1 },
+          { layerName: 'NameIsAlreadyExists', zIndex: 0 },
+        ],
+        mosaicName: 'NotExistsMosaicName',
       };
       // action
       const action = () => layersManager.reorderMosaic(mockReorderMosaicRequest);

@@ -38,9 +38,9 @@ export class LayersController {
   public reorderMosaic: PutMosaicHandler = (req, res, next) => {
     try {
       this.manager.reorderMosaic(req.body);
-      return res.status(httpStatus.CREATED); 
+      return res.status(httpStatus.CREATED);
     } catch (error) {
       next(error);
     }
-  }
+  };
 }

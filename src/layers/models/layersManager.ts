@@ -93,7 +93,7 @@ export class LayersManager {
         throw new NoContentError(`layer name '${layer.layerName}' is not exists`);
       }
     });
-    
+
     const sortedLayers: string[] = sortArrayByZIndex(reorderMosaicRequest.layers);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const mosaicCache: IMapProxyCache = jsonDocument.caches[reorderMosaicRequest.mosaicName];

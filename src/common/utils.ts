@@ -38,7 +38,7 @@ export function sortArrayByZIndex(layersArr: IReorderMosaicLayerObject[]): strin
   try {
     const sortedArray = layersArr.sort((a, b) => a.zIndex - b.zIndex);
     const layers: string[] = [];
-    sortedArray.forEach(layer => {
+    sortedArray.forEach((layer) => {
       layers.push(layer.layerName);
     });
     return layers;

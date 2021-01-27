@@ -77,10 +77,10 @@ export interface IMosaicLayer {
 }
 
 export interface IReorderMosaicLayerObject {
-  layerName: string,
-  zIndex: number
+  layerName: string;
+  zIndex: number;
 }
 export interface IReorderMosaicRequest {
-  mosaicName: string,
+  mosaicName: string;
   layers: IReorderMosaicLayerObject[];
 }
