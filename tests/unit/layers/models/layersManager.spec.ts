@@ -1,4 +1,4 @@
-import config, { util } from 'config';
+import config from 'config';
 import { ILayerToMosaicRequest, IMapProxyConfig, IReorderMosaicRequest } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { ConfilctError } from '../../../../src/common/exceptions/http/confilctError';
