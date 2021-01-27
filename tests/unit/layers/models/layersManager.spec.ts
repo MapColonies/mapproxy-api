@@ -5,7 +5,7 @@ import { ConfilctError } from '../../../../src/common/exceptions/http/confilctEr
 import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExists';
 import { mockLayerNameIsNotExists } from '../../mock/mockLayerNameIsNotExists';
 import * as utils from '../../../../src/common/utils';
-import { NoContentError } from '../../../../src/common/exceptions/http/noContentError';
+import { NotFoundError } from '../../../../src/common/exceptions/http/notFoundError';
 
 let layersManager: LayersManager;
 let convertYamlToJsonStub: jest.SpyInstance;
@@ -58,7 +58,7 @@ describe('layersManager', () => {
     });
   });
   describe('#addLayerToMosaic', () => {
-    it('should reject with no content error due layer name is not exists', function () {
+    it('should reject with not found error due layer name is not exists', function () {
       // mock
       const mockLayerNotExistsToMosaicRequest: ILayerToMosaicRequest = {
         layerName: 'layerNameIsNotExists',
@@ -67,12 +67,12 @@ describe('layersManager', () => {
       // action
       const action = () => layersManager.addLayerToMosaic(mockLayerNotExistsToMosaicRequest);
       // expectation
-      expect(action).toThrow(NoContentError);
+      expect(action).toThrow(NotFoundError);
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
       expect(convertJsonToYamlStub).not.toHaveBeenCalled();
       expect(replaceYamlContentStub).not.toHaveBeenCalled();
     });
-    it('should reject with no content error due mosaic name is not exists', function () {
+    it('should reject with not found error due mosaic name is not exists', function () {
       // mock
       const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
         layerName: 'mockLayerNameExists',
@@ -81,7 +81,7 @@ describe('layersManager', () => {
       // action
       const action = () => layersManager.addLayerToMosaic(mockLayerToMosaicRequest);
       // expectation
-      expect(action).toThrow(NoContentError);
+      expect(action).toThrow(NotFoundError);
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
       expect(convertJsonToYamlStub).not.toHaveBeenCalled();
       expect(replaceYamlContentStub).not.toHaveBeenCalled();
@@ -120,7 +120,7 @@ describe('layersManager', () => {
       expect(convertJsonToYamlStub).toHaveBeenCalledTimes(1);
       expect(replaceYamlContentStub).toHaveBeenCalledTimes(1);
     });
-    it('should reject with no content error due layer name is not exists', function () {
+    it('should reject with not found error due layer name is not exists', function () {
       // mock
       const mockReorderMosaicRequest: IReorderMosaicRequest = {
         layers: [
@@ -132,13 +132,13 @@ describe('layersManager', () => {
       // action
       const action = () => layersManager.reorderMosaic(mockReorderMosaicRequest);
       // expectation
-      expect(action).toThrow(NoContentError);
+      expect(action).toThrow(NotFoundError);
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
       expect(sortArrayByZIndexStub).toHaveBeenCalledTimes(0);
       expect(convertJsonToYamlStub).not.toHaveBeenCalled();
       expect(replaceYamlContentStub).not.toHaveBeenCalled();
     });
-    it('should reject with no content error due mosaic name is not exists', function () {
+    it('should reject with not found error due mosaic name is not exists', function () {
       // mock
       const mockReorderMosaicRequest: IReorderMosaicRequest = {
         layers: [
@@ -150,7 +150,7 @@ describe('layersManager', () => {
       // action
       const action = () => layersManager.reorderMosaic(mockReorderMosaicRequest);
       // expectation
-      expect(action).toThrow(NoContentError);
+      expect(action).toThrow(NotFoundError);
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
       expect(sortArrayByZIndexStub).toHaveBeenCalledTimes(0);
       expect(convertJsonToYamlStub).not.toHaveBeenCalled();

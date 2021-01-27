@@ -37,11 +37,7 @@ export function replaceYamlFileContent(yamlFilePath: string, yamlContent: string
 export function sortArrayByZIndex(layersArr: IReorderMosaicLayerObject[]): string[] {
   try {
     const sortedArray = layersArr.sort((a, b) => a.zIndex - b.zIndex);
-    const layers: string[] = [];
-    sortedArray.forEach((layer) => {
-      layers.push(layer.layerName);
-    });
-    return layers;
+    return sortedArray.map((val) => val.layerName);
   } catch (error) {
     throw new Error(error);
   }
