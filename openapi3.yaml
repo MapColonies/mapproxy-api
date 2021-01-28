@@ -53,6 +53,40 @@ paths:
               schema:
                 $ref: '#/components/schemas/error'
   /layer/{name}:
+    put:
+      operationId: updateLayer
+      tags:
+        - Layer
+      summary: update existing layer source
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/layer'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                LayerNotFound:
+                  value:
+                    message: 'Layer name {layerName} is not exists'
     delete:
       operationId: removeLayer
       tags:
