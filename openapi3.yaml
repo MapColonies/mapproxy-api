@@ -28,7 +28,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-
     post:
       operationId: addLayer
       tags:
@@ -47,6 +46,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
+        500:
+          description: Ineternal Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+  /layer/{name}:
+    delete:
+      operationId: removeLayer
+      tags:
+        - Layer
+      summary: remove layer from mapproxy
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Accepted
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                LayerNotFound:
+                  value:
+                    message: 'Layer name {layerName} is not exists'
         500:
           description: Ineternal Error
           content:
