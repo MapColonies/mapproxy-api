@@ -157,4 +157,28 @@ describe('layersManager', () => {
       expect(replaceYamlContentStub).not.toHaveBeenCalled();
     });
   });
+  describe('#removeLayer', () => {
+    it('should successfully remove layer', function () {
+      // mock
+      const mockLayerName = 'mockLayerNameExists';
+      // action
+      const action = () => layersManager.removeLayer(mockLayerName);
+      // expectation
+      expect(action).not.toThrow();
+      expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
+      expect(convertJsonToYamlStub).toHaveBeenCalledTimes(1);
+      expect(replaceYamlContentStub).toHaveBeenCalledTimes(1);
+    });
+    it('should reject with not found error due layer name is not exists', function () {
+      // mock
+      const mockLayerName = 'mockLayerNameIsNotExists';
+      // action
+      const action = () => layersManager.removeLayer(mockLayerName);
+      // expectation
+      expect(action).toThrow(NotFoundError);
+      expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
+      expect(convertJsonToYamlStub).not.toHaveBeenCalled();
+      expect(replaceYamlContentStub).not.toHaveBeenCalled();
+    });
+  });
 });
