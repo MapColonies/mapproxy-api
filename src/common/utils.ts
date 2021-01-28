@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { safeLoad, safeDump } from 'js-yaml';
-import { IMapProxyJsonDocument } from './interfaces';
+import { IMapProxyJsonDocument, IReorderMosaicLayerObject } from './interfaces';
 
 // read mapproxy yaml config file and convert it into a json object
 export function convertYamlToJson(yamlFilePath: string): IMapProxyJsonDocument {
@@ -28,6 +28,16 @@ export function convertJsonToYaml(jsonDocument: IMapProxyJsonDocument): string {
 export function replaceYamlFileContent(yamlFilePath: string, yamlContent: string): void {
   try {
     writeFileSync(yamlFilePath, yamlContent, 'utf8');
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
+// sort an array in numerical order
+export function sortArrayByZIndex(layersArr: IReorderMosaicLayerObject[]): string[] {
+  try {
+    const sortedArray = layersArr.sort((a, b) => a.zIndex - b.zIndex);
+    return sortedArray.map((val) => val.layerName);
   } catch (error) {
     throw new Error(error);
   }

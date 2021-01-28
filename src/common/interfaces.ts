@@ -75,3 +75,12 @@ export interface ILayerToMosaicRequest {
 export interface IMosaicLayer {
   layers: string[];
 }
+
+export interface IReorderMosaicLayerObject {
+  layerName: string;
+  zIndex: number;
+}
+export interface IReorderMosaicRequest {
+  mosaicName: string;
+  layers: IReorderMosaicLayerObject[];
+}

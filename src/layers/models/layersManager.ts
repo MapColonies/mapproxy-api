@@ -9,12 +9,13 @@ import {
   IMapProxyLayer,
   IMapProxyConfig,
   ILayerToMosaicRequest,
+  IReorderMosaicRequest,
 } from '../../common/interfaces';
 import { mockLayer } from '../../common/data/mock/mockLayer';
-import { convertJsonToYaml, convertYamlToJson, replaceYamlFileContent } from '../../common/utils';
+import { convertJsonToYaml, convertYamlToJson, replaceYamlFileContent, sortArrayByZIndex } from '../../common/utils';
 import { ConfilctError } from '../../common/exceptions/http/confilctError';
 import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
-import { NoContentError } from '../../common/exceptions/http/noContentError';
+import { NotFoundError } from '../../common/exceptions/http/notFoundError';
 
 @injectable()
 export class LayersManager {
@@ -63,21 +64,45 @@ export class LayersManager {
   public addLayerToMosaic(layerToMosaicRequest: ILayerToMosaicRequest): void {
     this.logger.log('info', `Add layer: ${layerToMosaicRequest.layerName} to mosaic: ${layerToMosaicRequest.mosaicName} request`);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const jsonDocument: IMapProxyJsonDocument | undefined = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
+    const jsonDocument: IMapProxyJsonDocument = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
     if (!isLayerNameExists(jsonDocument, layerToMosaicRequest.layerName)) {
-      throw new NoContentError(`Layer name '${layerToMosaicRequest.layerName}' is not exists`);
+      throw new NotFoundError(`Layer name '${layerToMosaicRequest.layerName}' is not exists`);
     }
 
     if (!isLayerNameExists(jsonDocument, layerToMosaicRequest.mosaicName)) {
-      throw new NoContentError(`Mosaic name '${layerToMosaicRequest.mosaicName}' is not exists`);
+      throw new NotFoundError(`Mosaic name '${layerToMosaicRequest.mosaicName}' is not exists`);
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const mosaicCache: IMapProxyCache = jsonDocument.caches[layerToMosaicRequest.mosaicName];
     mosaicCache.sources.push(layerToMosaicRequest.layerName);
 
-    const yamlContent: string | undefined = convertJsonToYaml(jsonDocument);
+    const yamlContent: string = convertJsonToYaml(jsonDocument);
 
     replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
     this.logger.log('info', `Successfully added layer: '${layerToMosaicRequest.layerName}' to mosaic: '${layerToMosaicRequest.mosaicName}'`);
+  }
+
+  public reorderMosaic(reorderMosaicRequest: IReorderMosaicRequest): void {
+    this.logger.log('info', `Reorder mosaic: ${reorderMosaicRequest.mosaicName} request`);
+    const jsonDocument: IMapProxyJsonDocument = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
+    if (!isLayerNameExists(jsonDocument, reorderMosaicRequest.mosaicName)) {
+      throw new NotFoundError(`Mosaic name '${reorderMosaicRequest.mosaicName}' is not exists`);
+    }
+    reorderMosaicRequest.layers.forEach((layer) => {
+      if (!isLayerNameExists(jsonDocument, layer.layerName)) {
+        throw new NotFoundError(`layer name '${layer.layerName}' is not exists`);
+      }
+    });
+
+    const sortedLayers: string[] = sortArrayByZIndex(reorderMosaicRequest.layers);
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const mosaicCache: IMapProxyCache = jsonDocument.caches[reorderMosaicRequest.mosaicName];
+    mosaicCache.sources = sortedLayers;
+
+    const yamlContent: string = convertJsonToYaml(jsonDocument);
+
+    replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
+    this.logger.log('info', `Successfully reordered mosaic: '${reorderMosaicRequest.mosaicName}'`);
   }
 }

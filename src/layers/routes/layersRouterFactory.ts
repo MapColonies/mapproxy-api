@@ -9,6 +9,7 @@ const layersRouterFactory: FactoryFunction<Router> = (dependencyContainer) => {
   router.get('/', controller.getLayer);
   router.post('/', controller.addLayer);
   router.post('/mosaic', controller.addLayerToMosaic);
+  router.put('/mosaic', controller.reorderMosaic);
 
   return router;
 };

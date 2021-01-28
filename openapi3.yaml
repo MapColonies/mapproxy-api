@@ -36,7 +36,7 @@ paths:
       summary: add layer to mapproxy
       responses:
         201:
-          description: created
+          description: Created
           content:
             application/json:
               schema:
@@ -53,7 +53,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-  /layer/mosiac:
+  /layer/mosaic:
     get:
       operationId: getLayers
       tags:
@@ -84,18 +84,25 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/mosaicLayer'
-        204:
-          description: no content
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error'
         400:
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                LayerNotFound:
+                  value:
+                    message: 'Layer name {layerName} is not exists'
+                MosaicNotFound:
+                  value:
+                    message: 'Mosaic name {mosaicName} is not exists'
         500:
           description: Ineternal Error
           content:
@@ -120,6 +127,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                LayerNotFound:
+                  value:
+                    message: 'Layer name {layerName} is not exists'
+                MosaicNotFound:
+                  value:
+                    message: 'Mosaic name {mosaicName} is not exists'
         500:
           description: Ineternal Error
           content:
