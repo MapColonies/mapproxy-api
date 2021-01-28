@@ -1,5 +1,5 @@
 import config from 'config';
-import { ILayerToMosaicRequest, IMapProxyConfig, IReorderMosaicRequest } from '../../../../src/common/interfaces';
+import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyConfig, IReorderMosaicRequest } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { ConfilctError } from '../../../../src/common/exceptions/http/confilctError';
 import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExists';
@@ -174,6 +174,36 @@ describe('layersManager', () => {
       const mockLayerName = 'mockLayerNameIsNotExists';
       // action
       const action = () => layersManager.removeLayer(mockLayerName);
+      // expectation
+      expect(action).toThrow(NotFoundError);
+      expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
+      expect(convertJsonToYamlStub).not.toHaveBeenCalled();
+      expect(replaceYamlContentStub).not.toHaveBeenCalled();
+    });
+  });
+  describe('#updateLayer', () => {
+    const mockUpdateLayerRequest: ILayerPostRequest = {
+      name: 'amsterdam_5cm',
+      tilesPath: '/path/to/tiles/directory/in/my/bucket/',
+      maxZoomLevel: 18,
+      description: 'description for amsterdam layer',
+    };
+    it('should successfully update layer', function () {
+      // mock
+      const mockLayerName = 'mockLayerNameExists';
+      // action
+      const action = () => layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
+      // expectation
+      expect(action).not.toThrow();
+      expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
+      expect(convertJsonToYamlStub).toHaveBeenCalledTimes(1);
+      expect(replaceYamlContentStub).toHaveBeenCalledTimes(1);
+    });
+    it('should reject with not found error due layer name is not exists', function () {
+      // mock
+      const mockLayerName = 'mockLayerNameIsNotExists';
+      // action
+      const action = () => layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
       // expectation
       expect(action).toThrow(NotFoundError);
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
