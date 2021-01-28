@@ -125,4 +125,41 @@ export class LayersManager {
     replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
     this.logger.log('info', `Successfully removed layer '${layerName}'`);
   }
+
+  public updateLayer(layerName: string, layerRequest: ILayerPostRequest): void {
+    this.logger.log('info', `Update layer: '${layerName}' request`);
+    const jsonDocument: IMapProxyJsonDocument = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
+    if (!isLayerNameExists(jsonDocument, layerName)) {
+      throw new NotFoundError(`Layer name '${layerName}' is not exists`);
+    }
+
+    const newCache: IMapProxyCache = {
+      sources: [],
+      grids: this.mapproxyConfig.cache.grids,
+      request_format: this.mapproxyConfig.cache.request_format,
+      upscale_tiles: this.mapproxyConfig.cache.upscale_tiles,
+      cache: {
+        type: this.mapproxyConfig.cache.type,
+        directory: layerRequest.tilesPath,
+        directory_layout: this.mapproxyConfig.cache.directory_layout,
+      },
+    };
+    const newLayer: IMapProxyLayer = {
+      name: layerName,
+      title: layerRequest.description,
+      sources: [layerRequest.name],
+    };
+    // update existing layer cache values with the new requested layer cache values
+    jsonDocument.caches[layerName] = newCache;
+    // update existing layer values with the new requested layer values
+    const requestedLayerIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === layerName);
+    const negativeResult = -1;
+    if (requestedLayerIndex !== negativeResult) {
+      jsonDocument.layers[requestedLayerIndex] = newLayer;
+    }
+
+    const yamlContent = convertJsonToYaml(jsonDocument);
+    replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
+    this.logger.log('info', `Successfully updated layer '${layerName}'`);
+  }
 }
