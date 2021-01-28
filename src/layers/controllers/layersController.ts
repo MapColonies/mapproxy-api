@@ -9,6 +9,7 @@ type CreateLayerHandler = RequestHandler<undefined, ILayerPostRequest, ILayerPos
 type GetLayerHandler = RequestHandler<undefined, ILayerPostRequest>;
 type CreateMosaicHandler = RequestHandler<undefined, ILayerToMosaicRequest, ILayerToMosaicRequest>;
 type PutMosaicHandler = RequestHandler<undefined, IReorderMosaicRequest, IReorderMosaicRequest>;
+type DeleteLayerHandler = RequestHandler<{ name: string }, string, string>;
 @injectable()
 export class LayersController {
   public constructor(@inject(Services.LOGGER) private readonly logger: ILogger, @inject(LayersManager) private readonly manager: LayersManager) {}
@@ -21,6 +22,15 @@ export class LayersController {
     try {
       this.manager.addLayer(req.body);
       return res.status(httpStatus.CREATED);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public removeLayer: DeleteLayerHandler = (req, res, next) => {
+    try {
+      this.manager.removeLayer(req.params.name);
+      return res.status(httpStatus.ACCEPTED);
     } catch (error) {
       next(error);
     }

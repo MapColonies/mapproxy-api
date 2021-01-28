@@ -105,4 +105,24 @@ export class LayersManager {
     replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
     this.logger.log('info', `Successfully reordered mosaic: '${reorderMosaicRequest.mosaicName}'`);
   }
+
+  public removeLayer(layerName: string): void {
+    this.logger.log('info', `Remove layer: ${layerName} request`);
+    const jsonDocument: IMapProxyJsonDocument = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
+    if (!isLayerNameExists(jsonDocument, layerName)) {
+      throw new NotFoundError(`Layer name '${layerName}' is not exists`);
+    }
+    // remove requested layer cache source from cache list
+    delete jsonDocument.caches[layerName];
+    // remove requested layer from layers array
+    const requestedLayerIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === layerName);
+    const negativeResult = -1;
+    if (requestedLayerIndex !== negativeResult) {
+      jsonDocument.layers.splice(requestedLayerIndex, 1);
+    }
+
+    const yamlContent = convertJsonToYaml(jsonDocument);
+    replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
+    this.logger.log('info', `Successfully removed layer '${layerName}'`);
+  }
 }
