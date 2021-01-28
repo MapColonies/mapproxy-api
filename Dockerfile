@@ -25,5 +25,5 @@ COPY --from=build /tmp/buildApp/node_modules ./node_modules
 COPY ./config ./config
 
 USER app:app
-EXPOSE 8080
+EXPOSE ${SERVER_PORT}
 CMD ["node", "--max_old_space_size=512", "./index.js"]
