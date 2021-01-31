@@ -8,6 +8,7 @@ import { LayersManager } from '../models/layersManager';
 type CreateLayerHandler = RequestHandler<undefined, ILayerPostRequest, ILayerPostRequest>;
 type GetLayerHandler = RequestHandler<undefined, ILayerPostRequest>;
 type CreateMosaicHandler = RequestHandler<undefined, ILayerToMosaicRequest, ILayerToMosaicRequest>;
+type UpdateLayerHandler = RequestHandler<{ name: string }, ILayerPostRequest, ILayerPostRequest>;
 type PutMosaicHandler = RequestHandler<undefined, IReorderMosaicRequest, IReorderMosaicRequest>;
 type DeleteLayerHandler = RequestHandler<{ name: string }, string, string>;
 @injectable()
@@ -22,6 +23,15 @@ export class LayersController {
     try {
       this.manager.addLayer(req.body);
       return res.status(httpStatus.CREATED);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public updateLayer: UpdateLayerHandler = (req, res, next) => {
+    try {
+      this.manager.updateLayer(req.params.name, req.body);
+      return res.status(httpStatus.ACCEPTED);
     } catch (error) {
       next(error);
     }
