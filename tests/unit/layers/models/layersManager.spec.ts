@@ -20,7 +20,7 @@ describe('layersManager', () => {
     convertYamlToJsonStub = jest.spyOn(utils, 'convertYamlToJson');
     convertJsonToYamlStub = jest.spyOn(utils, 'convertJsonToYaml');
     replaceYamlContentStub = jest.spyOn(utils, 'replaceYamlFileContent').mockReturnValueOnce(undefined);
-    sortArrayByZIndexStub = jest.spyOn(utils, 'sortArrayByZIndex');
+    sortArrayByZIndexStub = jest.spyOn(utils, 'sortArrayByZIndex').mockReturnValueOnce(['mockLayer1', 'mockLayer2', 'mockLayer3']);
   });
   afterEach(() => {
     jest.clearAllMocks();
