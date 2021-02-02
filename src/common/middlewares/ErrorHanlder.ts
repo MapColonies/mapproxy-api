@@ -39,11 +39,11 @@ export class ErrorHandler {
         body = {
           message: err.message,
         };
-      }  else if (err instanceof ServiceUnavailableError) {
-          status = err.status;
-          body = {
-            message: err.message,
-          };
+      } else if (err instanceof ServiceUnavailableError) {
+        status = err.status;
+        body = {
+          message: err.message,
+        };
       } else if (err instanceof HttpError) {
         status = err.status;
         body = {

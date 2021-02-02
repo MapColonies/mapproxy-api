@@ -11,7 +11,7 @@ export function convertYamlToJson(yamlFilePath: string): IMapProxyJsonDocument {
     return jsonDocument;
   } catch (error) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if(error.code === 'ENOENT'){
+    if (error.code === 'ENOENT') {
       throw new ServiceUnavailableError('Yaml file is not found');
     }
     throw new Error(error);
