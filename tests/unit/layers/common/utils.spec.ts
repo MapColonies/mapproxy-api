@@ -68,6 +68,7 @@ describe('utils', () => {
         name: 'mockLayer',
         sources: ['mockSource'],
       };
+      expect(mockConvertedJson.layers).not.toContainEqual(mockLayer);
       mockConvertedJson.layers.push(mockLayer);
       // action
       const convertedYaml: string = utils.convertJsonToYaml(mockConvertedJson);
