@@ -1,4 +1,4 @@
-import jsyaml from 'js-yaml';
+import jsyaml, { YAMLException } from 'js-yaml';
 import * as utils from '../../../../src/common/utils';
 import { ServiceUnavailableError } from '../../../../src/common/exceptions/http/serviceUnavailableError';
 import { IMapProxyJsonDocument, IMapProxyLayer, IReorderMosaicLayerObject } from '../../../../src/common/interfaces';
@@ -36,6 +36,15 @@ describe('utils', () => {
       // expectation
       expect(action).toThrow(ServiceUnavailableError);
       expect(safeLoadStub).not.toHaveBeenCalled();
+    });
+    it('should reject with invalid yaml syntax', function () {
+      // mock
+      const invalidYamlSyntaxFile = 'tests/unit/mock/mockInvalidYamlSyntax.yaml';
+      // action
+      const action = () => utils.convertYamlToJson(invalidYamlSyntaxFile);
+      // expectation
+      expect(action).toThrow(YAMLException);
+      expect(safeLoadStub).toHaveBeenCalledTimes(1);
     });
   });
   describe('#convertJsonToYaml', () => {

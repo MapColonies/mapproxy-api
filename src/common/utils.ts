@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync } from 'fs';
-import { safeLoad, safeDump } from 'js-yaml';
+import { safeLoad, safeDump, YAMLException } from 'js-yaml';
 import { ServiceUnavailableError } from './exceptions/http/serviceUnavailableError';
 import { IMapProxyJsonDocument, IReorderMosaicLayerObject } from './interfaces';
 
@@ -13,6 +13,10 @@ export function convertYamlToJson(yamlFilePath: string): IMapProxyJsonDocument {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (error.code === 'ENOENT') {
       throw new ServiceUnavailableError('Yaml file is not found');
+    }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    if (error instanceof YAMLException) {
+      throw new YAMLException('Invalid YAML syntax error');
     }
     throw new Error(error);
   }
