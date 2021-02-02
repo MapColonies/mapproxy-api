@@ -84,14 +84,17 @@ describe('utils', () => {
     test('should sort an array in numerical order', function () {
       // mock
       const layers: IReorderMosaicLayerObject[] = [
-        { layerName: 'mockLayer1', zIndex: 0 },
+        { layerName: 'mockLayer1', zIndex: 2 },
         { layerName: 'mockLayer2', zIndex: 1 },
-        { layerName: 'mockLayer3', zIndex: 2 },
+        { layerName: 'mockLayer3', zIndex: 0 },
       ];
       // action
       const action = () => utils.sortArrayByZIndex(layers);
       // expectation
-      expect(action()).toEqual(['mockLayer1', 'mockLayer2', 'mockLayer3']);
+      expect(layers[0].layerName).toBe('mockLayer1');
+      expect(layers[1].layerName).toBe('mockLayer2');
+      expect(layers[2].layerName).toBe('mockLayer3');
+      expect(action()).toEqual(['mockLayer3', 'mockLayer2', 'mockLayer1']);
       expect(sortArrayByZIndexStub).toHaveReturned();
       expect(sortArrayByZIndexStub).toHaveBeenCalledTimes(1);
     });
