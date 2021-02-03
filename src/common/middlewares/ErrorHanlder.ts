@@ -7,6 +7,7 @@ import { ILogger } from '../interfaces';
 import { HttpError } from '../exceptions/http/httpError';
 import { ConfilctError } from '../exceptions/http/confilctError';
 import { NoContentError } from '../exceptions/http/noContentError';
+import { ServiceUnavailableError } from '../exceptions/http/serviceUnavailableError';
 
 @injectable()
 export class ErrorHandler {
@@ -34,6 +35,11 @@ export class ErrorHandler {
           message: err.message,
         };
       } else if (err instanceof NoContentError) {
+        status = err.status;
+        body = {
+          message: err.message,
+        };
+      } else if (err instanceof ServiceUnavailableError) {
         status = err.status;
         body = {
           message: err.message,

@@ -10,3 +10,4 @@ tsbuildconfig.json
 tsconfig.json
 node_modules
 *.html
+mockInvalidYamlSyntax.yaml

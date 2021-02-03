@@ -42,7 +42,6 @@ caches:
       - artzi
     grids:
       - epsg4326
-
 layers:
   - name: mock
     title: title
