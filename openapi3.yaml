@@ -123,7 +123,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-  /layer/mosaic:
+  /mosaic:
     get:
       operationId: getLayers
       tags:
