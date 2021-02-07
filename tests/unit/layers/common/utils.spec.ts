@@ -1,7 +1,7 @@
 import jsyaml, { YAMLException } from 'js-yaml';
 import * as utils from '../../../../src/common/utils';
 import { ServiceUnavailableError } from '../../../../src/common/exceptions/http/serviceUnavailableError';
-import { IMapProxyJsonDocument, IMapProxyLayer, IReorderMosaicLayerObject } from '../../../../src/common/interfaces';
+import { IMapProxyJsonDocument, IMapProxyLayer, IMosaicLayerObject } from '../../../../src/common/interfaces';
 
 let safeLoadStub: jest.SpyInstance;
 let safeDumpStub: jest.SpyInstance;
@@ -84,7 +84,7 @@ describe('utils', () => {
   describe('#sortArrayByZIndex', () => {
     test('should sort an array in numerical order', function () {
       // mock
-      const layers: IReorderMosaicLayerObject[] = [
+      const layers: IMosaicLayerObject[] = [
         { layerName: 'mockLayer1', zIndex: 2 },
         { layerName: 'mockLayer2', zIndex: 1 },
         { layerName: 'mockLayer3', zIndex: 0 },

@@ -31,7 +31,7 @@ export class ServerBuilder {
   }
 
   private buildRoutes(): void {
-    this.serverInstance.use('/layer', layersRouterFactory(container));
+    this.serverInstance.use('/', layersRouterFactory(container));
     this.serverInstance.use('/', openapiRouterFactory(container));
   }
 

@@ -9,7 +9,7 @@ import {
   IMapProxyLayer,
   IMapProxyConfig,
   ILayerToMosaicRequest,
-  IReorderMosaicRequest,
+  IUpdateMosaicRequest,
 } from '../../common/interfaces';
 import { mockLayer } from '../../common/data/mock/mockLayer';
 import { convertJsonToYaml, convertYamlToJson, replaceYamlFileContent, sortArrayByZIndex } from '../../common/utils';
@@ -82,28 +82,28 @@ export class LayersManager {
     this.logger.log('info', `Successfully added layer: '${layerToMosaicRequest.layerName}' to mosaic: '${layerToMosaicRequest.mosaicName}'`);
   }
 
-  public reorderMosaic(reorderMosaicRequest: IReorderMosaicRequest): void {
-    this.logger.log('info', `Reorder mosaic: ${reorderMosaicRequest.mosaicName} request`);
+  public updateMosaic(updateMosaicRequest: IUpdateMosaicRequest): void {
+    this.logger.log('info', `Update mosaic: ${updateMosaicRequest.mosaicName} request`);
     const jsonDocument: IMapProxyJsonDocument = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
-    if (!isLayerNameExists(jsonDocument, reorderMosaicRequest.mosaicName)) {
-      throw new NotFoundError(`Mosaic name '${reorderMosaicRequest.mosaicName}' is not exists`);
+    if (!isLayerNameExists(jsonDocument, updateMosaicRequest.mosaicName)) {
+      throw new NotFoundError(`Mosaic name '${updateMosaicRequest.mosaicName}' is not exists`);
     }
-    reorderMosaicRequest.layers.forEach((layer) => {
+    updateMosaicRequest.layers.forEach((layer) => {
       if (!isLayerNameExists(jsonDocument, layer.layerName)) {
         throw new NotFoundError(`layer name '${layer.layerName}' is not exists`);
       }
     });
 
-    const sortedLayers: string[] = sortArrayByZIndex(reorderMosaicRequest.layers);
+    const sortedLayers: string[] = sortArrayByZIndex(updateMosaicRequest.layers);
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const mosaicCache: IMapProxyCache = jsonDocument.caches[reorderMosaicRequest.mosaicName];
+    const mosaicCache: IMapProxyCache = jsonDocument.caches[updateMosaicRequest.mosaicName];
     mosaicCache.sources = sortedLayers;
 
     const yamlContent: string = convertJsonToYaml(jsonDocument);
 
     replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
-    this.logger.log('info', `Successfully reordered mosaic: '${reorderMosaicRequest.mosaicName}'`);
+    this.logger.log('info', `Successfully updateed mosaic: '${updateMosaicRequest.mosaicName}'`);
   }
 
   public removeLayer(layerName: string): void {

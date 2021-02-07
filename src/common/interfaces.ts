@@ -76,11 +76,11 @@ export interface IMosaicLayer {
   layers: string[];
 }
 
-export interface IReorderMosaicLayerObject {
+export interface IMosaicLayerObject {
   layerName: string;
   zIndex: number;
 }
-export interface IReorderMosaicRequest {
+export interface IUpdateMosaicRequest {
   mosaicName: string;
-  layers: IReorderMosaicLayerObject[];
+  layers: IMosaicLayerObject[];
 }
