@@ -2,14 +2,14 @@ import { RequestHandler } from 'express';
 import httpStatus from 'http-status-codes';
 import { injectable, inject } from 'tsyringe';
 import { Services } from '../../common/constants';
-import { ILogger, ILayerPostRequest, ILayerToMosaicRequest, IReorderMosaicRequest } from '../../common/interfaces';
+import { ILogger, ILayerPostRequest, ILayerToMosaicRequest, IUpdateMosaicRequest } from '../../common/interfaces';
 import { LayersManager } from '../models/layersManager';
 
 type CreateLayerHandler = RequestHandler<undefined, ILayerPostRequest, ILayerPostRequest>;
 type GetLayerHandler = RequestHandler<undefined, ILayerPostRequest>;
 type CreateMosaicHandler = RequestHandler<undefined, ILayerToMosaicRequest, ILayerToMosaicRequest>;
 type UpdateLayerHandler = RequestHandler<{ name: string }, ILayerPostRequest, ILayerPostRequest>;
-type PutMosaicHandler = RequestHandler<undefined, IReorderMosaicRequest, IReorderMosaicRequest>;
+type PutMosaicHandler = RequestHandler<undefined, IUpdateMosaicRequest, IUpdateMosaicRequest>;
 type DeleteLayerHandler = RequestHandler<{ name: string }, string, string>;
 @injectable()
 export class LayersController {
@@ -55,9 +55,9 @@ export class LayersController {
     }
   };
 
-  public reorderMosaic: PutMosaicHandler = (req, res, next) => {
+  public updateMosaic: PutMosaicHandler = (req, res, next) => {
     try {
-      this.manager.reorderMosaic(req.body);
+      this.manager.updateMosaic(req.body);
       return res.status(httpStatus.CREATED);
     } catch (error) {
       next(error);

@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { safeLoad, safeDump, YAMLException } from 'js-yaml';
 import { ServiceUnavailableError } from './exceptions/http/serviceUnavailableError';
-import { IMapProxyJsonDocument, IReorderMosaicLayerObject } from './interfaces';
+import { IMapProxyJsonDocument, IMosaicLayerObject } from './interfaces';
 
 // read mapproxy yaml config file and convert it into a json object
 export function convertYamlToJson(yamlFilePath: string): IMapProxyJsonDocument {
@@ -43,7 +43,7 @@ export function replaceYamlFileContent(yamlFilePath: string, yamlContent: string
 }
 
 // sort an array in numerical order
-export function sortArrayByZIndex(layersArr: IReorderMosaicLayerObject[]): string[] {
+export function sortArrayByZIndex(layersArr: IMosaicLayerObject[]): string[] {
   try {
     const sortedArray = layersArr.sort((a, b) => a.zIndex - b.zIndex);
     return sortedArray.map((val) => val.layerName);
