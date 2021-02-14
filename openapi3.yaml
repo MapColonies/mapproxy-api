@@ -52,6 +52,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/layer'
   /layer/{name}:
     put:
       operationId: updateLayer
@@ -87,6 +93,12 @@ paths:
                 LayerNotFound:
                   value:
                     message: 'Layer name {layerName} is not exists'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/layer'
     delete:
       operationId: removeLayer
       tags:
@@ -179,6 +191,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/mosaicLayer'
     put:
       operationId: updateMosaic
       tags:
@@ -216,6 +234,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/mosaic'
 components:
   schemas:
     error:
@@ -240,19 +264,22 @@ components:
           example: '/path/to/tiles/directory/in/bucket/'
         maxZoomLevel:
           type: number
-          format: integer
           example: 18
         description:
           type: string
-          example: 'description for germany layer'
+          example: 'description for amsterdam layer'
     mosaicLayer:
       type: object
       required:
-        - name
+        - layerName
+        - mosaicName
       properties:
-        name:
+        layerName:
           type: string
           example: 'amsterdam_5cm'
+        mosaicName:
+          type: string
+          example: 'amsterdam_25cm'
     mosaic:
       type: array
       items:
@@ -266,5 +293,4 @@ components:
             example: 'amsterdam_5cm'
           zIndex:
             type: number
-            format: integer
             example: 1

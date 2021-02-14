@@ -22,7 +22,7 @@ export class LayersController {
   public addLayer: CreateLayerHandler = (req, res, next) => {
     try {
       this.manager.addLayer(req.body);
-      return res.status(httpStatus.CREATED);
+      return res.sendStatus(httpStatus.CREATED).send(req.body);
     } catch (error) {
       next(error);
     }
@@ -31,7 +31,7 @@ export class LayersController {
   public updateLayer: UpdateLayerHandler = (req, res, next) => {
     try {
       this.manager.updateLayer(req.params.name, req.body);
-      return res.status(httpStatus.ACCEPTED);
+      return res.sendStatus(httpStatus.ACCEPTED);
     } catch (error) {
       next(error);
     }
@@ -40,7 +40,7 @@ export class LayersController {
   public removeLayer: DeleteLayerHandler = (req, res, next) => {
     try {
       this.manager.removeLayer(req.params.name);
-      return res.status(httpStatus.ACCEPTED);
+      return res.sendStatus(httpStatus.ACCEPTED);
     } catch (error) {
       next(error);
     }
@@ -49,7 +49,7 @@ export class LayersController {
   public addLayerToMosaic: CreateMosaicHandler = (req, res, next) => {
     try {
       this.manager.addLayerToMosaic(req.body);
-      return res.status(httpStatus.CREATED);
+      return res.status(httpStatus.CREATED).send(req.body);
     } catch (error) {
       next(error);
     }
@@ -58,7 +58,7 @@ export class LayersController {
   public updateMosaic: PutMosaicHandler = (req, res, next) => {
     try {
       this.manager.updateMosaic(req.body);
-      return res.status(httpStatus.CREATED);
+      return res.status(httpStatus.CREATED).send(req.body);
     } catch (error) {
       next(error);
     }
