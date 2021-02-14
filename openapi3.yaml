@@ -51,13 +51,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/error'    
+                $ref: '#/components/schemas/error'
       requestBody:
         required: true
         content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/layer'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/layer'
   /layer/{name}:
     put:
       operationId: updateLayer
@@ -96,9 +96,9 @@ paths:
       requestBody:
         required: true
         content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/layer'                    
+          application/json:
+            schema:
+              $ref: '#/components/schemas/layer'
     delete:
       operationId: removeLayer
       tags:
@@ -194,9 +194,9 @@ paths:
       requestBody:
         required: true
         content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/mosaicLayer'                
+          application/json:
+            schema:
+              $ref: '#/components/schemas/mosaicLayer'
     put:
       operationId: updateMosaic
       tags:
@@ -237,9 +237,9 @@ paths:
       requestBody:
         required: true
         content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/mosaic'                
+          application/json:
+            schema:
+              $ref: '#/components/schemas/mosaic'
 components:
   schemas:
     error:
@@ -279,7 +279,7 @@ components:
           example: 'amsterdam_5cm'
         mosaicName:
           type: string
-          example: 'amsterdam_25cm'        
+          example: 'amsterdam_25cm'
     mosaic:
       type: array
       items:
