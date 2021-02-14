@@ -22,7 +22,7 @@ export class LayersController {
   public addLayer: CreateLayerHandler = (req, res, next) => {
     try {
       this.manager.addLayer(req.body);
-      return res.sendStatus(httpStatus.CREATED).send(req.body);
+      return res.status(httpStatus.CREATED).send(req.body);
     } catch (error) {
       next(error);
     }
