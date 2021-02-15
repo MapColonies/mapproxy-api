@@ -6,7 +6,7 @@ const layersRouterFactory: FactoryFunction<Router> = (dependencyContainer) => {
   const router = Router();
   const controller = dependencyContainer.resolve(LayersController);
 
-  router.get('/layer', controller.getLayer);
+  router.get('/layer/:name', controller.getLayer);
   router.post('/layer', controller.addLayer);
   router.put('/layer/:name', controller.updateLayer);
   router.delete('/layer/:name', controller.removeLayer);

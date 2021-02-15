@@ -1,5 +1,5 @@
 import config from 'config';
-import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyConfig, IUpdateMosaicRequest } from '../../../../src/common/interfaces';
+import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IMapProxyConfig, IUpdateMosaicRequest } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { ConfilctError } from '../../../../src/common/exceptions/http/confilctError';
 import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExists';
@@ -25,18 +25,28 @@ describe('layersManager', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
+
   describe('#getLayer', () => {
-    it('return the layer of id 1', function () {
+    it('should successfully return the requested layer', function () {
       // action
-      const resource = layersManager.getLayer();
-      // expectation
-      expect(resource.id).toEqual(1);
-      expect(resource.name).toEqual('amsterdam_5cm');
-      expect(resource.maxZoomLevel).toEqual(18);
-      expect(resource.tilesPath).toEqual('/path/to/s3/directory/tile');
-      expect(resource.description).toEqual('amsterdam 5m layer discription');
+      const resource: IMapProxyCache = layersManager.getLayer('mockLayerNameExists');
+      // expectation;
+      expect(resource.sources).toEqual([]);
+      expect(resource.upscale_tiles).toEqual(18);
+      expect(resource.request_format).toEqual('image/png');
+      expect(resource.grids).toEqual(['epsg4326dir']);
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      expect(resource.cache).toEqual({ directory: '/path/to/s3/directory/tile', directory_layout: 'tms', type: 's3' });
+    });
+
+    it('should reject with not found error', function () {
+      // action
+      const action = () => layersManager.getLayer('mockLayerNameIsNotExists');
+      // expectation;
+      expect(action).toThrow(NotFoundError);
     });
   });
+
   describe('#addLayer', () => {
     it('should reject with conflict error', function () {
       // action
@@ -47,6 +57,7 @@ describe('layersManager', () => {
       expect(convertJsonToYamlStub).not.toHaveBeenCalled();
       expect(replaceYamlContentStub).not.toHaveBeenCalled();
     });
+
     it('should successfully add layer', function () {
       // action
       const action = () => layersManager.addLayer(mockLayerNameIsNotExists);
@@ -57,6 +68,7 @@ describe('layersManager', () => {
       expect(replaceYamlContentStub).toHaveBeenCalledTimes(1);
     });
   });
+
   describe('#addLayerToMosaic', () => {
     it('should reject with not found error due layer name is not exists', function () {
       // mock
@@ -72,6 +84,7 @@ describe('layersManager', () => {
       expect(convertJsonToYamlStub).not.toHaveBeenCalled();
       expect(replaceYamlContentStub).not.toHaveBeenCalled();
     });
+
     it('should reject with not found error due mosaic name is not exists', function () {
       // mock
       const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
@@ -86,6 +99,7 @@ describe('layersManager', () => {
       expect(convertJsonToYamlStub).not.toHaveBeenCalled();
       expect(replaceYamlContentStub).not.toHaveBeenCalled();
     });
+
     it('should successfully add layer to mosaic', function () {
       // mock
       const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
@@ -120,6 +134,7 @@ describe('layersManager', () => {
       expect(convertJsonToYamlStub).toHaveBeenCalledTimes(1);
       expect(replaceYamlContentStub).toHaveBeenCalledTimes(1);
     });
+
     it('should reject with not found error due layer name is not exists', function () {
       // mock
       const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
@@ -138,6 +153,7 @@ describe('layersManager', () => {
       expect(convertJsonToYamlStub).not.toHaveBeenCalled();
       expect(replaceYamlContentStub).not.toHaveBeenCalled();
     });
+
     it('should reject with not found error due mosaic name is not exists', function () {
       // mock
       const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
@@ -157,6 +173,7 @@ describe('layersManager', () => {
       expect(replaceYamlContentStub).not.toHaveBeenCalled();
     });
   });
+
   describe('#removeLayer', () => {
     it('should successfully remove layer', function () {
       // mock
@@ -169,6 +186,7 @@ describe('layersManager', () => {
       expect(convertJsonToYamlStub).toHaveBeenCalledTimes(1);
       expect(replaceYamlContentStub).toHaveBeenCalledTimes(1);
     });
+
     it('should reject with not found error due layer name is not exists', function () {
       // mock
       const mockLayerName = 'mockLayerNameIsNotExists';
@@ -181,6 +199,7 @@ describe('layersManager', () => {
       expect(replaceYamlContentStub).not.toHaveBeenCalled();
     });
   });
+
   describe('#updateLayer', () => {
     const mockUpdateLayerRequest: ILayerPostRequest = {
       name: 'amsterdam_5cm',
@@ -188,6 +207,7 @@ describe('layersManager', () => {
       maxZoomLevel: 18,
       description: 'description for amsterdam layer',
     };
+
     it('should successfully update layer', function () {
       // mock
       const mockLayerName = 'mockLayerNameExists';
@@ -199,6 +219,7 @@ describe('layersManager', () => {
       expect(convertJsonToYamlStub).toHaveBeenCalledTimes(1);
       expect(replaceYamlContentStub).toHaveBeenCalledTimes(1);
     });
+
     it('should reject with not found error due layer name is not exists', function () {
       // mock
       const mockLayerName = 'mockLayerNameIsNotExists';

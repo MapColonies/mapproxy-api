@@ -11,7 +11,6 @@ import {
   ILayerToMosaicRequest,
   IUpdateMosaicRequest,
 } from '../../common/interfaces';
-import { mockLayer } from '../../common/data/mock/mockLayer';
 import { convertJsonToYaml, convertYamlToJson, replaceYamlFileContent, sortArrayByZIndex } from '../../common/utils';
 import { ConfilctError } from '../../common/exceptions/http/confilctError';
 import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
@@ -24,9 +23,13 @@ export class LayersManager {
     @inject(Services.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig
   ) {}
 
-  public getLayer(): ILayerPostRequest {
-    this.logger.log('info', 'Get layer request');
-    return mockLayer;
+  public getLayer(layerName: string): IMapProxyCache {
+    const jsonDocument: IMapProxyJsonDocument = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
+    if (!isLayerNameExists(jsonDocument, layerName)) {
+      throw new NotFoundError(`Layer name '${layerName}' is not exists`);
+    }
+    const requestedLayer: IMapProxyCache = jsonDocument.caches[layerName] as IMapProxyCache;
+    return requestedLayer;
   }
 
   public addLayer(layerRequest: ILayerPostRequest): void {
