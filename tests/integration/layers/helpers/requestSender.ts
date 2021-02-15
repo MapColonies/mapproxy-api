@@ -11,6 +11,6 @@ export function init(): void {
   app = builder.build();
 }
 
-export async function getLayer(): Promise<supertest.Response> {
-  return supertest.agent(app).get('/layer').set('Content-Type', 'application/json');
+export async function getLayer(layerName: string): Promise<supertest.Response> {
+  return supertest.agent(app).get(`/layer/${layerName}`).set('Content-Type', 'application/json');
 }
