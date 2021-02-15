@@ -17,7 +17,7 @@ export class LayersController {
 
   public getLayer: GetLayerHandler = (req, res, next) => {
     try {
-      return res.status(httpStatus.OK).json(this.manager.getLayer(req.params.name));    
+      return res.status(httpStatus.OK).json(this.manager.getLayer(req.params.name));
     } catch (error) {
       next(error);
     }

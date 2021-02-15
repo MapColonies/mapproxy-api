@@ -25,7 +25,7 @@ describe('layersManager', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  
+
   describe('#getLayer', () => {
     it('should successfully return the requested layer', function () {
       // action
