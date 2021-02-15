@@ -28,6 +28,7 @@ describe('layerManager', function () {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       expect(resource.cache).toEqual({ directory: '/path/to/s3/directory/tile', directory_layout: 'tms', type: 's3' });
     });
+    
     it('Sad Path', async function () {
       const mockLayerName = 'mockLayerNameIsNotExists';
       const response = await requestSender.getLayer(mockLayerName);
