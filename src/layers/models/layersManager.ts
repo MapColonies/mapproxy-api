@@ -24,7 +24,6 @@ export class LayersManager {
   ) {}
 
   public getLayer(layerName: string): IMapProxyCache {
-    this.logger.log('info', `Get layer '${layerName}' request`);
     const jsonDocument: IMapProxyJsonDocument = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
     if (!isLayerNameExists(jsonDocument, layerName)) {
       throw new NotFoundError(`Layer name '${layerName}' is not exists`);
