@@ -1,6 +1,5 @@
 import httpStatusCodes from 'http-status-codes';
 import { container } from 'tsyringe';
-import MCLogger from '@map-colonies/mc-logger';
 import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IUpdateMosaicRequest } from '../../../src/common/interfaces';
 import { mockLayerNameIsNotExists } from '../../unit/mock/mockLayerNameIsNotExists';
 import { mockLayerNameAlreadyExists } from '../../unit/mock/mockLayerNameAlreadyExists';
@@ -15,7 +14,6 @@ describe('layerManager', function () {
   });
   beforeEach(function () {
     jest.spyOn(utils, 'replaceYamlFileContent').mockReturnValueOnce(undefined);
-    jest.spyOn(MCLogger.MCLogger.prototype, 'log').mockImplementation(undefined);
   });
   afterEach(function () {
     jest.clearAllMocks();
