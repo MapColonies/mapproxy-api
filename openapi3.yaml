@@ -287,16 +287,22 @@ components:
           type: string
           example: 'amsterdam_25cm'
     mosaic:
-      type: array
-      items:
-        type: object
-        required:
-          - name
-          - zIndex
-        properties:
-          name:
-            type: string
-            example: 'amsterdam_5cm'
-          zIndex:
-            type: number
-            example: 1
+      type: object
+      properties:
+        layers:
+          type: array
+          items:
+            type: object
+            required:
+              - layerName
+              - zIndex
+            properties:
+              name:
+                type: string
+                example: 'amsterdam_5cm'
+              zIndex:
+                type: number
+                example: 1
+        mosaicName:
+          type: string
+          example: 'amsterdam_5cm_mosaic'
