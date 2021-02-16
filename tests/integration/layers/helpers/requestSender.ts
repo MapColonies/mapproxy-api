@@ -1,8 +1,8 @@
 import * as supertest from 'supertest';
 import { Application } from 'express';
-
 import { container } from 'tsyringe';
 import { ServerBuilder } from '../../../../src/serverBuilder';
+import { ILayerPostRequest, ILayerToMosaicRequest, IUpdateMosaicRequest } from '../../../../src/common/interfaces';
 
 let app: Application | null = null;
 
@@ -13,4 +13,24 @@ export function init(): void {
 
 export async function getLayer(layerName: string): Promise<supertest.Response> {
   return supertest.agent(app).get(`/layer/${layerName}`).set('Content-Type', 'application/json');
+}
+
+export async function addLayer(layerRequest: ILayerPostRequest): Promise<supertest.Response> {
+  return supertest.agent(app).post(`/layer`).set('Content-Type', 'application/json').send(layerRequest);
+}
+
+export async function updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<supertest.Response> {
+  return supertest.agent(app).put(`/layer/${layerName}`).set('Content-Type', 'application/json').send(layerRequest);
+}
+
+export async function removeLayer(layerName: string): Promise<supertest.Response> {
+  return supertest.agent(app).delete(`/layer/${layerName}`).set('Content-Type', 'application/json');
+}
+
+export async function addLayerToMosaic(layerToMosaicRequest: ILayerToMosaicRequest): Promise<supertest.Response> {
+  return supertest.agent(app).post(`/mosaic`).set('Content-Type', 'application/json').send(layerToMosaicRequest);
+}
+
+export async function updateMosaic(updateMosaicRequest: IUpdateMosaicRequest): Promise<supertest.Response> {
+  return supertest.agent(app).put(`/mosaic`).set('Content-Type', 'application/json').send(updateMosaicRequest);
 }
