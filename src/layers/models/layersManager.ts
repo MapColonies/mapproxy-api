@@ -93,7 +93,7 @@ export class LayersManager {
     }
     updateMosaicRequest.layers.forEach((layer) => {
       if (!isLayerNameExists(jsonDocument, layer.layerName)) {
-        throw new NotFoundError(`layer name '${layer.layerName}' is not exists`);
+        throw new NotFoundError(`Layer name '${layer.layerName}' is not exists`);
       }
     });
 
