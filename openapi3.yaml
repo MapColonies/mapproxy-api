@@ -147,6 +147,12 @@ paths:
       tags:
         - Mosaic
       summary: get mosaic layers
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: OK
@@ -165,6 +171,12 @@ paths:
       tags:
         - Mosaic
       summary: add layer to mosaic
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         201:
           description: created
@@ -208,6 +220,12 @@ paths:
       tags:
         - Mosaic
       summary: update mosaic layers
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         204:
           description: updated
