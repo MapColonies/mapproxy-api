@@ -126,7 +126,7 @@ describe('layerManager', function () {
   });
 
   describe('#addLayerToMosaic', function () {
-    const mockMosaicName =  'existsMosaicName';
+    const mockMosaicName = 'existsMosaicName';
     const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
       layerName: 'mockLayerNameExists',
     };
@@ -151,7 +151,6 @@ describe('layerManager', function () {
       const mockMosaicName = 'existsMosaicName';
       const mockLayerNotExistsRequest: ILayerToMosaicRequest = {
         layerName: 'layerNameIsNotExists',
-
       };
 
       const response = await requestSender.addLayerToMosaic(mockMosaicName, mockLayerNotExistsRequest);

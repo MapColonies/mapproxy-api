@@ -72,7 +72,7 @@ describe('layersManager', () => {
   describe('#addLayerToMosaic', () => {
     it('should reject with not found error due layer name is not exists', function () {
       // mock
-      const mockMosaicName = 'mosaicMockName'
+      const mockMosaicName = 'mosaicMockName';
       const mockLayerNotExistsToMosaicRequest: ILayerToMosaicRequest = {
         layerName: 'layerNameIsNotExists',
       };

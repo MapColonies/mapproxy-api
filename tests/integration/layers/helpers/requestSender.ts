@@ -27,10 +27,10 @@ export async function removeLayer(layerName: string): Promise<supertest.Response
   return supertest.agent(app).delete(`/layer/${layerName}`).set('Content-Type', 'application/json');
 }
 
-export async function addLayerToMosaic(mosaicName:string, layerToMosaicRequest: ILayerToMosaicRequest): Promise<supertest.Response> {
+export async function addLayerToMosaic(mosaicName: string, layerToMosaicRequest: ILayerToMosaicRequest): Promise<supertest.Response> {
   return supertest.agent(app).post(`/mosaic/${mosaicName}`).set('Content-Type', 'application/json').send(layerToMosaicRequest);
 }
 
-export async function updateMosaic(mosaicName:string, updateMosaicRequest: IUpdateMosaicRequest): Promise<supertest.Response> {
+export async function updateMosaic(mosaicName: string, updateMosaicRequest: IUpdateMosaicRequest): Promise<supertest.Response> {
   return supertest.agent(app).put(`/mosaic/${mosaicName}`).set('Content-Type', 'application/json').send(updateMosaicRequest);
 }

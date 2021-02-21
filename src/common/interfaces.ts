@@ -74,10 +74,12 @@ export interface ILayerToMosaicRequest {
 export interface IMosaicLayer {
   layers: string[];
 }
+
 export interface IMosaicLayerObject {
   layerName: string;
   zIndex: number;
 }
+
 export interface IUpdateMosaicRequest {
   layers: IMosaicLayerObject[];
 }
