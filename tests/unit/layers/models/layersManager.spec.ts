@@ -72,12 +72,12 @@ describe('layersManager', () => {
   describe('#addLayerToMosaic', () => {
     it('should reject with not found error due layer name is not exists', function () {
       // mock
+      const mockMosaicName = 'mosaicMockName'
       const mockLayerNotExistsToMosaicRequest: ILayerToMosaicRequest = {
         layerName: 'layerNameIsNotExists',
-        mosaicName: 'mosaicMockName',
       };
       // action
-      const action = () => layersManager.addLayerToMosaic(mockLayerNotExistsToMosaicRequest);
+      const action = () => layersManager.addLayerToMosaic(mockMosaicName, mockLayerNotExistsToMosaicRequest);
       // expectation
       expect(action).toThrow(NotFoundError);
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
@@ -87,12 +87,12 @@ describe('layersManager', () => {
 
     it('should reject with not found error due mosaic name is not exists', function () {
       // mock
+      const mockMosaicName = 'mosaicNameIsNotExists';
       const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
         layerName: 'mockLayerNameExists',
-        mosaicName: 'mosaicNameIsNotExists',
       };
       // action
-      const action = () => layersManager.addLayerToMosaic(mockLayerToMosaicRequest);
+      const action = () => layersManager.addLayerToMosaic(mockMosaicName, mockLayerToMosaicRequest);
       // expectation
       expect(action).toThrow(NotFoundError);
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
@@ -102,12 +102,12 @@ describe('layersManager', () => {
 
     it('should successfully add layer to mosaic', function () {
       // mock
+      const mockMosaicName = 'existsMosaicName';
       const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
         layerName: 'mockLayerNameExists',
-        mosaicName: 'existsMosaicName',
       };
       // action
-      const action = () => layersManager.addLayerToMosaic(mockLayerToMosaicRequest);
+      const action = () => layersManager.addLayerToMosaic(mockMosaicName, mockLayerToMosaicRequest);
       // expectation
       expect(action).not.toThrow();
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
@@ -118,15 +118,15 @@ describe('layersManager', () => {
   describe('#updateMosaic', () => {
     it('should successfully update mosaic layers by thier z-index', function () {
       // mock
+      const mockMosaicName = 'existsMosaicName';
       const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
         layers: [
           { layerName: 'amsterdam_5cm', zIndex: 1 },
           { layerName: 'NameIsAlreadyExists', zIndex: 0 },
         ],
-        mosaicName: 'existsMosaicName',
       };
       // action
-      const action = () => layersManager.updateMosaic(mockUpdateMosaicRequest);
+      const action = () => layersManager.updateMosaic(mockMosaicName, mockUpdateMosaicRequest);
       // expectation
       expect(action).not.toThrow();
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
@@ -137,15 +137,15 @@ describe('layersManager', () => {
 
     it('should reject with not found error due layer name is not exists', function () {
       // mock
+      const mockMosaicName = 'existsMosaicName';
       const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
         layers: [
           { layerName: 'amsterdam_5cm', zIndex: 1 },
           { layerName: 'LayerNameIsNotExists', zIndex: 0 },
         ],
-        mosaicName: 'existsMosaicName',
       };
       // action
-      const action = () => layersManager.updateMosaic(mockUpdateMosaicRequest);
+      const action = () => layersManager.updateMosaic(mockMosaicName, mockUpdateMosaicRequest);
       // expectation
       expect(action).toThrow(NotFoundError);
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
@@ -156,15 +156,15 @@ describe('layersManager', () => {
 
     it('should reject with not found error due mosaic name is not exists', function () {
       // mock
+      const mockMosaicName = 'NotExistsMosaicName';
       const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
         layers: [
           { layerName: 'amsterdam_5cm', zIndex: 1 },
           { layerName: 'NameIsAlreadyExists', zIndex: 0 },
         ],
-        mosaicName: 'NotExistsMosaicName',
       };
       // action
-      const action = () => layersManager.updateMosaic(mockUpdateMosaicRequest);
+      const action = () => layersManager.updateMosaic(mockMosaicName, mockUpdateMosaicRequest);
       // expectation
       expect(action).toThrow(NotFoundError);
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);

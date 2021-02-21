@@ -126,34 +126,35 @@ describe('layerManager', function () {
   });
 
   describe('#addLayerToMosaic', function () {
+    const mockMosaicName =  'existsMosaicName';
     const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
       layerName: 'mockLayerNameExists',
-      mosaicName: 'existsMosaicName',
     };
 
     it('Happy Path', async function () {
-      const response = await requestSender.addLayerToMosaic(mockLayerToMosaicRequest);
+      const response = await requestSender.addLayerToMosaic(mockMosaicName, mockLayerToMosaicRequest);
 
       expect(response.status).toBe(httpStatusCodes.CREATED);
     });
 
     it('Bad Path', async function () {
+      const mockMosaicName = 'mosaicMockName';
       const mockBadRequestRequest = ({
-        name: 'layerNameIsNotExists',
-        mosaicName: 'mosaicMockName',
+        mockName: 'layerNameIsNotExists',
       } as unknown) as ILayerToMosaicRequest;
-      const response = await requestSender.addLayerToMosaic(mockBadRequestRequest);
+      const response = await requestSender.addLayerToMosaic(mockMosaicName, mockBadRequestRequest);
 
       expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
     });
 
     it('Sad Path', async function () {
+      const mockMosaicName = 'existsMosaicName';
       const mockLayerNotExistsRequest: ILayerToMosaicRequest = {
         layerName: 'layerNameIsNotExists',
-        mosaicName: 'mosaicMockName',
+
       };
 
-      const response = await requestSender.addLayerToMosaic(mockLayerNotExistsRequest);
+      const response = await requestSender.addLayerToMosaic(mockMosaicName, mockLayerNotExistsRequest);
       const notFoundErrorMessage = `Layer name '${mockLayerNotExistsRequest.layerName}' is not exists`;
 
       expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
@@ -162,13 +163,13 @@ describe('layerManager', function () {
 
     // eslint-disable-next-line jest/no-identical-title
     it('Sad Path', async function () {
+      const mockMosaicName = 'mosaicMockNameIsNotExists';
       const mockMosaicNotExistsRequest: ILayerToMosaicRequest = {
         layerName: 'mockLayerNameExists',
-        mosaicName: 'mosaicNameIsNotExists',
       };
 
-      const response = await requestSender.addLayerToMosaic(mockMosaicNotExistsRequest);
-      const notFoundErrorMessage = `Mosaic name '${mockMosaicNotExistsRequest.mosaicName}' is not exists`;
+      const response = await requestSender.addLayerToMosaic(mockMosaicName, mockMosaicNotExistsRequest);
+      const notFoundErrorMessage = `Mosaic name '${mockMosaicName}' is not exists`;
 
       expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
       expect(response.body).toEqual({ message: notFoundErrorMessage });
@@ -176,43 +177,43 @@ describe('layerManager', function () {
   });
 
   describe('#updateMosaic', function () {
+    const mockMosaicName = 'existsMosaicName';
     const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
       layers: [
         { layerName: 'amsterdam_5cm', zIndex: 1 },
         { layerName: 'NameIsAlreadyExists', zIndex: 0 },
       ],
-      mosaicName: 'existsMosaicName',
     };
 
     it('Happy Path', async function () {
-      const response = await requestSender.updateMosaic(mockUpdateMosaicRequest);
+      const response = await requestSender.updateMosaic(mockMosaicName, mockUpdateMosaicRequest);
 
       expect(response.status).toBe(httpStatusCodes.CREATED);
     });
 
     it('Bad Path', async function () {
+      const mockMosaicName = 'existsMosaicName';
       const mockBadRequest = ({
         layers: [
           { mockName: 'amsterdam_5cm', zIndex: 1 },
           { mockName: 'LayerNameIsNotExists', zIndex: 0 },
         ],
-        mosaicName: 'existsMosaicName',
       } as unknown) as IUpdateMosaicRequest;
-      const response = await requestSender.updateMosaic(mockBadRequest);
+      const response = await requestSender.updateMosaic(mockMosaicName, mockBadRequest);
 
       expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
     });
 
     it('Sad Path', async function () {
+      const mockMosaicName = 'existsMosaicName';
       const mockLayerNotExistsRequest: IUpdateMosaicRequest = {
         layers: [
           { layerName: 'amsterdam_5cm', zIndex: 1 },
           { layerName: 'LayerNameIsNotExists', zIndex: 0 },
         ],
-        mosaicName: 'existsMosaicName',
       };
 
-      const response = await requestSender.updateMosaic(mockLayerNotExistsRequest);
+      const response = await requestSender.updateMosaic(mockMosaicName, mockLayerNotExistsRequest);
       const notFoundErrorMessage = `Layer name '${mockLayerNotExistsRequest.layers[1].layerName}' is not exists`;
 
       expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
@@ -221,16 +222,16 @@ describe('layerManager', function () {
 
     // eslint-disable-next-line jest/no-identical-title
     it('Sad Path', async function () {
+      const mockMosaicName = 'NotExistsMosaicName';
       const mockMosaicNotExistsRequest: IUpdateMosaicRequest = {
         layers: [
           { layerName: 'amsterdam_5cm', zIndex: 1 },
           { layerName: 'NameIsAlreadyExists', zIndex: 0 },
         ],
-        mosaicName: 'NotExistsMosaicName',
       };
 
-      const response = await requestSender.updateMosaic(mockMosaicNotExistsRequest);
-      const notFoundErrorMessage = `Mosaic name '${mockMosaicNotExistsRequest.mosaicName}' is not exists`;
+      const response = await requestSender.updateMosaic(mockMosaicName, mockMosaicNotExistsRequest);
+      const notFoundErrorMessage = `Mosaic name '${mockMosaicName}' is not exists`;
 
       expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
       expect(response.body).toEqual({ message: notFoundErrorMessage });

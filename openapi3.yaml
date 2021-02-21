@@ -141,7 +141,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-  /mosaic:
+  /mosaic/{name}:
     get:
       operationId: getLayers
       tags:
@@ -278,16 +278,14 @@ components:
       type: object
       required:
         - layerName
-        - mosaicName
       properties:
         layerName:
           type: string
           example: 'amsterdam_5cm'
-        mosaicName:
-          type: string
-          example: 'amsterdam_25cm'
     mosaic:
       type: object
+      required:
+        - layers
       properties:
         layers:
           type: array
@@ -297,12 +295,9 @@ components:
               - layerName
               - zIndex
             properties:
-              name:
+              layerName:
                 type: string
                 example: 'amsterdam_5cm'
               zIndex:
                 type: number
                 example: 1
-        mosaicName:
-          type: string
-          example: 'amsterdam_5cm_mosaic'

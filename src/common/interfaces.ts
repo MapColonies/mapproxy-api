@@ -69,18 +69,15 @@ export interface ILayerPostRequest {
 
 export interface ILayerToMosaicRequest {
   layerName: string;
-  mosaicName: string;
 }
 
 export interface IMosaicLayer {
   layers: string[];
 }
-
 export interface IMosaicLayerObject {
   layerName: string;
   zIndex: number;
 }
 export interface IUpdateMosaicRequest {
-  mosaicName: string;
   layers: IMosaicLayerObject[];
 }
