@@ -193,7 +193,7 @@ describe('layerManager', function () {
       expect(response.status).toBe(httpStatusCodes.CREATED);
     });
 
-    it('Bad Path', async function () {
+    it('Bad Path - should fail with response status 400 Bad Request', async function () {
       const mockMosaicName = 'existsMosaicName';
       const mockBadRequest = ({
         // mocking bad request with invalid field 'mockName' to test BadRequest status
