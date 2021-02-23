@@ -54,7 +54,7 @@ describe('layerManager', function () {
 
     it('Bad Path', async function () {
       const mockBadRequestRequest = ({
-        // mocking bad request with unvalid field 'mockName' to test BadRequest status
+        // mocking bad request with invalid field 'mockName' to test BadRequest status
         mockName: 'NameIsNotExists',
         tilesPath: '/path/to/s3/directory/tile',
         maxZoomLevel: 18,
