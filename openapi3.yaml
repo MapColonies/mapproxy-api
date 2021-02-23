@@ -18,10 +18,6 @@ paths:
       responses:
         201:
           description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/layer'
         400:
           description: Bad Request
           content:
@@ -78,7 +74,7 @@ paths:
             type: string
       responses:
         200:
-          description: updated
+          description: Updated
           content:
             application/json:
               schema:
@@ -155,11 +151,7 @@ paths:
             type: string
       responses:
         201:
-          description: created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/mosaicLayer'
+          description: Created
         400:
           description: Bad Request
           content:
@@ -204,11 +196,7 @@ paths:
             type: string
       responses:
         204:
-          description: updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/mosaic'
+          description: Updated
         400:
           description: Bad Request
           content:
