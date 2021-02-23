@@ -90,6 +90,7 @@ describe('layerManager', function () {
 
     it('Bad Path - should fail with response status 400 Bad Request', async function () {
       const mockBadRequest = ({
+        // mocking bad request with invalid field 'mockName' to test BadRequest status
         mockName: 'amsterdam_5cm',
         tilesPath: '/path/to/tiles/directory/in/my/bucket/',
         maxZoomLevel: 18,
@@ -140,6 +141,7 @@ describe('layerManager', function () {
 
     it('Bad Path - should fail with response status 400 Bad Request', async function () {
       const mockMosaicName = 'mosaicMockName';
+      // mocking bad request with invalid field 'mockName' to test BadRequest status
       const mockBadRequestRequest = ({
         mockName: 'layerNameIsNotExists',
       } as unknown) as ILayerToMosaicRequest;
@@ -194,6 +196,7 @@ describe('layerManager', function () {
     it('Bad Path', async function () {
       const mockMosaicName = 'existsMosaicName';
       const mockBadRequest = ({
+        // mocking bad request with invalid field 'mockName' to test BadRequest status
         layers: [
           { mockName: 'amsterdam_5cm', zIndex: 1 },
           { mockName: 'LayerNameIsNotExists', zIndex: 0 },
