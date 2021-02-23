@@ -142,30 +142,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/error'
   /mosaic/{name}:
-    get:
-      operationId: getLayers
-      tags:
-        - Mosaic
-      summary: get mosaic layers
-      parameters:
-        - name: name
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/mosaic'
-        500:
-          description: Ineternal Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error'
     post:
       operationId: addLayerToMosaic
       tags:
