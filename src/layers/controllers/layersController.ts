@@ -7,9 +7,9 @@ import { LayersManager } from '../models/layersManager';
 
 type CreateLayerHandler = RequestHandler<undefined, ILayerPostRequest, ILayerPostRequest>;
 type GetLayerHandler = RequestHandler<{ name: string }, IMapProxyCache, IMapProxyCache>;
-type CreateMosaicHandler = RequestHandler<undefined, ILayerToMosaicRequest, ILayerToMosaicRequest>;
+type CreateMosaicHandler = RequestHandler<{ name: string }, ILayerToMosaicRequest, ILayerToMosaicRequest>;
 type UpdateLayerHandler = RequestHandler<{ name: string }, ILayerPostRequest, ILayerPostRequest>;
-type PutMosaicHandler = RequestHandler<undefined, IUpdateMosaicRequest, IUpdateMosaicRequest>;
+type PutMosaicHandler = RequestHandler<{ name: string }, IUpdateMosaicRequest, IUpdateMosaicRequest>;
 type DeleteLayerHandler = RequestHandler<{ name: string }, string, string>;
 @injectable()
 export class LayersController {
@@ -52,7 +52,7 @@ export class LayersController {
 
   public addLayerToMosaic: CreateMosaicHandler = (req, res, next) => {
     try {
-      this.manager.addLayerToMosaic(req.body);
+      this.manager.addLayerToMosaic(req.params.name, req.body);
       return res.status(httpStatus.CREATED).send(req.body);
     } catch (error) {
       next(error);
@@ -61,7 +61,7 @@ export class LayersController {
 
   public updateMosaic: PutMosaicHandler = (req, res, next) => {
     try {
-      this.manager.updateMosaic(req.body);
+      this.manager.updateMosaic(req.params.name, req.body);
       return res.status(httpStatus.CREATED).send(req.body);
     } catch (error) {
       next(error);
