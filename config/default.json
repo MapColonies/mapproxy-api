@@ -12,13 +12,19 @@
     "port": "8080"
   },
   "mapproxy": {
-    "yamlFilePath": "tests/unit/mock/mockContent.yaml",
+    "fileExt": ".yaml",
+    "defaultFilePath": "config/default.yaml",
+    "yamlFilePath": "/path/to/config/file.yaml",
     "cache": {
       "grids": ["epsg4326dir"],
       "request_format": "image/png",
       "upscale_tiles": 18,
       "type": "s3",
       "directory_layout": "tms"
+    },
+    "s3": {
+      "endpoint_url": "http://localhost:9000",
+      "bucket": "mybucket"
     }
   }
 }
