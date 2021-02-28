@@ -15,7 +15,7 @@ let sortArrayByZIndexStub: jest.SpyInstance;
 const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
 describe('layersManager', () => {
   beforeEach(function () {
-    layersManager = new LayersManager({ log: jest.fn() }, { yamlFilePath: 'tests/unit/mock/mockContent.yaml', cache: mapproxyConfig.cache });
+    layersManager = new LayersManager({ log: jest.fn() }, mapproxyConfig);
     // stub util functions
     convertYamlToJsonStub = jest.spyOn(utils, 'convertYamlToJson');
     convertJsonToYamlStub = jest.spyOn(utils, 'convertJsonToYaml');
