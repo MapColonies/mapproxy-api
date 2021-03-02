@@ -20,12 +20,18 @@ export interface OpenApiConfig {
 
 export interface IMapProxyConfig {
   yamlFilePath: string;
+  fileExt?: string;
+  defaultFilePath?: string;
   cache: {
     grids: string[];
-    request_format: string;
-    upscale_tiles: number;
+    requestFormat: string;
+    upscaleTiles: number;
     type: string;
-    directory_layout: string;
+    directoryLayout: string;
+  };
+  s3: {
+    endpointUrl: string;
+    bucket: string;
   };
 }
 
@@ -34,7 +40,16 @@ export interface IMapProxyJsonDocument {
   layers: IMapProxyLayer[];
   caches: IMapProxyCache;
   grids: JsonObject;
-  globals: JsonObject;
+  globals: IMapProxyGlobalConfig;
+}
+
+export interface IMapProxyGlobalConfig {
+  cache: {
+    s3: {
+      endpoint_url: string;
+      bucket_name: string;
+    };
+  };
 }
 
 export interface IMapProxyCacheSource {
