@@ -51,6 +51,7 @@ export interface IMapProxyGlobalConfig {
     };
   };
 }
+
 export interface IMapProxyCacheSource {
   type: string;
   directory: string;
