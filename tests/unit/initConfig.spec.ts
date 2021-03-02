@@ -29,7 +29,7 @@ describe('initConfig', () => {
       // mock
       existsSyncSpy.mockReturnValue(false);
       // action
-      const action = () => initConfig('tests/unit/mock/mapproxy.yaml', mapproxyConfig.s3.endpoint_url, mapproxyConfig.s3.bucket);
+      const action = () => initConfig('tests/unit/mock/mapproxy.yaml', mapproxyConfig.s3.endpointUrl, mapproxyConfig.s3.bucket);
       // expectation
       expect(action).not.toThrow();
       expect(existsSyncSpy).toHaveBeenCalledTimes(1);
@@ -41,7 +41,7 @@ describe('initConfig', () => {
       // mock
       existsSyncSpy.mockReturnValue(true);
       // action
-      const action = () => initConfig('tests/unit/mock/mockContent.yaml', mapproxyConfig.s3.endpoint_url, mapproxyConfig.s3.bucket);
+      const action = () => initConfig('tests/unit/mock/mockContent.yaml', mapproxyConfig.s3.endpointUrl, mapproxyConfig.s3.bucket);
       // expectation
       expect(action).not.toThrow();
       expect(existsSyncSpy).toHaveBeenCalledTimes(1);
@@ -53,7 +53,7 @@ describe('initConfig', () => {
       // mock
       existsSyncSpy.mockReturnValue(false);
       // action
-      const action = () => initConfig('tests/unit/mock/invalidExtension.txt', mapproxyConfig.s3.endpoint_url, mapproxyConfig.s3.bucket);
+      const action = () => initConfig('tests/unit/mock/invalidExtension.txt', mapproxyConfig.s3.endpointUrl, mapproxyConfig.s3.bucket);
       // expectation
       expect(action).toThrow(Error);
       expect(writeFileSyncSpy).toHaveBeenCalledTimes(0);
@@ -64,7 +64,7 @@ describe('initConfig', () => {
       // mock
       existsSyncSpy.mockReturnValue(false);
       // action
-      const action = () => initConfig('tests/unit/mock/', mapproxyConfig.s3.endpoint_url, mapproxyConfig.s3.bucket);
+      const action = () => initConfig('tests/unit/mock/', mapproxyConfig.s3.endpointUrl, mapproxyConfig.s3.bucket);
       // expectation
       expect(action).toThrow(Error);
       expect(writeFileSyncSpy).toHaveBeenCalledTimes(0);

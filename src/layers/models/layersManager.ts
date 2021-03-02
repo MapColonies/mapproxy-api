@@ -43,12 +43,12 @@ export class LayersManager {
     const newCache: IMapProxyCache = {
       sources: [],
       grids: this.mapproxyConfig.cache.grids,
-      request_format: this.mapproxyConfig.cache.request_format,
-      upscale_tiles: this.mapproxyConfig.cache.upscale_tiles,
+      request_format: this.mapproxyConfig.cache.requestFormat,
+      upscale_tiles: this.mapproxyConfig.cache.upscaleTiles,
       cache: {
         type: this.mapproxyConfig.cache.type,
         directory: layerRequest.tilesPath,
-        directory_layout: this.mapproxyConfig.cache.directory_layout,
+        directory_layout: this.mapproxyConfig.cache.directoryLayout,
       },
     };
     const newLayer: IMapProxyLayer = {
@@ -139,12 +139,12 @@ export class LayersManager {
     const newCache: IMapProxyCache = {
       sources: [],
       grids: this.mapproxyConfig.cache.grids,
-      request_format: this.mapproxyConfig.cache.request_format,
-      upscale_tiles: this.mapproxyConfig.cache.upscale_tiles,
+      request_format: this.mapproxyConfig.cache.requestFormat,
+      upscale_tiles: this.mapproxyConfig.cache.upscaleTiles,
       cache: {
         type: this.mapproxyConfig.cache.type,
         directory: layerRequest.tilesPath,
-        directory_layout: this.mapproxyConfig.cache.directory_layout,
+        directory_layout: this.mapproxyConfig.cache.directoryLayout,
       },
     };
     const newLayer: IMapProxyLayer = {

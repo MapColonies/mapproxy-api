@@ -24,13 +24,13 @@ export interface IMapProxyConfig {
   defaultFilePath?: string;
   cache: {
     grids: string[];
-    request_format: string;
-    upscale_tiles: number;
+    requestFormat: string;
+    upscaleTiles: number;
     type: string;
-    directory_layout: string;
+    directoryLayout: string;
   };
   s3: {
-    endpoint_url: string;
+    endpointUrl: string;
     bucket: string;
   };
 }
