@@ -9,7 +9,7 @@ import { Services } from '../../src/common/constants';
 let writeFileSyncSpy: jest.SpyInstance;
 let existsSyncSpy: jest.SpyInstance;
 let convertJsonToYamlSpy: jest.SpyInstance;
-const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
+const mapproxyConfig = { ...config.get<IMapProxyConfig>('mapproxy') };
 
 describe('initConfig', () => {
   beforeEach(function () {
@@ -28,8 +28,9 @@ describe('initConfig', () => {
     it('should create default config file if not exists', function () {
       // mock
       existsSyncSpy.mockReturnValue(false);
+      mapproxyConfig.yamlFilePath = 'tests/unit/mock/mapproxy.yaml';
       // action
-      const action = () => initConfig('tests/unit/mock/mapproxy.yaml', mapproxyConfig.s3.endpointUrl, mapproxyConfig.s3.bucket);
+      const action = () => initConfig(mapproxyConfig);
       // expectation
       expect(action).not.toThrow();
       expect(existsSyncSpy).toHaveBeenCalledTimes(1);
@@ -40,8 +41,9 @@ describe('initConfig', () => {
     it('should use the existing default config file', function () {
       // mock
       existsSyncSpy.mockReturnValue(true);
+      mapproxyConfig.yamlFilePath = 'tests/unit/mock/mockContent.yaml';
       // action
-      const action = () => initConfig('tests/unit/mock/mockContent.yaml', mapproxyConfig.s3.endpointUrl, mapproxyConfig.s3.bucket);
+      const action = () => initConfig(mapproxyConfig);
       // expectation
       expect(action).not.toThrow();
       expect(existsSyncSpy).toHaveBeenCalledTimes(1);
@@ -52,8 +54,9 @@ describe('initConfig', () => {
     it('should throw an error due to invalid file extension', function () {
       // mock
       existsSyncSpy.mockReturnValue(false);
+      mapproxyConfig.yamlFilePath = 'tests/unit/mock/invalidExtension.txt';
       // action
-      const action = () => initConfig('tests/unit/mock/invalidExtension.txt', mapproxyConfig.s3.endpointUrl, mapproxyConfig.s3.bucket);
+      const action = () => initConfig(mapproxyConfig);
       // expectation
       expect(action).toThrow(Error);
       expect(writeFileSyncSpy).toHaveBeenCalledTimes(0);
@@ -63,8 +66,9 @@ describe('initConfig', () => {
     it('should throw an error due to invalid file path', function () {
       // mock
       existsSyncSpy.mockReturnValue(false);
+      mapproxyConfig.yamlFilePath = 'tests/unit/mock/';
       // action
-      const action = () => initConfig('tests/unit/mock/', mapproxyConfig.s3.endpointUrl, mapproxyConfig.s3.bucket);
+      const action = () => initConfig(mapproxyConfig);
       // expectation
       expect(action).toThrow(Error);
       expect(writeFileSyncSpy).toHaveBeenCalledTimes(0);

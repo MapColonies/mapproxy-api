@@ -16,7 +16,7 @@ const mapproxyConfig = get<IMapProxyConfig>('mapproxy');
 const serverConfig = get<IServerConfig>('server');
 const port: number = parseInt(serverConfig.port) || DEFAULT_SERVER_PORT;
 const app = getApp();
-initConfig(mapproxyConfig.yamlFilePath, mapproxyConfig.s3.endpointUrl, mapproxyConfig.s3.bucket);
+initConfig(mapproxyConfig);
 const probe = container.resolve<Probe>(Probe);
 void probe.start(app, port).then(() => {
   probe.readyFlag = true;

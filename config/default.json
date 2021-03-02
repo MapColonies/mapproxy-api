@@ -17,13 +17,13 @@
     "yamlFilePath": "/path/to/config/file.yaml",
     "cache": {
       "grids": ["epsg4326dir"],
-      "request_format": "image/png",
-      "upscale_tiles": 18,
+      "requestFormat": "image/png",
+      "upscaleTiles": 18,
       "type": "s3",
-      "directory_layout": "tms"
+      "directoryLayout": "tms"
     },
     "s3": {
-      "endpoint_url": "http://localhost:9000",
+      "endpointUrl": "http://localhost:9000",
       "bucket": "mybucket"
     }
   }
