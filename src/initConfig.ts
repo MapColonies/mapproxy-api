@@ -1,13 +1,15 @@
 import { existsSync, writeFileSync } from 'fs';
 import { extname } from 'path';
-import config from 'config';
+import { container } from 'tsyringe';
 import { ServiceUnavailableError } from './common/exceptions/http/serviceUnavailableError';
-import { IMapProxyConfig, IMapProxyJsonDocument } from './common/interfaces';
+import { ILogger, IMapProxyConfig, IMapProxyJsonDocument } from './common/interfaces';
 import { convertJsonToYaml, convertYamlToJson } from './common/utils';
+import { Services } from './common/constants';
 
-const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
 // create default config yaml file if not exists
 export function initConfig(yamlFilePath: string, endPointUrl: string, bucket: string): void {
+  const mapproxyConfig: IMapProxyConfig = container.resolve(Services.MAPPROXY);
+  const logger: ILogger = container.resolve(Services.LOGGER);
   try {
     const extension: string = extname(yamlFilePath);
     if (extension !== mapproxyConfig.fileExt) {
@@ -16,22 +18,21 @@ export function initConfig(yamlFilePath: string, endPointUrl: string, bucket: st
       );
     }
     if (existsSync(yamlFilePath) && extension === mapproxyConfig.fileExt) {
-      // TODO: add logger
-      // logger.log('info', 'Using existing configuration file');
+      logger.log('info', 'Using existing configuration file');
       return;
     }
-    // TODO: add logger
-    // logger.log('info', 'Configuration file not found, create default configuration file');
+
+    logger.log('info', 'Configuration file not found, creating default configuration file');
     const jsonDocument: IMapProxyJsonDocument = convertYamlToJson(mapproxyConfig.defaultFilePath as string);
     jsonDocument.globals.cache.s3.endpoint_url = endPointUrl;
     jsonDocument.globals.cache.s3.bucket_name = bucket;
     const yamlContent = convertJsonToYaml(jsonDocument);
     writeFileSync(yamlFilePath, yamlContent, 'utf8');
-    // TODO: add logger
-    // logger.log('info', 'Successfully created default configuration file')
+
+    logger.log('info', 'Successfully created default configuration file');
   } catch (error) {
-    // TODO: add logger
-    // logger.log('error', `Error occurred: ${error}`);
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+    logger.log('error', `Error occurred: ${error}`);
     throw new Error(error);
   }
 }
