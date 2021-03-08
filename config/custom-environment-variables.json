@@ -10,12 +10,17 @@
   },
   "mapproxy": {
     "yamlFilePath": "MAPPROXY_YAML_FILEPATH",
+    "fileExt": "MAPPROXY_FILE_EXT",
     "cache": {
       "grids": "MAPPROXY_CACHE_GRIDS",
-      "request_format": "MAPPROXY_CACHE_REQUEST_FORMAT",
-      "upscale_tiles": "MAPPROXY_CACHE_UPSCALE_TILES",
+      "requestFormat": "MAPPROXY_CACHE_REQUEST_FORMAT",
+      "upscaleTiles": "MAPPROXY_CACHE_UPSCALE_TILES",
       "type": "MAPPROXY_CACHE_TYPE",
-      "directory_layout": "MAPPROXY_CACHE_DIRECTORY_LAYOUT"
+      "directoryLayout": "MAPPROXY_CACHE_DIRECTORY_LAYOUT"
+    },
+    "s3": {
+      "endpointUrl": "S3_ENDPOINT_URL",
+      "bucket": "S3_BUCKET"
     }
   }
 }
