@@ -30,8 +30,13 @@ export interface IMapProxyConfig {
     directoryLayout: string;
   };
   s3: {
+    awsAccessKeyId: string;
+    awsSecretAccessKey: string;
     endpointUrl: string;
-    bucket: string;
+    storageBucket: string;
+    configFileBucket: string;
+    objectKey: string;
+    sslEnabled: boolean;
   };
 }
 

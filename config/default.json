@@ -23,8 +23,13 @@
       "directoryLayout": "tms"
     },
     "s3": {
+      "awsAccessKeyId": "AKIAIOSFODNN7EXAMPLE",
+      "awsSecretAccessKey": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
       "endpointUrl": "http://localhost:9000",
-      "bucket": "mybucket"
+      "storageBucket": "storage_bucket",
+      "configFileBucket": "config_file_bucket",
+      "objectKey": "mapproxy.yaml",
+      "sslEnabled": false
     }
   }
 }

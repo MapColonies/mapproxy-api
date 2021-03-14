@@ -12,6 +12,7 @@ import {
   ILayerToMosaicRequest,
 } from '../../common/interfaces';
 import { convertJsonToYaml, convertYamlToJson, replaceYamlFileContent, sortArrayByZIndex } from '../../common/utils';
+import { S3Client } from '../../common/s3/S3Client';
 import { ConfilctError } from '../../common/exceptions/http/confilctError';
 import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
 import { NotFoundError } from '../../common/exceptions/http/notFoundError';
@@ -20,10 +21,12 @@ import { NotFoundError } from '../../common/exceptions/http/notFoundError';
 export class LayersManager {
   public constructor(
     @inject(Services.LOGGER) private readonly logger: ILogger,
-    @inject(Services.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig
+    @inject(Services.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig,
+    private readonly S3Client: S3Client
   ) {}
 
-  public getLayer(layerName: string): IMapProxyCache {
+  public async getLayer(layerName: string): Promise<IMapProxyCache> {
+    await this.S3Client.getFile(this.mapproxyConfig.yamlFilePath);
     const jsonDocument: IMapProxyJsonDocument = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
     if (!isLayerNameExists(jsonDocument, layerName)) {
       throw new NotFoundError(`Layer name '${layerName}' is not exists`);
@@ -32,8 +35,9 @@ export class LayersManager {
     return requestedLayer;
   }
 
-  public addLayer(layerRequest: ILayerPostRequest): void {
+  public async addLayer(layerRequest: ILayerPostRequest): Promise<void> {
     this.logger.log('info', `Add layer request: ${layerRequest.name}`);
+    await this.S3Client.getFile(this.mapproxyConfig.yamlFilePath);
     const jsonDocument: IMapProxyJsonDocument = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
 
     if (isLayerNameExists(jsonDocument, layerRequest.name)) {
@@ -61,11 +65,13 @@ export class LayersManager {
 
     const yamlContent = convertJsonToYaml(jsonDocument);
     replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
+    await this.S3Client.uploadFile(this.mapproxyConfig.yamlFilePath);
     this.logger.log('info', `Successfully added layer: ${layerRequest.name}`);
   }
 
-  public addLayerToMosaic(mosaicName: string, layerToMosaicRequest: ILayerToMosaicRequest): void {
+  public async addLayerToMosaic(mosaicName: string, layerToMosaicRequest: ILayerToMosaicRequest): Promise<void> {
     this.logger.log('info', `Add layer: ${layerToMosaicRequest.layerName} to mosaic: ${mosaicName} request`);
+    await this.S3Client.getFile(this.mapproxyConfig.yamlFilePath);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const jsonDocument: IMapProxyJsonDocument = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
     if (!isLayerNameExists(jsonDocument, layerToMosaicRequest.layerName)) {
@@ -82,11 +88,13 @@ export class LayersManager {
     const yamlContent: string = convertJsonToYaml(jsonDocument);
 
     replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
+    await this.S3Client.uploadFile(this.mapproxyConfig.yamlFilePath);
     this.logger.log('info', `Successfully added layer: '${layerToMosaicRequest.layerName}' to mosaic: '${mosaicName}'`);
   }
 
-  public updateMosaic(mosaicName: string, updateMosaicRequest: IUpdateMosaicRequest): void {
+  public async updateMosaic(mosaicName: string, updateMosaicRequest: IUpdateMosaicRequest): Promise<void> {
     this.logger.log('info', `Update mosaic: ${mosaicName} request`);
+    await this.S3Client.getFile(this.mapproxyConfig.yamlFilePath);
     const jsonDocument: IMapProxyJsonDocument = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
     if (!isLayerNameExists(jsonDocument, mosaicName)) {
       throw new NotFoundError(`Mosaic name '${mosaicName}' is not exists`);
@@ -106,11 +114,13 @@ export class LayersManager {
     const yamlContent: string = convertJsonToYaml(jsonDocument);
 
     replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
+    await this.S3Client.uploadFile(this.mapproxyConfig.yamlFilePath);
     this.logger.log('info', `Successfully updated mosaic: '${mosaicName}'`);
   }
 
-  public removeLayer(layerName: string): void {
+  public async removeLayer(layerName: string): Promise<void> {
     this.logger.log('info', `Remove layer: ${layerName} request`);
+    await this.S3Client.getFile(this.mapproxyConfig.yamlFilePath);
     const jsonDocument: IMapProxyJsonDocument = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
     if (!isLayerNameExists(jsonDocument, layerName)) {
       throw new NotFoundError(`Layer name '${layerName}' is not exists`);
@@ -126,11 +136,13 @@ export class LayersManager {
 
     const yamlContent = convertJsonToYaml(jsonDocument);
     replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
+    await this.S3Client.uploadFile(this.mapproxyConfig.yamlFilePath);
     this.logger.log('info', `Successfully removed layer '${layerName}'`);
   }
 
-  public updateLayer(layerName: string, layerRequest: ILayerPostRequest): void {
+  public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<void> {
     this.logger.log('info', `Update layer: '${layerName}' request`);
+    await this.S3Client.getFile(this.mapproxyConfig.yamlFilePath);
     const jsonDocument: IMapProxyJsonDocument = convertYamlToJson(this.mapproxyConfig.yamlFilePath);
     if (!isLayerNameExists(jsonDocument, layerName)) {
       throw new NotFoundError(`Layer name '${layerName}' is not exists`);
@@ -163,6 +175,7 @@ export class LayersManager {
 
     const yamlContent = convertJsonToYaml(jsonDocument);
     replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
+    await this.S3Client.uploadFile(this.mapproxyConfig.yamlFilePath);
     this.logger.log('info', `Successfully updated layer '${layerName}'`);
   }
 }
