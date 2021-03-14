@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { readFileSync, createWriteStream } from 'fs';
+import { promises } from 'fs';
 import { inject, injectable } from 'tsyringe';
-import S3, { ManagedUpload } from 'aws-sdk/clients/s3';
+import S3 from 'aws-sdk/clients/s3';
 import * as AWS from 'aws-sdk';
 import { CredentialsOptions } from 'aws-sdk/lib/credentials';
 import { ILogger, IMapProxyConfig } from '../interfaces';
@@ -33,26 +33,16 @@ export class S3Client {
   public async uploadFile(filePath: string): Promise<void> {
     try {
       // Read content from the file
-      const fileContent = readFileSync(filePath);
-
+      const fileContent = await promises.readFile(filePath);
       // Setting up S3 upload parameters
       const params = {
         Bucket: this.mapproxyConfig.s3.configFileBucket,
-        Key: this.mapproxyConfig.s3.objectKey, // File name you want to save as in S3
+        Key: this.mapproxyConfig.s3.objectKey, // File name you readFileSync, createWriteStream, writeFilewant to save as in S3
         Body: fileContent,
       };
-
       // Uploading files to the bucket
-      await new Promise((resolve, reject) => {
-        this.logger.log('info', `Uploading file to bucket: ${this.mapproxyConfig.s3.configFileBucket}`);
-        this.s3.upload(params, (err: Error | undefined, data: ManagedUpload.SendData): void => {
-          if (err) {
-            return reject(err);
-          }
-          this.logger.log('info', `File uploaded successfully. ${data.Location}`);
-          return resolve(data);
-        });
-      });
+      await this.s3.upload(params).promise();
+      this.logger.log('info', `File uploaded successfully.`);
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       this.logger.log('error', `Failed to upload file: ${error}`);
@@ -62,30 +52,16 @@ export class S3Client {
 
   public async getFile(filePath: string): Promise<void> {
     try {
-      // Create write stream to the file
-      const file = createWriteStream(filePath);
-
       // Setting up S3 upload parameters
       const params = {
         Bucket: this.mapproxyConfig.s3.configFileBucket,
         Key: this.mapproxyConfig.s3.objectKey, // File name you want to read from S3
       };
-
       // Reads file from the bucket
-      await new Promise((resolve, reject) => {
-        this.logger.log('info', `Reading file from bucket: ${this.mapproxyConfig.s3.configFileBucket}`);
-        this.s3
-          .getObject(params, (err: Error | undefined, data: S3.GetObjectOutput): void => {
-            if (err) {
-              return reject(err);
-            }
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-            this.logger.log('info', `Successfully read the file`);
-            return resolve(data);
-          })
-          .createReadStream()
-          .pipe(file);
-      });
+      this.logger.log('info', `Reading file from bucket: ${this.mapproxyConfig.s3.configFileBucket}`);
+      const data = (await this.s3.getObject(params).promise()) as { Body: string };
+      await promises.writeFile(filePath, data.Body.toString());
+      this.logger.log('info', `Successfully read the file`);
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       this.logger.log('error', `Failed to read file: ${error}`);
