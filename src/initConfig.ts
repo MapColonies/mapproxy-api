@@ -24,7 +24,7 @@ export function initConfig(mapproxyConfig: IMapProxyConfig): void {
     logger.log('info', 'Configuration file not found, creating default configuration file');
     const jsonDocument: IMapProxyJsonDocument = convertYamlToJson(mapproxyConfig.defaultFilePath as string);
     jsonDocument.globals.cache.s3.endpoint_url = mapproxyConfig.s3.endpointUrl;
-    jsonDocument.globals.cache.s3.bucket_name = mapproxyConfig.s3.bucket;
+    jsonDocument.globals.cache.s3.bucket_name = mapproxyConfig.s3.storageBucket;
     const yamlContent = convertJsonToYaml(jsonDocument);
     writeFileSync(mapproxyConfig.yamlFilePath, yamlContent, 'utf8');
 

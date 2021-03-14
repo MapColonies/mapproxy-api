@@ -19,8 +19,13 @@
       "directoryLayout": "MAPPROXY_CACHE_DIRECTORY_LAYOUT"
     },
     "s3": {
+      "awsAccessKeyId": "AWS_ACCESS_KEY_ID",
+      "awsSecretAccessKey": "AWS_SECRET_ACCESS_KEY",
       "endpointUrl": "S3_ENDPOINT_URL",
-      "bucket": "S3_BUCKET"
+      "storageBucket": "S3_BUCKET",
+      "configFileBucket": "S3_CONFIG_FILE_BUCKET",
+      "objectKey": "S3_OBJECT_KEY",
+      "sslEnabled": "SSL_ENABLED"
     }
   }
 }
