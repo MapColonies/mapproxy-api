@@ -1,4 +1,5 @@
 import config from 'config';
+import { S3Client } from '../../../../src/common/s3/S3Client';
 import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IMapProxyConfig, IUpdateMosaicRequest } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { ConfilctError } from '../../../../src/common/exceptions/http/confilctError';
@@ -12,11 +13,21 @@ let convertYamlToJsonStub: jest.SpyInstance;
 let convertJsonToYamlStub: jest.SpyInstance;
 let replaceYamlContentStub: jest.SpyInstance;
 let sortArrayByZIndexStub: jest.SpyInstance;
+const getFileStub = jest.fn();
+const uploadFileStub = jest.fn();
+
 const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
 describe('layersManager', () => {
   beforeEach(function () {
-    layersManager = new LayersManager({ log: jest.fn() }, mapproxyConfig);
+    const s3ClientMock = ({
+      getFile: getFileStub,
+      uploadFile: uploadFileStub,
+    } as unknown) as S3Client;
+
+    layersManager = new LayersManager({ log: jest.fn() }, mapproxyConfig, s3ClientMock);
     // stub util functions
+    uploadFileStub.mockResolvedValue(undefined);
+    getFileStub.mockResolvedValue(undefined);
     convertYamlToJsonStub = jest.spyOn(utils, 'convertYamlToJson');
     convertJsonToYamlStub = jest.spyOn(utils, 'convertJsonToYaml');
     replaceYamlContentStub = jest.spyOn(utils, 'replaceYamlFileContent').mockReturnValueOnce(undefined);
@@ -27,10 +38,11 @@ describe('layersManager', () => {
   });
 
   describe('#getLayer', () => {
-    it('should successfully return the requested layer', function () {
+    it('should successfully return the requested layer', async function () {
       // action
-      const resource: IMapProxyCache = layersManager.getLayer('mockLayerNameExists');
+      const resource: IMapProxyCache = await layersManager.getLayer('mockLayerNameExists');
       // expectation;
+      expect(getFileStub).toHaveBeenCalledTimes(1);
       expect(resource.sources).toEqual([]);
       expect(resource.upscale_tiles).toEqual(18);
       expect(resource.request_format).toEqual('image/png');
@@ -39,84 +51,110 @@ describe('layersManager', () => {
       expect(resource.cache).toEqual({ directory: '/path/to/s3/directory/tile', directory_layout: 'tms', type: 's3' });
     });
 
-    it('should reject with not found error', function () {
+    it('should reject with not found error', async function () {
       // action
-      const action = () => layersManager.getLayer('mockLayerNameIsNotExists');
+      const action = async () => {
+        await layersManager.getLayer('mockLayerNameIsNotExists');
+      };
       // expectation;
-      expect(action).toThrow(NotFoundError);
+      await expect(action).rejects.toThrow(NotFoundError);
+      expect(getFileStub).toHaveBeenCalledTimes(1);
+      expect(uploadFileStub).not.toHaveBeenCalled();
     });
   });
 
   describe('#addLayer', () => {
-    it('should reject with conflict error', function () {
+    it('should reject with conflict error', async function () {
       // action
-      const action = () => layersManager.addLayer(mockLayerNameAlreadyExists);
+      const action = async () => {
+        await layersManager.addLayer(mockLayerNameAlreadyExists);
+      };
       // expectation
-      expect(action).toThrow(ConfilctError);
+      await expect(action).rejects.toThrow(ConfilctError);
+      expect(getFileStub).toHaveBeenCalledTimes(1);
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
       expect(convertJsonToYamlStub).not.toHaveBeenCalled();
       expect(replaceYamlContentStub).not.toHaveBeenCalled();
+      expect(uploadFileStub).not.toHaveBeenCalled();
     });
 
-    it('should successfully add layer', function () {
+    it('should successfully add layer', async function () {
       // action
-      const action = () => layersManager.addLayer(mockLayerNameIsNotExists);
+      const action = async () => {
+        await layersManager.addLayer(mockLayerNameIsNotExists);
+      };
+
       // expectation
-      expect(action).not.toThrow();
+      await expect(action()).resolves.not.toThrow();
+      expect(getFileStub).toHaveBeenCalledTimes(1);
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
       expect(convertJsonToYamlStub).toHaveBeenCalledTimes(1);
       expect(replaceYamlContentStub).toHaveBeenCalledTimes(1);
+      expect(uploadFileStub).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('#addLayerToMosaic', () => {
-    it('should reject with not found error due layer name is not exists', function () {
+    it('should reject with not found error due layer name is not exists', async function () {
       // mock
       const mockMosaicName = 'mosaicMockName';
       const mockLayerNotExistsToMosaicRequest: ILayerToMosaicRequest = {
         layerName: 'layerNameIsNotExists',
       };
       // action
-      const action = () => layersManager.addLayerToMosaic(mockMosaicName, mockLayerNotExistsToMosaicRequest);
+      const action = async () => {
+        await layersManager.addLayerToMosaic(mockMosaicName, mockLayerNotExistsToMosaicRequest);
+      };
       // expectation
-      expect(action).toThrow(NotFoundError);
+      await expect(action).rejects.toThrow(NotFoundError);
+      expect(getFileStub).toHaveBeenCalledTimes(1);
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
       expect(convertJsonToYamlStub).not.toHaveBeenCalled();
       expect(replaceYamlContentStub).not.toHaveBeenCalled();
+      expect(uploadFileStub).not.toHaveBeenCalled();
     });
 
-    it('should reject with not found error due mosaic name is not exists', function () {
+    it('should reject with not found error due mosaic name is not exists', async function () {
       // mock
       const mockMosaicName = 'mosaicNameIsNotExists';
       const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
         layerName: 'mockLayerNameExists',
       };
       // action
-      const action = () => layersManager.addLayerToMosaic(mockMosaicName, mockLayerToMosaicRequest);
+      const action = async () => {
+        await layersManager.addLayerToMosaic(mockMosaicName, mockLayerToMosaicRequest);
+      };
       // expectation
-      expect(action).toThrow(NotFoundError);
+      await expect(action).rejects.toThrow(NotFoundError);
+      expect(getFileStub).toHaveBeenCalledTimes(1);
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
       expect(convertJsonToYamlStub).not.toHaveBeenCalled();
       expect(replaceYamlContentStub).not.toHaveBeenCalled();
+      expect(uploadFileStub).not.toHaveBeenCalled();
     });
 
-    it('should successfully add layer to mosaic', function () {
+    it('should successfully add layer to mosaic', async function () {
       // mock
       const mockMosaicName = 'existsMosaicName';
       const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
         layerName: 'mockLayerNameExists',
       };
       // action
-      const action = () => layersManager.addLayerToMosaic(mockMosaicName, mockLayerToMosaicRequest);
+      const action = async () => {
+        await layersManager.addLayerToMosaic(mockMosaicName, mockLayerToMosaicRequest);
+      };
       // expectation
-      expect(action).not.toThrow();
+      await expect(action()).resolves.not.toThrow();
+      expect(getFileStub).toHaveBeenCalledTimes(1);
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
       expect(convertJsonToYamlStub).toHaveBeenCalledTimes(1);
       expect(replaceYamlContentStub).toHaveBeenCalledTimes(1);
+      expect(uploadFileStub).toHaveBeenCalledTimes(1);
     });
   });
+
   describe('#updateMosaic', () => {
-    it('should successfully update mosaic layers by thier z-index', function () {
+    it('should successfully update mosaic layers by thier z-index', async function () {
       // mock
       const mockMosaicName = 'existsMosaicName';
       const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
@@ -126,16 +164,20 @@ describe('layersManager', () => {
         ],
       };
       // action
-      const action = () => layersManager.updateMosaic(mockMosaicName, mockUpdateMosaicRequest);
+      const action = async () => {
+        await layersManager.updateMosaic(mockMosaicName, mockUpdateMosaicRequest);
+      };
       // expectation
-      expect(action).not.toThrow();
+      await expect(action()).resolves.not.toThrow();
+      expect(getFileStub).toHaveBeenCalledTimes(1);
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
       expect(sortArrayByZIndexStub).toHaveBeenCalledTimes(1);
       expect(convertJsonToYamlStub).toHaveBeenCalledTimes(1);
       expect(replaceYamlContentStub).toHaveBeenCalledTimes(1);
+      expect(uploadFileStub).toHaveBeenCalledTimes(1);
     });
 
-    it('should reject with not found error due layer name is not exists', function () {
+    it('should reject with not found error due layer name is not exists', async function () {
       // mock
       const mockMosaicName = 'existsMosaicName';
       const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
@@ -145,16 +187,20 @@ describe('layersManager', () => {
         ],
       };
       // action
-      const action = () => layersManager.updateMosaic(mockMosaicName, mockUpdateMosaicRequest);
+      const action = async () => {
+        await layersManager.updateMosaic(mockMosaicName, mockUpdateMosaicRequest);
+      };
       // expectation
-      expect(action).toThrow(NotFoundError);
+      await expect(action).rejects.toThrow(NotFoundError);
+      expect(getFileStub).toHaveBeenCalledTimes(1);
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
       expect(sortArrayByZIndexStub).toHaveBeenCalledTimes(0);
       expect(convertJsonToYamlStub).not.toHaveBeenCalled();
       expect(replaceYamlContentStub).not.toHaveBeenCalled();
+      expect(uploadFileStub).not.toHaveBeenCalled();
     });
 
-    it('should reject with not found error due mosaic name is not exists', function () {
+    it('should reject with not found error due mosaic name is not exists', async function () {
       // mock
       const mockMosaicName = 'NotExistsMosaicName';
       const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
@@ -164,39 +210,51 @@ describe('layersManager', () => {
         ],
       };
       // action
-      const action = () => layersManager.updateMosaic(mockMosaicName, mockUpdateMosaicRequest);
+      const action = async () => {
+        await layersManager.updateMosaic(mockMosaicName, mockUpdateMosaicRequest);
+      };
       // expectation
-      expect(action).toThrow(NotFoundError);
+      await expect(action).rejects.toThrow(NotFoundError);
+      expect(getFileStub).toHaveBeenCalledTimes(1);
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
       expect(sortArrayByZIndexStub).toHaveBeenCalledTimes(0);
       expect(convertJsonToYamlStub).not.toHaveBeenCalled();
       expect(replaceYamlContentStub).not.toHaveBeenCalled();
+      expect(uploadFileStub).not.toHaveBeenCalled();
     });
   });
 
   describe('#removeLayer', () => {
-    it('should successfully remove layer', function () {
+    it('should successfully remove layer', async function () {
       // mock
       const mockLayerName = 'mockLayerNameExists';
       // action
-      const action = () => layersManager.removeLayer(mockLayerName);
+      const action = async () => {
+        await layersManager.removeLayer(mockLayerName);
+      };
       // expectation
-      expect(action).not.toThrow();
+      await expect(action()).resolves.not.toThrow();
+      expect(getFileStub).toHaveBeenCalledTimes(1);
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
       expect(convertJsonToYamlStub).toHaveBeenCalledTimes(1);
       expect(replaceYamlContentStub).toHaveBeenCalledTimes(1);
+      expect(uploadFileStub).toHaveBeenCalledTimes(1);
     });
 
-    it('should reject with not found error due layer name is not exists', function () {
+    it('should reject with not found error due layer name is not exists', async function () {
       // mock
       const mockLayerName = 'mockLayerNameIsNotExists';
       // action
-      const action = () => layersManager.removeLayer(mockLayerName);
+      const action = async () => {
+        await layersManager.removeLayer(mockLayerName);
+      };
       // expectation
-      expect(action).toThrow(NotFoundError);
+      await expect(action).rejects.toThrow(NotFoundError);
+      expect(getFileStub).toHaveBeenCalledTimes(1);
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
       expect(convertJsonToYamlStub).not.toHaveBeenCalled();
       expect(replaceYamlContentStub).not.toHaveBeenCalled();
+      expect(uploadFileStub).not.toHaveBeenCalled();
     });
   });
 
@@ -208,28 +266,36 @@ describe('layersManager', () => {
       description: 'description for amsterdam layer',
     };
 
-    it('should successfully update layer', function () {
+    it('should successfully update layer', async function () {
       // mock
       const mockLayerName = 'mockLayerNameExists';
       // action
-      const action = () => layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
+      const action = async () => {
+        await layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
+      };
       // expectation
-      expect(action).not.toThrow();
+      await expect(action()).resolves.not.toThrow();
+      expect(getFileStub).toHaveBeenCalledTimes(1);
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
       expect(convertJsonToYamlStub).toHaveBeenCalledTimes(1);
       expect(replaceYamlContentStub).toHaveBeenCalledTimes(1);
+      expect(uploadFileStub).toHaveBeenCalledTimes(1);
     });
 
-    it('should reject with not found error due layer name is not exists', function () {
+    it('should reject with not found error due layer name is not exists', async function () {
       // mock
       const mockLayerName = 'mockLayerNameIsNotExists';
       // action
-      const action = () => layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
+      const action = async () => {
+        await layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
+      };
       // expectation
-      expect(action).toThrow(NotFoundError);
+      await expect(action).rejects.toThrow(NotFoundError);
+      expect(getFileStub).toHaveBeenCalledTimes(1);
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
       expect(convertJsonToYamlStub).not.toHaveBeenCalled();
       expect(replaceYamlContentStub).not.toHaveBeenCalled();
+      expect(uploadFileStub).not.toHaveBeenCalled();
     });
   });
 });
