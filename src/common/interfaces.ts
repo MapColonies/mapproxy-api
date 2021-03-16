@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { ILogMethod } from '@map-colonies/mc-logger';
 import { JsonObject } from 'swagger-ui-express';
+import { Providers } from './enums/Providers';
 
 export interface ILogger {
   log: ILogMethod;
@@ -19,6 +20,7 @@ export interface OpenApiConfig {
 }
 
 export interface IMapProxyConfig {
+  fileProvider: Providers;
   yamlFilePath: string;
   fileExt?: string;
   defaultFilePath?: string;
@@ -102,4 +104,9 @@ export interface IMosaicLayerObject {
 
 export interface IUpdateMosaicRequest {
   layers: IMosaicLayerObject[];
+}
+
+export interface IFileProvider {
+  uploadFile: (filePath: string) => Promise<void>;
+  getFile: (filePath: string) => Promise<void>;
 }

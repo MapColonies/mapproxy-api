@@ -12,6 +12,7 @@
     "port": "8080"
   },
   "mapproxy": {
+    "fileProvider": "fs",
     "yamlFilePath": "tests/unit/mock/mockContent.yaml",
     "cache": {
       "grids": ["epsg4326dir"],

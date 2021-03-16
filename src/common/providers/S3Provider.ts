@@ -1,19 +1,20 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { promises } from 'fs';
-import { inject, injectable } from 'tsyringe';
+import { DependencyContainer } from 'tsyringe';
 import S3 from 'aws-sdk/clients/s3';
 import * as AWS from 'aws-sdk';
 import { CredentialsOptions } from 'aws-sdk/lib/credentials';
-import { ILogger, IMapProxyConfig } from '../interfaces';
-import { Services } from '../constants';
+import { IFileProvider, ILogger, IMapProxyConfig } from '../interfaces';
+import { Services } from '../../common/constants';
 
-@injectable()
-export class S3Client {
-  public constructor(
-    @inject(Services.LOGGER) private readonly logger: ILogger,
-    @inject(Services.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig,
-    public s3: S3
-  ) {
+export class S3Provider implements IFileProvider {
+  private readonly s3: S3;
+  private readonly logger: ILogger;
+  private readonly mapproxyConfig: IMapProxyConfig;
+
+  public constructor(container: DependencyContainer) {
+    this.logger = container.resolve(Services.LOGGER);
+    this.mapproxyConfig = container.resolve(Services.MAPPROXY);
     const credentials: CredentialsOptions = {
       accessKeyId: this.mapproxyConfig.s3.awsAccessKeyId,
       secretAccessKey: this.mapproxyConfig.s3.awsSecretAccessKey,
@@ -37,7 +38,7 @@ export class S3Client {
       // Setting up S3 upload parameters
       const params = {
         Bucket: this.mapproxyConfig.s3.configFileBucket,
-        Key: this.mapproxyConfig.s3.objectKey, // File name you readFileSync, createWriteStream, writeFilewant to save as in S3
+        Key: this.mapproxyConfig.s3.objectKey, // File name you want to save as in S3
         Body: fileContent,
       };
       // Uploading files to the bucket

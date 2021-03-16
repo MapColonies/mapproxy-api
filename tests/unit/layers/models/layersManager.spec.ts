@@ -1,5 +1,4 @@
 import config from 'config';
-import { S3Client } from '../../../../src/common/s3/S3Client';
 import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IMapProxyConfig, IUpdateMosaicRequest } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { ConfilctError } from '../../../../src/common/exceptions/http/confilctError';
@@ -7,6 +6,7 @@ import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExist
 import { mockLayerNameIsNotExists } from '../../mock/mockLayerNameIsNotExists';
 import * as utils from '../../../../src/common/utils';
 import { NotFoundError } from '../../../../src/common/exceptions/http/notFoundError';
+import { S3Provider } from '../../../../src/common/providers/S3Provider';
 
 let layersManager: LayersManager;
 let convertYamlToJsonStub: jest.SpyInstance;
@@ -22,7 +22,7 @@ describe('layersManager', () => {
     const s3ClientMock = ({
       getFile: getFileStub,
       uploadFile: uploadFileStub,
-    } as unknown) as S3Client;
+    } as unknown) as S3Provider;
 
     layersManager = new LayersManager({ log: jest.fn() }, mapproxyConfig, s3ClientMock);
     // stub util functions
