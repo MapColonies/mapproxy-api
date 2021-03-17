@@ -4,7 +4,7 @@ import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IUpdateMosaic
 import { mockLayerNameIsNotExists } from '../../unit/mock/mockLayerNameIsNotExists';
 import { mockLayerNameAlreadyExists } from '../../unit/mock/mockLayerNameAlreadyExists';
 import { registerTestValues } from '../testContainerConfig';
-import { S3Provider } from '../../../src/common/providers/S3Provider';
+import { MockFileProvider } from '../../unit/mock/mockFileProvider';
 import * as utils from '../../../src/common/utils';
 import * as requestSender from './helpers/requestSender';
 
@@ -14,8 +14,8 @@ describe('layerManager', function () {
     requestSender.init();
   });
   beforeEach(function () {
-    jest.spyOn(S3Provider.prototype, 'getFile').mockResolvedValue(undefined);
-    jest.spyOn(S3Provider.prototype, 'uploadFile').mockResolvedValue(undefined);
+    jest.spyOn(MockFileProvider.prototype, 'getFile').mockResolvedValue(undefined);
+    jest.spyOn(MockFileProvider.prototype, 'uploadFile').mockResolvedValue(undefined);
     jest.spyOn(utils, 'replaceYamlFileContent').mockReturnValueOnce(undefined);
   });
   afterEach(function () {

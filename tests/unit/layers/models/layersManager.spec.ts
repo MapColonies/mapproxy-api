@@ -6,28 +6,23 @@ import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExist
 import { mockLayerNameIsNotExists } from '../../mock/mockLayerNameIsNotExists';
 import * as utils from '../../../../src/common/utils';
 import { NotFoundError } from '../../../../src/common/exceptions/http/notFoundError';
-import { S3Provider } from '../../../../src/common/providers/S3Provider';
+import { MockFileProvider } from '../../mock/mockFileProvider';
 
 let layersManager: LayersManager;
 let convertYamlToJsonStub: jest.SpyInstance;
 let convertJsonToYamlStub: jest.SpyInstance;
 let replaceYamlContentStub: jest.SpyInstance;
 let sortArrayByZIndexStub: jest.SpyInstance;
-const getFileStub = jest.fn();
-const uploadFileStub = jest.fn();
+let getFileStub: jest.SpyInstance;
+let uploadFileStub: jest.SpyInstance;
 
 const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
 describe('layersManager', () => {
   beforeEach(function () {
-    const s3ClientMock = ({
-      getFile: getFileStub,
-      uploadFile: uploadFileStub,
-    } as unknown) as S3Provider;
-
-    layersManager = new LayersManager({ log: jest.fn() }, mapproxyConfig, s3ClientMock);
+    layersManager = new LayersManager({ log: jest.fn() }, mapproxyConfig, MockFileProvider.prototype);
     // stub util functions
-    uploadFileStub.mockResolvedValue(undefined);
-    getFileStub.mockResolvedValue(undefined);
+    getFileStub = jest.spyOn(MockFileProvider.prototype, 'getFile').mockResolvedValue(undefined);
+    uploadFileStub = jest.spyOn(MockFileProvider.prototype, 'uploadFile').mockResolvedValue(undefined);
     convertYamlToJsonStub = jest.spyOn(utils, 'convertYamlToJson');
     convertJsonToYamlStub = jest.spyOn(utils, 'convertJsonToYaml');
     replaceYamlContentStub = jest.spyOn(utils, 'replaceYamlFileContent').mockReturnValueOnce(undefined);
