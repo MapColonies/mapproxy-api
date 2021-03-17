@@ -9,6 +9,7 @@
     "port": "SERVER_PORT"
   },
   "mapproxy": {
+    "fileProvider": "MAPPROXY_FILE_PROVIDER",
     "yamlFilePath": "MAPPROXY_YAML_FILEPATH",
     "fileExt": "MAPPROXY_FILE_EXT",
     "cache": {

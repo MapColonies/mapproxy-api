@@ -12,6 +12,7 @@
     "port": "8080"
   },
   "mapproxy": {
+    "fileProvider": "fs",
     "fileExt": ".yaml",
     "defaultFilePath": "config/default.yaml",
     "yamlFilePath": "/path/to/config/file.yaml",
