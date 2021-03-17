@@ -5,7 +5,7 @@ import S3 from 'aws-sdk/clients/s3';
 import * as AWS from 'aws-sdk';
 import { CredentialsOptions } from 'aws-sdk/lib/credentials';
 import { IFileProvider, ILogger, IMapProxyConfig } from '../interfaces';
-import { Services } from '../../common/constants';
+import { Services } from '../constants';
 
 export class S3Provider implements IFileProvider {
   private readonly s3: S3;

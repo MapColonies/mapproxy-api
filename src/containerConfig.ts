@@ -5,9 +5,9 @@ import { Probe } from '@map-colonies/mc-probe';
 import { MCLogger, ILoggerConfig, IServiceConfig } from '@map-colonies/mc-logger';
 import { Services } from './common/constants';
 import { IFileProvider, IMapProxyConfig } from './common/interfaces';
-import { Providers } from './common/enums/Providers';
-import { S3Provider } from './common/providers/S3Provider';
-import { FSProvider } from './common/providers/FSProvider';
+import { Providers } from './common/enums/providers';
+import { S3Provider } from './common/providers/s3Provider';
+import { FSProvider } from './common/providers/fSProvider';
 
 function registerExternalValues(): void {
   const loggerConfig = config.get<ILoggerConfig>('logger');
