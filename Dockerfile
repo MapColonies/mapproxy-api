@@ -9,7 +9,7 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-FROM node:12.18.3-slim as production
+FROM node:12.20-slim as production
 
 ENV NODE_ENV=production
 ENV SERVER_PORT=8080
