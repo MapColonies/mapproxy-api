@@ -20,7 +20,7 @@ function registerExternalValues(): void {
   container.register(Services.MAPPROXY, { useValue: mapproxyConfig });
   container.register(Services.FILEPROVIDER, {
     useFactory: (): IFileProvider => {
-      return mapproxyConfig.fileProvider === Providers.S3 ? new S3Provider(container) : new FSProvider();
+      return mapproxyConfig.fileProvider === Providers.S3 ? new S3Provider(container) : new FSProvider(container);
     },
   });
   container.register<Probe>(Probe, { useFactory: (container) => new Probe(container.resolve(Services.LOGGER), {}) });

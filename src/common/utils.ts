@@ -1,3 +1,4 @@
+import { extname } from 'path';
 import { readFileSync, writeFileSync } from 'fs';
 import { safeLoad, safeDump, YAMLException } from 'js-yaml';
 import { ServiceUnavailableError } from './exceptions/http/serviceUnavailableError';
@@ -47,6 +48,15 @@ export function sortArrayByZIndex(layersArr: IMosaicLayerObject[]): string[] {
   try {
     const sortedArray = layersArr.sort((a, b) => a.zIndex - b.zIndex);
     return sortedArray.map((val) => val.layerName);
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
+// get the extension from a file path
+export function getFileExtension(path: string): string {
+  try {
+    return extname(path);
   } catch (error) {
     throw new Error(error);
   }

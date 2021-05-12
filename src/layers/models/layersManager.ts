@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { inject, injectable } from 'tsyringe';
+import { container, inject, injectable } from 'tsyringe';
 import { Services } from '../../common/constants';
 import {
   ILogger,
@@ -11,11 +11,14 @@ import {
   IUpdateMosaicRequest,
   ILayerToMosaicRequest,
   IFileProvider,
+  ICacheProvider,
 } from '../../common/interfaces';
-import { convertJsonToYaml, convertYamlToJson, replaceYamlFileContent, sortArrayByZIndex } from '../../common/utils';
+import { convertJsonToYaml, convertYamlToJson, replaceYamlFileContent, sortArrayByZIndex, getFileExtension } from '../../common/utils';
 import { ConfilctError } from '../../common/exceptions/http/confilctError';
 import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
 import { NotFoundError } from '../../common/exceptions/http/notFoundError';
+import { S3Source } from '../../common/S3Source';
+import { GpkgSource } from '../../common/gpkgSource';
 
 @injectable()
 export class LayersManager {
@@ -49,11 +52,8 @@ export class LayersManager {
       grids: this.mapproxyConfig.cache.grids,
       request_format: this.mapproxyConfig.cache.requestFormat,
       upscale_tiles: this.mapproxyConfig.cache.upscaleTiles,
-      cache: {
-        type: this.mapproxyConfig.cache.type,
-        directory: layerRequest.tilesPath,
-        directory_layout: this.mapproxyConfig.cache.directoryLayout,
-      },
+      cache: getFileExtension(layerRequest.tilesPath) === ".gpkg"? 
+      new GpkgSource(container).getCacheSource(layerRequest.tilesPath) : new S3Source(container).getCacheSource(layerRequest.tilesPath) 
     };
     const newLayer: IMapProxyLayer = {
       name: layerRequest.name,
@@ -153,11 +153,8 @@ export class LayersManager {
       grids: this.mapproxyConfig.cache.grids,
       request_format: this.mapproxyConfig.cache.requestFormat,
       upscale_tiles: this.mapproxyConfig.cache.upscaleTiles,
-      cache: {
-        type: this.mapproxyConfig.cache.type,
-        directory: layerRequest.tilesPath,
-        directory_layout: this.mapproxyConfig.cache.directoryLayout,
-      },
+      cache: getFileExtension(layerRequest.tilesPath) === ".gpkg"? 
+      new GpkgSource(container).getCacheSource(layerRequest.tilesPath) : new S3Source(container).getCacheSource(layerRequest.tilesPath) 
     };
     const newLayer: IMapProxyLayer = {
       name: layerName,
@@ -177,5 +174,9 @@ export class LayersManager {
     replaceYamlFileContent(this.mapproxyConfig.yamlFilePath, yamlContent);
     await this.fileProvider.uploadFile(this.mapproxyConfig.yamlFilePath);
     this.logger.log('info', `Successfully updated layer '${layerName}'`);
+  }
+
+  public getCacheSource(sourcePath: string): S3Source | GpkgSource {
+
   }
 }

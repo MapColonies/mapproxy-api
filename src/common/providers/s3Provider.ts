@@ -4,8 +4,9 @@ import { DependencyContainer } from 'tsyringe';
 import S3 from 'aws-sdk/clients/s3';
 import * as AWS from 'aws-sdk';
 import { CredentialsOptions } from 'aws-sdk/lib/credentials';
-import { IFileProvider, ILogger, IMapProxyConfig } from '../interfaces';
+import { IFileProvider, ILogger, IMapProxyConfig, IS3Source } from '../interfaces';
 import { Services } from '../constants';
+import { SourceTypes } from '../enums/sourceTypes';
 
 export class S3Provider implements IFileProvider {
   private readonly s3: S3;

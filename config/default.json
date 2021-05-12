@@ -15,7 +15,7 @@
     "fileProvider": "fs",
     "fileExt": ".yaml",
     "defaultFilePath": "config/default.yaml",
-    "yamlFilePath": "/path/to/config/file.yaml",
+    "yamlFilePath": "/home/shlomikoncha/Documents/mapproxy.yaml",
     "cache": {
       "grids": ["epsg4326dir"],
       "requestFormat": "image/png",
