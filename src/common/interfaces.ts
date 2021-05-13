@@ -30,6 +30,7 @@ export interface IMapProxyConfig {
     upscaleTiles: number;
     type: string;
     directoryLayout: string;
+    gpkgExt: string;
   };
   s3: {
     awsAccessKeyId: string;
@@ -120,5 +121,5 @@ export interface IFileProvider {
 }
 
 export interface ICacheProvider {
-  getCacheSource: (sourcePath: string) => IS3Source | IGpkgSource;
+  getCacheSource: (sourcePath: string, tableName?: string) => IS3Source | IGpkgSource;
 }

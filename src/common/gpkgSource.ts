@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import { parse } from 'path';
 import { SourceTypes } from './enums/sourceTypes';
 import { DependencyContainer } from 'tsyringe';
 import { Services } from './constants';
@@ -14,10 +15,12 @@ export class GpkgSource implements ICacheProvider {
   }
 
   public getCacheSource(sourcePath: string): IGpkgSource {
+    const fileBasename =  parse(sourcePath).name
+    
     const gpkgSource: IGpkgSource = {
       type: SourceTypes.GPKG,
       filename: sourcePath,
-      table_name: 'tablename'
+      table_name: fileBasename
     }
 
     return gpkgSource;

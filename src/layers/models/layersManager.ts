@@ -12,6 +12,8 @@ import {
   ILayerToMosaicRequest,
   IFileProvider,
   ICacheProvider,
+  IS3Source,
+  IGpkgSource,
 } from '../../common/interfaces';
 import { convertJsonToYaml, convertYamlToJson, replaceYamlFileContent, sortArrayByZIndex, getFileExtension } from '../../common/utils';
 import { ConfilctError } from '../../common/exceptions/http/confilctError';
@@ -19,6 +21,7 @@ import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
 import { NotFoundError } from '../../common/exceptions/http/notFoundError';
 import { S3Source } from '../../common/S3Source';
 import { GpkgSource } from '../../common/gpkgSource';
+import { BadRequestError } from '../../common/exceptions/http/badRequestError';
 
 @injectable()
 export class LayersManager {
@@ -52,8 +55,7 @@ export class LayersManager {
       grids: this.mapproxyConfig.cache.grids,
       request_format: this.mapproxyConfig.cache.requestFormat,
       upscale_tiles: this.mapproxyConfig.cache.upscaleTiles,
-      cache: getFileExtension(layerRequest.tilesPath) === ".gpkg"? 
-      new GpkgSource(container).getCacheSource(layerRequest.tilesPath) : new S3Source(container).getCacheSource(layerRequest.tilesPath) 
+      cache: this.getCacheSource(layerRequest.tilesPath)
     };
     const newLayer: IMapProxyLayer = {
       name: layerRequest.name,
@@ -153,8 +155,7 @@ export class LayersManager {
       grids: this.mapproxyConfig.cache.grids,
       request_format: this.mapproxyConfig.cache.requestFormat,
       upscale_tiles: this.mapproxyConfig.cache.upscaleTiles,
-      cache: getFileExtension(layerRequest.tilesPath) === ".gpkg"? 
-      new GpkgSource(container).getCacheSource(layerRequest.tilesPath) : new S3Source(container).getCacheSource(layerRequest.tilesPath) 
+      cache: this.getCacheSource(layerRequest.tilesPath)
     };
     const newLayer: IMapProxyLayer = {
       name: layerName,
@@ -176,7 +177,19 @@ export class LayersManager {
     this.logger.log('info', `Successfully updated layer '${layerName}'`);
   }
 
-  public getCacheSource(sourcePath: string): S3Source | GpkgSource {
-
+  public getCacheSource(sourcePath: string): IS3Source | IGpkgSource {
+    let sourceProvider: ICacheProvider | undefined;
+    const filePathExtension = getFileExtension(sourcePath);
+    console.log(filePathExtension);
+    if (filePathExtension === this.mapproxyConfig.cache.gpkgExt) { 
+      sourceProvider = new GpkgSource(container)
+    } 
+    else if (filePathExtension === '') {
+      sourceProvider = new S3Source(container)
+    }
+    if(sourceProvider === undefined)
+     throw new Error('Invalid source provider due to invalid source path');
+     
+    return sourceProvider.getCacheSource(sourcePath);
   }
-}
+};

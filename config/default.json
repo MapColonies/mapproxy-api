@@ -9,7 +9,7 @@
     "level": "info"
   },
   "server": {
-    "port": "8080"
+    "port": "8083"
   },
   "mapproxy": {
     "fileProvider": "fs",
@@ -21,7 +21,8 @@
       "requestFormat": "image/png",
       "upscaleTiles": 18,
       "type": "s3",
-      "directoryLayout": "tms"
+      "directoryLayout": "tms",
+      "gpkgExt": ".gpkg"
     },
     "s3": {
       "awsAccessKeyId": "AKIAIOSFODNN7EXAMPLE",
