@@ -21,10 +21,9 @@ import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
 import { NotFoundError } from '../../common/exceptions/http/notFoundError';
 import { S3Source } from '../../common/S3Source';
 import { GpkgSource } from '../../common/gpkgSource';
-import { BadRequestError } from '../../common/exceptions/http/badRequestError';
 
 @injectable()
-export class LayersManager {
+class LayersManager {
   public constructor(
     @inject(Services.LOGGER) private readonly logger: ILogger,
     @inject(Services.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig,
@@ -55,7 +54,7 @@ export class LayersManager {
       grids: this.mapproxyConfig.cache.grids,
       request_format: this.mapproxyConfig.cache.requestFormat,
       upscale_tiles: this.mapproxyConfig.cache.upscaleTiles,
-      cache: this.getCacheSource(layerRequest.tilesPath)
+      cache: this.getCacheSource(layerRequest.tilesPath),
     };
     const newLayer: IMapProxyLayer = {
       name: layerRequest.name,
@@ -155,7 +154,7 @@ export class LayersManager {
       grids: this.mapproxyConfig.cache.grids,
       request_format: this.mapproxyConfig.cache.requestFormat,
       upscale_tiles: this.mapproxyConfig.cache.upscaleTiles,
-      cache: this.getCacheSource(layerRequest.tilesPath)
+      cache: this.getCacheSource(layerRequest.tilesPath),
     };
     const newLayer: IMapProxyLayer = {
       name: layerName,
@@ -180,16 +179,17 @@ export class LayersManager {
   public getCacheSource(sourcePath: string): IS3Source | IGpkgSource {
     let sourceProvider: ICacheProvider | undefined;
     const filePathExtension = getFileExtension(sourcePath);
-    console.log(filePathExtension);
-    if (filePathExtension === this.mapproxyConfig.cache.gpkgExt) { 
-      sourceProvider = new GpkgSource(container)
-    } 
-    else if (filePathExtension === '') {
-      sourceProvider = new S3Source(container)
+    
+    if (filePathExtension === this.mapproxyConfig.cache.gpkgExt) {
+      sourceProvider = new GpkgSource(container);
+    } else if (filePathExtension === '') {
+      sourceProvider = new S3Source(container);
     }
-    if(sourceProvider === undefined)
-     throw new Error('Invalid source provider due to invalid source path');
-     
+    if (sourceProvider === undefined) {
+      throw new Error('Invalid source provider due to invalid source path');
+    }
     return sourceProvider.getCacheSource(sourcePath);
   }
-};
+}
+
+export { LayersManager };

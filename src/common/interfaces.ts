@@ -64,7 +64,7 @@ export interface ICacheSource {
   type: string;
 }
 
-export interface IS3Source extends ICacheSource{
+export interface IS3Source extends ICacheSource {
   directory: string;
   directory_layout: string;
 }
@@ -117,7 +117,6 @@ export interface IUpdateMosaicRequest {
 export interface IFileProvider {
   uploadFile: (filePath: string) => Promise<void>;
   getFile: (filePath: string) => Promise<void>;
-
 }
 
 export interface ICacheProvider {
