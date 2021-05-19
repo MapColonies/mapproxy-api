@@ -19,7 +19,8 @@ describe('layerManager', function () {
     jest.spyOn(utils, 'replaceYamlFileContent').mockReturnValueOnce(undefined);
   });
   afterEach(function () {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
+    jest.restoreAllMocks();
     container.clearInstances();
   });
 

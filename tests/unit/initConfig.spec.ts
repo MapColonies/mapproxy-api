@@ -22,7 +22,8 @@ describe('initConfig', () => {
   });
   afterEach(() => {
     container.reset();
-    jest.clearAllMocks();
+    jest.resetAllMocks();
+    jest.restoreAllMocks();
   });
   describe('#convertYamlToJson', () => {
     it('should create default config file if not exists', function () {

@@ -16,7 +16,8 @@ describe('utils', () => {
     replaceYamlFileContentStub = jest.spyOn(utils, 'replaceYamlFileContent');
   });
   afterEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
+    jest.restoreAllMocks();
   });
   describe('#convertYamlToJson', () => {
     it('should convert yaml content to json object', function () {

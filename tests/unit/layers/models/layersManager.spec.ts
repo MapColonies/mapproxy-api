@@ -1,4 +1,5 @@
 import config from 'config';
+import { container } from 'tsyringe';
 import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IMapProxyConfig, IUpdateMosaicRequest } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { ConfilctError } from '../../../../src/common/exceptions/http/confilctError';
@@ -7,6 +8,7 @@ import { mockLayerNameIsNotExists } from '../../mock/mockLayerNameIsNotExists';
 import * as utils from '../../../../src/common/utils';
 import { NotFoundError } from '../../../../src/common/exceptions/http/notFoundError';
 import { MockFileProvider } from '../../mock/mockFileProvider';
+import { Services } from '../../../../src/common/constants';
 
 let layersManager: LayersManager;
 let convertYamlToJsonStub: jest.SpyInstance;
@@ -21,6 +23,7 @@ describe('layersManager', () => {
   beforeEach(function () {
     layersManager = new LayersManager({ log: jest.fn() }, mapproxyConfig, MockFileProvider.prototype);
     // stub util functions
+    container.register(Services.MAPPROXY, { useValue: mapproxyConfig });
     getFileStub = jest.spyOn(MockFileProvider.prototype, 'getFile').mockResolvedValue(undefined);
     uploadFileStub = jest.spyOn(MockFileProvider.prototype, 'uploadFile').mockResolvedValue(undefined);
     convertYamlToJsonStub = jest.spyOn(utils, 'convertYamlToJson');
@@ -29,7 +32,8 @@ describe('layersManager', () => {
     sortArrayByZIndexStub = jest.spyOn(utils, 'sortArrayByZIndex').mockReturnValueOnce(['mockLayer1', 'mockLayer2', 'mockLayer3']);
   });
   afterEach(() => {
-    jest.clearAllMocks();
+    container.reset();
+    container.clearInstances();
     jest.resetAllMocks();
     jest.restoreAllMocks();
   });
