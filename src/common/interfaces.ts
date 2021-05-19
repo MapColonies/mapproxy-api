@@ -25,7 +25,7 @@ export interface IMapProxyConfig {
   fileExt?: string;
   defaultFilePath?: string;
   cache: {
-    grids: string[];
+    grids: string;
     requestFormat: string;
     upscaleTiles: number;
     type: string;

@@ -51,7 +51,7 @@ class LayersManager {
 
     const newCache: IMapProxyCache = {
       sources: [],
-      grids: this.mapproxyConfig.cache.grids,
+      grids: this.mapproxyConfig.cache.grids.split(','),
       request_format: this.mapproxyConfig.cache.requestFormat,
       upscale_tiles: this.mapproxyConfig.cache.upscaleTiles,
       cache: this.getCacheSource(layerRequest.tilesPath),
@@ -151,7 +151,7 @@ class LayersManager {
 
     const newCache: IMapProxyCache = {
       sources: [],
-      grids: this.mapproxyConfig.cache.grids,
+      grids: this.mapproxyConfig.cache.grids.split(','),
       request_format: this.mapproxyConfig.cache.requestFormat,
       upscale_tiles: this.mapproxyConfig.cache.upscaleTiles,
       cache: this.getCacheSource(layerRequest.tilesPath),
@@ -179,9 +179,9 @@ class LayersManager {
   public getCacheSource(sourcePath: string): IS3Source | IGpkgSource {
     let sourceProvider: ICacheProvider | undefined;
     const filePathExtension = getFileExtension(sourcePath);
-    
+
     if (filePathExtension === this.mapproxyConfig.cache.gpkgExt) {
-      sourceProvider = new GpkgSource(container);
+      sourceProvider = new GpkgSource();
     } else if (filePathExtension === '') {
       sourceProvider = new S3Source(container);
     }

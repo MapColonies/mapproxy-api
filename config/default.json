@@ -17,7 +17,7 @@
     "defaultFilePath": "config/default.yaml",
     "yamlFilePath": "/home/shlomikoncha/Documents/mapproxy.yaml",
     "cache": {
-      "grids": ["epsg4326dir"],
+      "grids": "epsg4326ul",
       "requestFormat": "image/png",
       "upscaleTiles": 18,
       "type": "s3",

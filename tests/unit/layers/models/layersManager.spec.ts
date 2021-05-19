@@ -30,6 +30,8 @@ describe('layersManager', () => {
   });
   afterEach(() => {
     jest.clearAllMocks();
+    jest.resetAllMocks();
+    jest.restoreAllMocks();
   });
 
   describe('#getLayer', () => {

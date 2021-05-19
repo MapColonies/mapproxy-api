@@ -56,6 +56,30 @@ sources:
 grids:
   webmercator:
     base: GLOBAL_WEBMERCATOR
+  epsg4326ul:
+    name: epsg4326ul
+    srs: 'EPSG:4326'
+    num_levels: 20
+    bbox:
+      - -180
+      - -90
+      - 180
+      - 90
+    bbox_srs: 'EPSG:4326'
+    origin: ul
+    min_res: 0.703125
+  epsg4326ll:
+    name: epsg4326ll
+    srs: 'EPSG:4326'
+    num_levels: 20
+    bbox:
+      - -180
+      - -90
+      - 180
+      - 90
+    bbox_srs: 'EPSG:4326'
+    origin: ll
+    min_res: 0.703125
 
 globals:
   cache:

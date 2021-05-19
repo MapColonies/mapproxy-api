@@ -2,14 +2,12 @@
 import { DependencyContainer } from 'tsyringe';
 import { SourceTypes } from './enums/sourceTypes';
 import { Services } from './constants';
-import { ICacheProvider, ILogger, IMapProxyConfig, IS3Source } from './interfaces';
+import { ICacheProvider, IMapProxyConfig, IS3Source } from './interfaces';
 
 class S3Source implements ICacheProvider {
   private readonly mapproxyConfig: IMapProxyConfig;
-  private readonly logger: ILogger;
 
   public constructor(container: DependencyContainer) {
-    this.logger = container.resolve(Services.LOGGER);
     this.mapproxyConfig = container.resolve(Services.MAPPROXY);
   }
 
