@@ -9,13 +9,13 @@
     "level": "info"
   },
   "server": {
-    "port": "8083"
+    "port": "8080"
   },
   "mapproxy": {
     "fileProvider": "fs",
     "fileExt": ".yaml",
     "defaultFilePath": "config/default.yaml",
-    "yamlFilePath": "/home/shlomikoncha/Documents/mapproxy.yaml",
+    "yamlFilePath": "/path/to/config/file.yaml",
     "cache": {
       "grids": "epsg4326ul",
       "requestFormat": "image/png",
