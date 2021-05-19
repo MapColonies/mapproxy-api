@@ -79,7 +79,7 @@ describe('layersManager', () => {
       expect(uploadFileStub).not.toHaveBeenCalled();
     });
 
-    it('should successfully add layer', async function () {
+    it('should successfully add layer with s3 source value', async function () {
       // action
       const action = async () => {
         await layersManager.addLayer(mockLayerNameIsNotExists);
@@ -87,6 +87,7 @@ describe('layersManager', () => {
 
       // expectation
       await expect(action()).resolves.not.toThrow();
+      
       expect(getFileStub).toHaveBeenCalledTimes(1);
       expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
       expect(convertJsonToYamlStub).toHaveBeenCalledTimes(1);

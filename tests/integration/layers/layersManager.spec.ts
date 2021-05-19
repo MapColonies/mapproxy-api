@@ -9,11 +9,9 @@ import * as utils from '../../../src/common/utils';
 import * as requestSender from './helpers/requestSender';
 
 describe('layerManager', function () {
-  beforeAll(function () {
+  beforeEach(function () {
     registerTestValues();
     requestSender.init();
-  });
-  beforeEach(function () {
     jest.spyOn(MockFileProvider.prototype, 'getFile').mockResolvedValue(undefined);
     jest.spyOn(MockFileProvider.prototype, 'uploadFile').mockResolvedValue(undefined);
     jest.spyOn(utils, 'replaceYamlFileContent').mockReturnValueOnce(undefined);

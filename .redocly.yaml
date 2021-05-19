@@ -26,6 +26,7 @@ lint:
       prefixes: ['should', 'is', 'has']
     no-unused-components:
       severity: error
+    no-empty-servers: off
 
   decorators:
     # Decorators modify the the definition after validation is complete, only in the bundling process.
