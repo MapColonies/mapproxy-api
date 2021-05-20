@@ -49,18 +49,9 @@ class LayersManager {
       throw new ConfilctError(`Layer name '${layerRequest.name}' is already exists`);
     }
 
-    const newCache: IMapProxyCache = {
-      sources: [],
-      grids: this.mapproxyConfig.cache.grids.split(','),
-      request_format: this.mapproxyConfig.cache.requestFormat,
-      upscale_tiles: this.mapproxyConfig.cache.upscaleTiles,
-      cache: this.getCacheSource(layerRequest.tilesPath),
-    };
-    const newLayer: IMapProxyLayer = {
-      name: layerRequest.name,
-      title: layerRequest.description,
-      sources: [layerRequest.name],
-    };
+    const newCache: IMapProxyCache = this.getCacheValues(layerRequest.tilesPath);
+    const newLayer: IMapProxyLayer = this.getLayerValues(layerRequest.name, layerRequest.description, layerRequest.name);
+
     jsonDocument.caches[layerRequest.name] = newCache;
     jsonDocument.layers.push(newLayer);
 
@@ -149,18 +140,9 @@ class LayersManager {
       throw new NotFoundError(`Layer name '${layerName}' is not exists`);
     }
 
-    const newCache: IMapProxyCache = {
-      sources: [],
-      grids: this.mapproxyConfig.cache.grids.split(','),
-      request_format: this.mapproxyConfig.cache.requestFormat,
-      upscale_tiles: this.mapproxyConfig.cache.upscaleTiles,
-      cache: this.getCacheSource(layerRequest.tilesPath),
-    };
-    const newLayer: IMapProxyLayer = {
-      name: layerName,
-      title: layerRequest.description,
-      sources: [layerRequest.name],
-    };
+    const newCache: IMapProxyCache = this.getCacheValues(layerRequest.tilesPath);
+    const newLayer: IMapProxyLayer = this.getLayerValues(layerName, layerRequest.description, layerRequest.name);
+
     // update existing layer cache values with the new requested layer cache values
     jsonDocument.caches[layerName] = newCache;
     // update existing layer values with the new requested layer values
@@ -176,7 +158,34 @@ class LayersManager {
     this.logger.log('info', `Successfully updated layer '${layerName}'`);
   }
 
-  public getCacheSource(sourcePath: string): IS3Source | IGpkgSource {
+  public getCacheValues(sourcePath: string): IMapProxyCache {
+    const grids = this.mapproxyConfig.cache.grids.split(',');
+    const requestFormat = this.mapproxyConfig.cache.requestFormat;
+    const upscaleTiles = this.mapproxyConfig.cache.upscaleTiles;
+    const cacheType = this.getCacheType(sourcePath);
+
+    const cache: IMapProxyCache = {
+      sources: [],
+      grids: grids,
+      request_format: requestFormat,
+      upscale_tiles: upscaleTiles,
+      cache: cacheType,
+    };
+
+    return cache;
+  }
+
+  public getLayerValues(layerName: string, title: string, sources: string): IMapProxyLayer {
+    const layer: IMapProxyLayer = {
+      name: layerName,
+      title: title,
+      sources: [sources],
+    };
+
+    return layer;
+  }
+
+  public getCacheType(sourcePath: string): IS3Source | IGpkgSource {
     let sourceProvider: ICacheProvider | undefined;
     const filePathExtension = getFileExtension(sourcePath);
 

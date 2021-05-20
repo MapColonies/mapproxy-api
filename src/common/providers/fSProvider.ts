@@ -1,6 +1,4 @@
-import { DependencyContainer } from 'tsyringe';
-import { Services } from '../constants';
-import { IFileProvider, ILogger, IMapProxyConfig } from '../interfaces';
+import { IFileProvider } from '../interfaces';
 
 export class FSProvider implements IFileProvider {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
