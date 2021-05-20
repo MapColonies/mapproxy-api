@@ -2,24 +2,7 @@
 
 This is an API service to manage layers provided by [MapProxy](https://mapproxy.org/) 
 
-### template features:
-- eslint configuration with @map-colonies/eslint-config
-- prettier
-- jest
-- nvm configuration
-- Dockerfile
-- commitlint setup
-- git hooks
-- logger using @map-colonies/mc-logger
-- swagger ui & swagger json serve
-- config load
-- github templates
-  - bug report
-  - feature request
-  - pull request
-- github actions
-  - lint
-  - test
+
 
 ### Uasage:
 
