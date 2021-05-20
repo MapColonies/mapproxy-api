@@ -16,7 +16,6 @@
       "grids": "MAPPROXY_CACHE_GRIDS",
       "requestFormat": "MAPPROXY_CACHE_REQUEST_FORMAT",
       "upscaleTiles": "MAPPROXY_CACHE_UPSCALE_TILES",
-      "type": "MAPPROXY_CACHE_TYPE",
       "directoryLayout": "MAPPROXY_CACHE_DIRECTORY_LAYOUT"
     },
     "s3": {

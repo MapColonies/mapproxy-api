@@ -20,13 +20,12 @@
       "grids": "epsg4326ul",
       "requestFormat": "image/png",
       "upscaleTiles": 18,
-      "type": "s3",
       "directoryLayout": "tms",
       "gpkgExt": ".gpkg"
     },
     "s3": {
-      "awsAccessKeyId": "AKIAIOSFODNN7EXAMPLE",
-      "awsSecretAccessKey": "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+      "awsAccessKeyId": "minioadmin",
+      "awsSecretAccessKey": "minioadmin",
       "endpointUrl": "http://localhost:9000",
       "storageBucket": "storage_bucket",
       "configFileBucket": "config_file_bucket",
