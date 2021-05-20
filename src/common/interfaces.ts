@@ -28,7 +28,6 @@ export interface IMapProxyConfig {
     grids: string;
     requestFormat: string;
     upscaleTiles: number;
-    type: string;
     directoryLayout: string;
     gpkgExt: string;
   };
