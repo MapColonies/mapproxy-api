@@ -25,11 +25,12 @@ export interface IMapProxyConfig {
   fileExt?: string;
   defaultFilePath?: string;
   cache: {
-    grids: string[];
+    grids: string;
     requestFormat: string;
     upscaleTiles: number;
     type: string;
     directoryLayout: string;
+    gpkgExt: string;
   };
   s3: {
     awsAccessKeyId: string;
@@ -59,12 +60,19 @@ export interface IMapProxyGlobalConfig {
   };
 }
 
-export interface IMapProxyCacheSource {
+export interface ICacheSource {
   type: string;
+}
+
+export interface IS3Source extends ICacheSource {
   directory: string;
   directory_layout: string;
 }
 
+export interface IGpkgSource extends ICacheSource {
+  filename: string;
+  table_name: string;
+}
 export interface IMapProxyCache {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
@@ -72,7 +80,7 @@ export interface IMapProxyCache {
   grids: string[];
   request_format: string;
   upscale_tiles: number;
-  cache: IMapProxyCacheSource;
+  cache: ICacheSource;
 }
 
 export interface IMapProxyLayer {
@@ -109,4 +117,8 @@ export interface IUpdateMosaicRequest {
 export interface IFileProvider {
   uploadFile: (filePath: string) => Promise<void>;
   getFile: (filePath: string) => Promise<void>;
+}
+
+export interface ICacheProvider {
+  getCacheSource: (sourcePath: string, tableName?: string) => IS3Source | IGpkgSource;
 }

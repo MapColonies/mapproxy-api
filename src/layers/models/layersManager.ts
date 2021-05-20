@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { inject, injectable } from 'tsyringe';
+import { container, inject, injectable } from 'tsyringe';
 import { Services } from '../../common/constants';
 import {
   ILogger,
@@ -11,14 +11,19 @@ import {
   IUpdateMosaicRequest,
   ILayerToMosaicRequest,
   IFileProvider,
+  ICacheProvider,
+  IS3Source,
+  IGpkgSource,
 } from '../../common/interfaces';
-import { convertJsonToYaml, convertYamlToJson, replaceYamlFileContent, sortArrayByZIndex } from '../../common/utils';
+import { convertJsonToYaml, convertYamlToJson, replaceYamlFileContent, sortArrayByZIndex, getFileExtension } from '../../common/utils';
 import { ConfilctError } from '../../common/exceptions/http/confilctError';
 import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
 import { NotFoundError } from '../../common/exceptions/http/notFoundError';
+import { S3Source } from '../../common/S3Source';
+import { GpkgSource } from '../../common/gpkgSource';
 
 @injectable()
-export class LayersManager {
+class LayersManager {
   public constructor(
     @inject(Services.LOGGER) private readonly logger: ILogger,
     @inject(Services.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig,
@@ -44,22 +49,9 @@ export class LayersManager {
       throw new ConfilctError(`Layer name '${layerRequest.name}' is already exists`);
     }
 
-    const newCache: IMapProxyCache = {
-      sources: [],
-      grids: this.mapproxyConfig.cache.grids,
-      request_format: this.mapproxyConfig.cache.requestFormat,
-      upscale_tiles: this.mapproxyConfig.cache.upscaleTiles,
-      cache: {
-        type: this.mapproxyConfig.cache.type,
-        directory: layerRequest.tilesPath,
-        directory_layout: this.mapproxyConfig.cache.directoryLayout,
-      },
-    };
-    const newLayer: IMapProxyLayer = {
-      name: layerRequest.name,
-      title: layerRequest.description,
-      sources: [layerRequest.name],
-    };
+    const newCache: IMapProxyCache = this.getCacheValues(layerRequest.tilesPath);
+    const newLayer: IMapProxyLayer = this.getLayerValues(layerRequest.name, layerRequest.description, layerRequest.name);
+
     jsonDocument.caches[layerRequest.name] = newCache;
     jsonDocument.layers.push(newLayer);
 
@@ -148,22 +140,9 @@ export class LayersManager {
       throw new NotFoundError(`Layer name '${layerName}' is not exists`);
     }
 
-    const newCache: IMapProxyCache = {
-      sources: [],
-      grids: this.mapproxyConfig.cache.grids,
-      request_format: this.mapproxyConfig.cache.requestFormat,
-      upscale_tiles: this.mapproxyConfig.cache.upscaleTiles,
-      cache: {
-        type: this.mapproxyConfig.cache.type,
-        directory: layerRequest.tilesPath,
-        directory_layout: this.mapproxyConfig.cache.directoryLayout,
-      },
-    };
-    const newLayer: IMapProxyLayer = {
-      name: layerName,
-      title: layerRequest.description,
-      sources: [layerRequest.name],
-    };
+    const newCache: IMapProxyCache = this.getCacheValues(layerRequest.tilesPath);
+    const newLayer: IMapProxyLayer = this.getLayerValues(layerName, layerRequest.description, layerRequest.name);
+
     // update existing layer cache values with the new requested layer cache values
     jsonDocument.caches[layerName] = newCache;
     // update existing layer values with the new requested layer values
@@ -178,4 +157,48 @@ export class LayersManager {
     await this.fileProvider.uploadFile(this.mapproxyConfig.yamlFilePath);
     this.logger.log('info', `Successfully updated layer '${layerName}'`);
   }
+
+  public getCacheValues(sourcePath: string): IMapProxyCache {
+    const grids = this.mapproxyConfig.cache.grids.split(',');
+    const requestFormat = this.mapproxyConfig.cache.requestFormat;
+    const upscaleTiles = this.mapproxyConfig.cache.upscaleTiles;
+    const cacheType = this.getCacheType(sourcePath);
+
+    const cache: IMapProxyCache = {
+      sources: [],
+      grids: grids,
+      request_format: requestFormat,
+      upscale_tiles: upscaleTiles,
+      cache: cacheType,
+    };
+
+    return cache;
+  }
+
+  public getLayerValues(layerName: string, title: string, sources: string): IMapProxyLayer {
+    const layer: IMapProxyLayer = {
+      name: layerName,
+      title: title,
+      sources: [sources],
+    };
+
+    return layer;
+  }
+
+  public getCacheType(sourcePath: string): IS3Source | IGpkgSource {
+    let sourceProvider: ICacheProvider | undefined;
+    const filePathExtension = getFileExtension(sourcePath);
+
+    if (filePathExtension === this.mapproxyConfig.cache.gpkgExt) {
+      sourceProvider = new GpkgSource();
+    } else if (filePathExtension === '') {
+      sourceProvider = new S3Source(container);
+    }
+    if (sourceProvider === undefined) {
+      throw new Error('Invalid source provider due to invalid source path');
+    }
+    return sourceProvider.getCacheSource(sourcePath);
+  }
 }
+
+export { LayersManager };
