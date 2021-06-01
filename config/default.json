@@ -15,7 +15,7 @@
     "fileProvider": "fs",
     "fileExt": ".yaml",
     "defaultFilePath": "config/default.yaml",
-    "yamlFilePath": "/path/to/config/file.yaml",
+    "yamlFilePath": "/default.yaml",
     "cache": {
       "grids": "epsg4326ul",
       "requestFormat": "image/png",
