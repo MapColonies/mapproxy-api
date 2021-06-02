@@ -41,7 +41,7 @@
     "@map-colonies/mc-model-types": "^1.0.1",
     "@map-colonies/mc-probe": "^1.0.0",
     "@types/lodash": "^4.14.168",
-    "aws-sdk": "^2.859.0",
+    "aws-sdk": "^2.905.0",
     "config": "^3.3.3",
     "express": "^4.17.1",
     "express-openapi-validator": "^4.10.5",
