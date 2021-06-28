@@ -10,22 +10,26 @@
   },
   "mapproxy": {
     "fileProvider": "MAPPROXY_FILE_PROVIDER",
-    "yamlFilePath": "MAPPROXY_YAML_FILEPATH",
-    "fileExt": "MAPPROXY_FILE_EXT",
+    "yamlFilePath": "MAPPROXY_YAML_FILE_PATH",
     "cache": {
       "grids": "MAPPROXY_CACHE_GRIDS",
       "requestFormat": "MAPPROXY_CACHE_REQUEST_FORMAT",
       "upscaleTiles": "MAPPROXY_CACHE_UPSCALE_TILES",
       "directoryLayout": "MAPPROXY_CACHE_DIRECTORY_LAYOUT"
-    },
-    "s3": {
-      "awsAccessKeyId": "AWS_ACCESS_KEY_ID",
-      "awsSecretAccessKey": "AWS_SECRET_ACCESS_KEY",
-      "endpointUrl": "S3_ENDPOINT_URL",
-      "storageBucket": "S3_BUCKET",
-      "configFileBucket": "S3_CONFIG_FILE_BUCKET",
-      "objectKey": "S3_OBJECT_KEY",
-      "sslEnabled": "SSL_ENABLED"
     }
+  },
+  "S3": {
+    "awsAccessKeyId": "AWS_ACCESS_KEY_ID",
+    "awsSecretAccessKey": "AWS_SECRET_ACCESS_KEY",
+    "endpointUrl": "AWS_ENDPOINT_URL",
+    "bucket": "AWS_BUCKET",
+    "objectKey": "AWS_OBJECT_KEY",
+    "sslEnabled": "AWS_SSL_ENABLED"
+  },
+  "DB": {
+    "host": "DB_HOST",
+    "user": "DB_USER",
+    "password": "DB_PASSWORD",
+    "database": "DB_DATABASE"
   }
 }

@@ -1,6 +1,7 @@
+import { readFileSync } from 'fs';
 import config from 'config';
 import { container } from 'tsyringe';
-import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IMapProxyConfig, IUpdateMosaicRequest } from '../../../../src/common/interfaces';
+import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IMapProxyConfig, IMapProxyJsonDocument, IUpdateMosaicRequest } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { ConfilctError } from '../../../../src/common/exceptions/http/confilctError';
 import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExists';
@@ -15,22 +16,28 @@ let convertYamlToJsonStub: jest.SpyInstance;
 let convertJsonToYamlStub: jest.SpyInstance;
 let replaceYamlContentStub: jest.SpyInstance;
 let sortArrayByZIndexStub: jest.SpyInstance;
-let getFileStub: jest.SpyInstance;
-let uploadFileStub: jest.SpyInstance;
+let getJsonStub: jest.SpyInstance;
+let updateJsonStub: jest.SpyInstance;
+let mockJsonData: string;
 
 const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
 describe('layersManager', () => {
+  beforeAll(function () {
+    mockJsonData = readFileSync('tests/unit/mock/mockJson.json', 'utf8');
+  });
+
   beforeEach(function () {
     layersManager = new LayersManager({ log: jest.fn() }, mapproxyConfig, MockFileProvider.prototype);
     // stub util functions
     container.register(Services.MAPPROXY, { useValue: mapproxyConfig });
-    getFileStub = jest.spyOn(MockFileProvider.prototype, 'getFile').mockResolvedValue(undefined);
-    uploadFileStub = jest.spyOn(MockFileProvider.prototype, 'uploadFile').mockResolvedValue(undefined);
+    getJsonStub = jest.spyOn(MockFileProvider.prototype, 'getJson').mockResolvedValue(JSON.parse(mockJsonData));
+    updateJsonStub = jest.spyOn(MockFileProvider.prototype, "updateJson").mockResolvedValue(undefined);
     convertYamlToJsonStub = jest.spyOn(utils, 'convertYamlToJson');
     convertJsonToYamlStub = jest.spyOn(utils, 'convertJsonToYaml');
-    replaceYamlContentStub = jest.spyOn(utils, 'replaceYamlFileContent').mockReturnValueOnce(undefined);
+    replaceYamlContentStub = jest.spyOn(utils, 'replaceYamlFileContent').mockResolvedValue(undefined);
     sortArrayByZIndexStub = jest.spyOn(utils, 'sortArrayByZIndex').mockReturnValueOnce(['mockLayer1', 'mockLayer2', 'mockLayer3']);
   });
+
   afterEach(() => {
     container.reset();
     container.clearInstances();
@@ -42,7 +49,7 @@ describe('layersManager', () => {
       // action
       const resource: IMapProxyCache = await layersManager.getLayer('mockLayerNameExists');
       // expectation;
-      expect(getFileStub).toHaveBeenCalledTimes(1);
+      expect(getJsonStub).toHaveBeenCalledTimes(1);
       expect(resource.sources).toEqual([]);
       expect(resource.upscale_tiles).toEqual(18);
       expect(resource.request_format).toEqual('image/png');
@@ -58,8 +65,8 @@ describe('layersManager', () => {
       };
       // expectation;
       await expect(action).rejects.toThrow(NotFoundError);
-      expect(getFileStub).toHaveBeenCalledTimes(1);
-      expect(uploadFileStub).not.toHaveBeenCalled();
+      expect(getJsonStub).toHaveBeenCalledTimes(1);
+      expect(updateJsonStub).not.toHaveBeenCalled();
     });
   });
 
@@ -72,11 +79,8 @@ describe('layersManager', () => {
 
       // expectation
       await expect(action).rejects.toThrow(ConfilctError);
-      expect(getFileStub).toHaveBeenCalledTimes(1);
-      expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
-      expect(convertJsonToYamlStub).not.toHaveBeenCalled();
-      expect(replaceYamlContentStub).not.toHaveBeenCalled();
-      expect(uploadFileStub).not.toHaveBeenCalled();
+      expect(getJsonStub).toHaveBeenCalledTimes(1);
+      expect(updateJsonStub).not.toHaveBeenCalled();
     });
 
     it('should successfully add layer', async function () {
@@ -87,11 +91,8 @@ describe('layersManager', () => {
 
       // expectation
       await expect(action()).resolves.not.toThrow();
-      expect(getFileStub).toHaveBeenCalledTimes(1);
-      expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
-      expect(convertJsonToYamlStub).toHaveBeenCalledTimes(1);
-      expect(replaceYamlContentStub).toHaveBeenCalledTimes(1);
-      expect(uploadFileStub).toHaveBeenCalledTimes(1);
+      expect(getJsonStub).toHaveBeenCalledTimes(1);
+      expect(updateJsonStub).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -108,11 +109,8 @@ describe('layersManager', () => {
       };
       // expectation
       await expect(action).rejects.toThrow(NotFoundError);
-      expect(getFileStub).toHaveBeenCalledTimes(1);
-      expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
-      expect(convertJsonToYamlStub).not.toHaveBeenCalled();
-      expect(replaceYamlContentStub).not.toHaveBeenCalled();
-      expect(uploadFileStub).not.toHaveBeenCalled();
+      expect(getJsonStub).toHaveBeenCalledTimes(1);
+      expect(updateJsonStub).not.toHaveBeenCalled();
     });
 
     it('should reject with not found error due mosaic name is not exists', async function () {
@@ -127,11 +125,8 @@ describe('layersManager', () => {
       };
       // expectation
       await expect(action).rejects.toThrow(NotFoundError);
-      expect(getFileStub).toHaveBeenCalledTimes(1);
-      expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
-      expect(convertJsonToYamlStub).not.toHaveBeenCalled();
-      expect(replaceYamlContentStub).not.toHaveBeenCalled();
-      expect(uploadFileStub).not.toHaveBeenCalled();
+      expect(getJsonStub).toHaveBeenCalledTimes(1);
+      expect(updateJsonStub).not.toHaveBeenCalled();
     });
 
     it('should successfully add layer to mosaic', async function () {
@@ -146,11 +141,8 @@ describe('layersManager', () => {
       };
       // expectation
       await expect(action()).resolves.not.toThrow();
-      expect(getFileStub).toHaveBeenCalledTimes(1);
-      expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
-      expect(convertJsonToYamlStub).toHaveBeenCalledTimes(1);
-      expect(replaceYamlContentStub).toHaveBeenCalledTimes(1);
-      expect(uploadFileStub).toHaveBeenCalledTimes(1);
+      expect(getJsonStub).toHaveBeenCalledTimes(1);
+      expect(updateJsonStub).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -170,12 +162,9 @@ describe('layersManager', () => {
       };
       // expectation
       await expect(action()).resolves.not.toThrow();
-      expect(getFileStub).toHaveBeenCalledTimes(1);
-      expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
+      expect(getJsonStub).toHaveBeenCalledTimes(1);
       expect(sortArrayByZIndexStub).toHaveBeenCalledTimes(1);
-      expect(convertJsonToYamlStub).toHaveBeenCalledTimes(1);
-      expect(replaceYamlContentStub).toHaveBeenCalledTimes(1);
-      expect(uploadFileStub).toHaveBeenCalledTimes(1);
+      expect(updateJsonStub).toHaveBeenCalledTimes(1);
     });
 
     it('should reject with not found error due layer name is not exists', async function () {
@@ -193,12 +182,9 @@ describe('layersManager', () => {
       };
       // expectation
       await expect(action).rejects.toThrow(NotFoundError);
-      expect(getFileStub).toHaveBeenCalledTimes(1);
-      expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
+      expect(getJsonStub).toHaveBeenCalledTimes(1);
       expect(sortArrayByZIndexStub).toHaveBeenCalledTimes(0);
-      expect(convertJsonToYamlStub).not.toHaveBeenCalled();
-      expect(replaceYamlContentStub).not.toHaveBeenCalled();
-      expect(uploadFileStub).not.toHaveBeenCalled();
+      expect(updateJsonStub).not.toHaveBeenCalled();
     });
 
     it('should reject with not found error due mosaic name is not exists', async function () {
@@ -216,12 +202,9 @@ describe('layersManager', () => {
       };
       // expectation
       await expect(action).rejects.toThrow(NotFoundError);
-      expect(getFileStub).toHaveBeenCalledTimes(1);
-      expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
+      expect(getJsonStub).toHaveBeenCalledTimes(1);
       expect(sortArrayByZIndexStub).toHaveBeenCalledTimes(0);
-      expect(convertJsonToYamlStub).not.toHaveBeenCalled();
-      expect(replaceYamlContentStub).not.toHaveBeenCalled();
-      expect(uploadFileStub).not.toHaveBeenCalled();
+      expect(updateJsonStub).not.toHaveBeenCalled();
     });
   });
 
@@ -235,11 +218,8 @@ describe('layersManager', () => {
       };
       // expectation
       await expect(action()).resolves.not.toThrow();
-      expect(getFileStub).toHaveBeenCalledTimes(1);
-      expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
-      expect(convertJsonToYamlStub).toHaveBeenCalledTimes(1);
-      expect(replaceYamlContentStub).toHaveBeenCalledTimes(1);
-      expect(uploadFileStub).toHaveBeenCalledTimes(1);
+      expect(getJsonStub).toHaveBeenCalledTimes(1);
+      expect(updateJsonStub).toHaveBeenCalledTimes(1);
     });
 
     it('should reject with not found error due layer name is not exists', async function () {
@@ -251,11 +231,8 @@ describe('layersManager', () => {
       };
       // expectation
       await expect(action).rejects.toThrow(NotFoundError);
-      expect(getFileStub).toHaveBeenCalledTimes(1);
-      expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
-      expect(convertJsonToYamlStub).not.toHaveBeenCalled();
-      expect(replaceYamlContentStub).not.toHaveBeenCalled();
-      expect(uploadFileStub).not.toHaveBeenCalled();
+      expect(getJsonStub).toHaveBeenCalledTimes(1);
+      expect(updateJsonStub).not.toHaveBeenCalled();
     });
   });
 
@@ -276,11 +253,8 @@ describe('layersManager', () => {
       };
       // expectation
       await expect(action()).resolves.not.toThrow();
-      expect(getFileStub).toHaveBeenCalledTimes(1);
-      expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
-      expect(convertJsonToYamlStub).toHaveBeenCalledTimes(1);
-      expect(replaceYamlContentStub).toHaveBeenCalledTimes(1);
-      expect(uploadFileStub).toHaveBeenCalledTimes(1);
+      expect(getJsonStub).toHaveBeenCalledTimes(1);
+      expect(updateJsonStub).toHaveBeenCalledTimes(1);
     });
 
     it('should reject with not found error due layer name is not exists', async function () {
@@ -292,11 +266,8 @@ describe('layersManager', () => {
       };
       // expectation
       await expect(action).rejects.toThrow(NotFoundError);
-      expect(getFileStub).toHaveBeenCalledTimes(1);
-      expect(convertYamlToJsonStub).toHaveBeenCalledTimes(1);
-      expect(convertJsonToYamlStub).not.toHaveBeenCalled();
-      expect(replaceYamlContentStub).not.toHaveBeenCalled();
-      expect(uploadFileStub).not.toHaveBeenCalled();
+      expect(getJsonStub).toHaveBeenCalledTimes(1);
+      expect(updateJsonStub).not.toHaveBeenCalled();
     });
   });
 });

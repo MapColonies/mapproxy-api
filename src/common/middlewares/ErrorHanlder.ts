@@ -63,7 +63,9 @@ export class ErrorHandler {
         }
       }
       this.logger.log('error', `${req.method} request to ${req.originalUrl}  has failed with error: ${err.message}`);
+      next()
       res.status(status).json(body);
+
     };
   }
 }
