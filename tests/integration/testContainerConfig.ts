@@ -3,7 +3,6 @@ import config from 'config';
 import { Services } from '../../src/common/constants';
 import { IFileProvider, IMapProxyConfig } from '../../src/common/interfaces';
 import { MockFileProvider } from '../unit/mock/mockFileProvider';
-import { PGClient } from '../../src/pg/pgClient';
 
 function registerTestValues(): void {
   const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
@@ -16,6 +15,6 @@ function registerTestValues(): void {
       return new MockFileProvider();
     },
   });
-  container.register(Services.PG, { useClass: PGClient });
+  container.register(Services.PG, { useValue: {} });
 }
 export { registerTestValues };

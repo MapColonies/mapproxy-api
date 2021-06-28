@@ -13,18 +13,18 @@ export class RollBackErrorHandler {
 
   public getRollBackHandlerMiddleware(): ErrorRequestHandler {
     return async (err: Error, req: Request, res: Response, next: NextFunction): Promise<void> => {
-      await this.rollback();
+      if (this.config.fileProvider.toLowerCase() === Providers.DB) {
+        await this.rollback();
+      }
       next(err);
     };
   }
 
   public async rollback(): Promise<void> {
     const client = await this.pgClient.getPoolConnection();
-    if (this.config.fileProvider.toLowerCase() === Providers.DB) {
-      await client.query('ROLLBACK');
-      this.logger.log('debug', 'Transaction ROLLBACK called');
-      client.release();
-      this.logger.log('debug', 'Client RELEASED called');
-    }
+    await client.query('ROLLBACK');
+    this.logger.log('debug', 'Transaction ROLLBACK called');
+    client.release();
+    this.logger.log('debug', 'Client RELEASED called');
   }
 }
