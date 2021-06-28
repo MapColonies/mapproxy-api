@@ -6,5 +6,5 @@ export enum Services {
   MAPPROXY = 'IMapProxyConfig',
   S3 = 'S3',
   FILEPROVIDER = 'IFileProvider',
-  PG = 'PG'
+  PG = 'PG',
 }

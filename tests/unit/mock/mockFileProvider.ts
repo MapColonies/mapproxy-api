@@ -10,7 +10,7 @@ export class MockFileProvider implements IFileProvider {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public async getJson(): Promise<IMapProxyJsonDocument> {
-    const mockJsonData = await fsp.readFile('tests/unit/mock/mockJson.json', {encoding: "utf8"});
-    return Promise.resolve(JSON.parse(mockJsonData)) as unknown as IMapProxyJsonDocument;
+    const mockJsonData = await fsp.readFile('tests/unit/mock/mockJson.json', { encoding: 'utf8' });
+    return (Promise.resolve(JSON.parse(mockJsonData)) as unknown) as IMapProxyJsonDocument;
   }
 }

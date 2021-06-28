@@ -7,7 +7,6 @@ import { Services } from '../constants';
 import { IFileProvider, IDBConfig, IConfig, ILogger, IMapProxyJsonDocument, IDBColumns } from '../interfaces';
 
 export class DBProvider implements IFileProvider {
-  
   private readonly config: IConfig;
   private readonly dbConfig: IDBConfig;
   private readonly logger: ILogger;
@@ -22,7 +21,7 @@ export class DBProvider implements IFileProvider {
       user: this.dbConfig.user,
       database: this.dbConfig.database,
       password: this.dbConfig.password,
-      port: this.dbConfig.port
+      port: this.dbConfig.port,
     };
     this.pool = new Pool(pgClientConfig);
   }
@@ -33,10 +32,10 @@ export class DBProvider implements IFileProvider {
       const data = JSON.stringify(jsonContent);
       const table: string = this.dbConfig.table;
       const columns: IDBColumns = {
-        data: this.dbConfig.columns.data
+        data: this.dbConfig.columns.data,
       };
       const query = `INSERT INTO ${table}(${columns.data}) VALUES('${data}') RETURNING *;`;
-      await client.query(query) as unknown as IMapProxyJsonDocument;
+      ((await client.query(query)) as unknown) as IMapProxyJsonDocument;
       await client.query('COMMIT');
       this.logger.log('debug', 'Transaction COMMIT called');
       this.logger.log('info', 'Successfully updated database');
@@ -54,11 +53,11 @@ export class DBProvider implements IFileProvider {
       await client.query('BEGIN');
       const query = 'SELECT data FROM configurations ORDER BY timestamp DESC limit 1 FOR UPDATE';
       const result = await client.query<{ data: string }>(query);
-      const jsonContent = result.rows[0].data as unknown as IMapProxyJsonDocument;;
+      const jsonContent = (result.rows[0].data as unknown) as IMapProxyJsonDocument;
       return jsonContent;
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      throw new Error(`Failed to provied json from database: ${error}`)
+      throw new Error(`Failed to provied json from database: ${error}`);
     } finally {
       client.release();
     }

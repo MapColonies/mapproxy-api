@@ -32,7 +32,7 @@ export class S3Provider implements IFileProvider {
   }
 
   public async updateJson(jsonContent: IMapProxyJsonDocument): Promise<void> {
-    try {     
+    try {
       //convert the updated json content to yaml content
       const yamlContent = convertJsonToYaml(jsonContent);
       // Setting up S3 upload parameters

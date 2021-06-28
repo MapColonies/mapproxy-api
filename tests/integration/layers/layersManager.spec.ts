@@ -14,7 +14,7 @@ describe('layerManager', function () {
   beforeAll(function () {
     mockJsonData = readFileSync('tests/unit/mock/mockJson.json', 'utf8');
   });
-  
+
   beforeEach(function () {
     registerTestValues();
     requestSender.init();

@@ -4,7 +4,6 @@ import { Services } from '../constants';
 import { IFileProvider, ILogger, IMapProxyConfig, IMapProxyJsonDocument } from '../interfaces';
 import { convertJsonToYaml, convertYamlToJson, replaceYamlFileContent } from '../utils';
 
-
 export class FSProvider implements IFileProvider {
   private readonly logger: ILogger;
   private readonly mapproxyConfig: IMapProxyConfig;
@@ -12,8 +11,8 @@ export class FSProvider implements IFileProvider {
   public constructor() {
     this.logger = container.resolve(Services.LOGGER);
     this.mapproxyConfig = container.resolve(Services.MAPPROXY);
-  };
-  
+  }
+
   public async updateJson(jsonContent: IMapProxyJsonDocument): Promise<void> {
     try {
       const yamlContent = convertJsonToYaml(jsonContent);
@@ -27,8 +26,8 @@ export class FSProvider implements IFileProvider {
 
   public async getJson(): Promise<IMapProxyJsonDocument> {
     try {
-      const yamlContent = await fsp.readFile(this.mapproxyConfig.yamlFilePath, {encoding: "utf8"});
-      const jsonContent = convertYamlToJson(yamlContent) as unknown as IMapProxyJsonDocument;
+      const yamlContent = await fsp.readFile(this.mapproxyConfig.yamlFilePath, { encoding: 'utf8' });
+      const jsonContent = (convertYamlToJson(yamlContent) as unknown) as IMapProxyJsonDocument;
       return jsonContent;
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions

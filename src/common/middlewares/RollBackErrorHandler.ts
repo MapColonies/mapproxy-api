@@ -7,26 +7,20 @@ import { ILogger, IMapProxyConfig, IPGClient } from '../interfaces';
 @injectable()
 export class RollBackErrorHandler {
   private readonly pgClient: IPGClient;
-  public constructor(@inject(Services.LOGGER) private readonly logger: ILogger,
-  @inject(Services.MAPPROXY) private readonly config: IMapProxyConfig ) {
+  public constructor(@inject(Services.LOGGER) private readonly logger: ILogger, @inject(Services.MAPPROXY) private readonly config: IMapProxyConfig) {
     this.pgClient = container.resolve<IPGClient>('PG');
   }
-  
+
   public getRollBackHandlerMiddleware(): ErrorRequestHandler {
-    return async (
-      err: Error,
-      req: Request,
-      res: Response,
-      next: NextFunction
-    ): Promise<void> => {
-        await this.rollback();
-        next(err)
-    }
+    return async (err: Error, req: Request, res: Response, next: NextFunction): Promise<void> => {
+      await this.rollback();
+      next(err);
+    };
   }
 
   public async rollback(): Promise<void> {
     const client = await this.pgClient.getPoolConnection();
-    if (this.config.fileProvider.toLowerCase() === Providers.DB) { 
+    if (this.config.fileProvider.toLowerCase() === Providers.DB) {
       await client.query('ROLLBACK');
       this.logger.log('debug', 'Transaction ROLLBACK called');
       client.release();
@@ -34,4 +28,3 @@ export class RollBackErrorHandler {
     }
   }
 }
-

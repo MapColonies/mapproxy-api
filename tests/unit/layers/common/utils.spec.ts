@@ -26,7 +26,7 @@ describe('utils', () => {
     it('should convert yaml content to json object', function () {
       // mock
       const mockYamlFile = 'tests/unit/mock/mockContent.yaml';
-      const yamlContent = readFileSync(mockYamlFile, {encoding: 'utf8'});
+      const yamlContent = readFileSync(mockYamlFile, { encoding: 'utf8' });
       // action
       const action = () => utils.convertYamlToJson(yamlContent);
       // expectation
@@ -37,7 +37,7 @@ describe('utils', () => {
     it('should reject with invalid yaml syntax', function () {
       // mock
       const invalidYamlSyntaxFile = 'tests/unit/mock/mockInvalidYamlSyntax.yaml';
-      const yamlContent = readFileSync(invalidYamlSyntaxFile, {encoding: 'utf8'});
+      const yamlContent = readFileSync(invalidYamlSyntaxFile, { encoding: 'utf8' });
       // action
       const action = () => utils.convertYamlToJson(yamlContent);
       // expectation
@@ -50,7 +50,7 @@ describe('utils', () => {
     it('should convert json object content to yaml content', function () {
       // mock
       const mockYamlFile = 'tests/unit/mock/mockContent.yaml';
-      const yamlContent = readFileSync(mockYamlFile, {encoding: 'utf8'});
+      const yamlContent = readFileSync(mockYamlFile, { encoding: 'utf8' });
       const mockConvertedJson: IMapProxyJsonDocument = utils.convertYamlToJson(yamlContent);
       // action
       const convertedYaml: string = utils.convertJsonToYaml(mockConvertedJson);
@@ -64,7 +64,7 @@ describe('utils', () => {
     it('should replace file content with the requested yaml content', function () {
       // mock
       const mockYamlFile = 'tests/unit/mock/mockContent.yaml';
-      const yamlContent = readFileSync(mockYamlFile, {encoding: 'utf8'});
+      const yamlContent = readFileSync(mockYamlFile, { encoding: 'utf8' });
       const mockConvertedJson: IMapProxyJsonDocument = utils.convertYamlToJson(yamlContent);
       const mockLayer: IMapProxyLayer = {
         name: 'mockLayer',

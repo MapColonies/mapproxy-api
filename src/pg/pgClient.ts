@@ -1,7 +1,7 @@
 import { Pool, PoolClient, PoolConfig } from 'pg';
 import { container, injectable } from 'tsyringe';
 import { Services } from '../common/constants';
-import { IConfig, IDBConfig} from '../common/interfaces';
+import { IConfig, IDBConfig } from '../common/interfaces';
 
 @injectable()
 export class PGClient {
@@ -10,13 +10,13 @@ export class PGClient {
     const config: IConfig = container.resolve(Services.CONFIG);
     const dbConfig: IDBConfig = config.get<IDBConfig>('DB');
     const pgClientConfig: PoolConfig = {
-        host: dbConfig.host,
-        user: dbConfig.user,
-        database: dbConfig.database,
-        password: dbConfig.password,
-        port: dbConfig.port
-      };
-     this.pool = new Pool(pgClientConfig);
+      host: dbConfig.host,
+      user: dbConfig.user,
+      database: dbConfig.database,
+      password: dbConfig.password,
+      port: dbConfig.port,
+    };
+    this.pool = new Pool(pgClientConfig);
   }
 
   public async getPoolConnection(): Promise<PoolClient> {
@@ -24,5 +24,3 @@ export class PGClient {
     return client;
   }
 }
-
-

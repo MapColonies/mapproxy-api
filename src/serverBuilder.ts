@@ -48,7 +48,7 @@ export class ServerBuilder {
   }
 
   private registerPostRoutesMiddleware(): void {
-    this.serverInstance.use(this.rollbackErrorHandler.getRollBackHandlerMiddleware())
+    this.serverInstance.use(this.rollbackErrorHandler.getRollBackHandlerMiddleware());
     this.serverInstance.use(this.errorHandler.getErrorHandlerMiddleware());
   }
 }

@@ -27,7 +27,7 @@ export interface IDBConfig {
   password: string;
   port: number;
   table: string;
-  columns: IDBColumns
+  columns: IDBColumns;
 }
 
 export interface IDBColumns {
@@ -136,5 +136,5 @@ export interface ICacheProvider {
 }
 
 export interface IPGClient {
-  getPoolConnection: () => Promise<PoolClient>
+  getPoolConnection: () => Promise<PoolClient>;
 }
