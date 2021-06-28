@@ -1,14 +1,7 @@
 import { readFileSync } from 'fs';
 import config from 'config';
 import { container } from 'tsyringe';
-import {
-  ILayerPostRequest,
-  ILayerToMosaicRequest,
-  IMapProxyCache,
-  IMapProxyConfig,
-  IMapProxyJsonDocument,
-  IUpdateMosaicRequest,
-} from '../../../../src/common/interfaces';
+import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IMapProxyConfig, IUpdateMosaicRequest } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { ConfilctError } from '../../../../src/common/exceptions/http/confilctError';
 import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExists';
@@ -19,9 +12,6 @@ import { MockFileProvider } from '../../mock/mockFileProvider';
 import { Services } from '../../../../src/common/constants';
 
 let layersManager: LayersManager;
-let convertYamlToJsonStub: jest.SpyInstance;
-let convertJsonToYamlStub: jest.SpyInstance;
-let replaceYamlContentStub: jest.SpyInstance;
 let sortArrayByZIndexStub: jest.SpyInstance;
 let getJsonStub: jest.SpyInstance;
 let updateJsonStub: jest.SpyInstance;
@@ -39,9 +29,6 @@ describe('layersManager', () => {
     container.register(Services.MAPPROXY, { useValue: mapproxyConfig });
     getJsonStub = jest.spyOn(MockFileProvider.prototype, 'getJson').mockResolvedValue(JSON.parse(mockJsonData));
     updateJsonStub = jest.spyOn(MockFileProvider.prototype, 'updateJson').mockResolvedValue(undefined);
-    convertYamlToJsonStub = jest.spyOn(utils, 'convertYamlToJson');
-    convertJsonToYamlStub = jest.spyOn(utils, 'convertJsonToYaml');
-    replaceYamlContentStub = jest.spyOn(utils, 'replaceYamlFileContent').mockResolvedValue(undefined);
     sortArrayByZIndexStub = jest.spyOn(utils, 'sortArrayByZIndex').mockReturnValueOnce(['mockLayer1', 'mockLayer2', 'mockLayer3']);
   });
 

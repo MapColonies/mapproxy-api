@@ -77,7 +77,7 @@ describe('utils', () => {
       // action
       const convertedYaml: string = utils.convertJsonToYaml(mockConvertedJson);
       const newConvertedJson: IMapProxyJsonDocument = jsyaml.safeLoad(convertedYaml) as IMapProxyJsonDocument;
-      replaceYamlFileContentStub.mockReturnValueOnce(undefined);
+      replaceYamlFileContentStub.mockResolvedValue(undefined);
       const action = async () => utils.replaceYamlFileContent(mockYamlFile, convertedYaml);
 
       // expectation

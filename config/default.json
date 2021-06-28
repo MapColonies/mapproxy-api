@@ -13,7 +13,7 @@
   },
   "mapproxy": {
     "yamlFilePath": "",
-    "fileProvider": "db",
+    "fileProvider": "fs",
     "cache": {
       "grids": "epsg4326ul",
       "requestFormat": "image/png",
