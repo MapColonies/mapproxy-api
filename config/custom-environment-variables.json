@@ -30,6 +30,13 @@
     "host": "DB_HOST",
     "user": "DB_USER",
     "password": "DB_PASSWORD",
-    "database": "DB_DATABASE"
+    "database": "DB_DATABASE",
+    "enableSslAuth": "DB_SSL_ENABLE",
+    "rejectUnauthorized": "DB_SSL_REJECT_UNAUTHORIZED",
+    "sslPaths": {
+      "ca": "DB_SSL_CA",
+      "key": "DB_SSL_KEY",
+      "cert": "DB_SSL_CERT"
+    }
   }
 }

@@ -28,6 +28,13 @@ export interface IDBConfig {
   port: number;
   table: string;
   columns: IDBColumns;
+  sslEnabled: boolean;
+  rejectUnauthorized: boolean;
+  sslPaths: {
+    ca: string;
+    key: string;
+    cert: string;
+  };
 }
 
 export interface IDBColumns {

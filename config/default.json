@@ -39,6 +39,13 @@
     "table": "configurations",
     "columns": {
       "data": "data"
+    },
+    "enableSslAuth": false,
+    "rejectUnauthorized": true,
+    "sslPaths": {
+      "ca": "",
+      "key": "",
+      "cert": ""
     }
   }
 }

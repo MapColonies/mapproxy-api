@@ -1,3 +1,4 @@
+import { readFileSync } from 'fs';
 import { Pool, PoolClient, PoolConfig } from 'pg';
 import { container, injectable } from 'tsyringe';
 import { Services } from '../common/constants';
@@ -16,6 +17,14 @@ export class PGClient {
       password: dbConfig.password,
       port: dbConfig.port,
     };
+    if (dbConfig.sslEnabled) {
+      pgClientConfig.ssl = {
+        rejectUnauthorized: dbConfig.rejectUnauthorized,
+        key: readFileSync(dbConfig.sslPaths.key),
+        cert: readFileSync(dbConfig.sslPaths.cert),
+        ca: readFileSync(dbConfig.sslPaths.ca),
+      };
+    }
     this.pool = new Pool(pgClientConfig);
   }
 
