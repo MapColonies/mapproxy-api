@@ -29,9 +29,10 @@
   },
   "DB": {
     "host": "DB_HOST",
+    "port": "DB_PORT",
     "user": "DB_USER",
     "password": "DB_PASSWORD",
-    "database": "DB_DATABASE",
+    "database": "DB_NAME",
     "enableSslAuth": "DB_SSL_ENABLE",
     "rejectUnauthorized": "DB_SSL_REJECT_UNAUTHORIZED",
     "sslPaths": {

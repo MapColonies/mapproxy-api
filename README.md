@@ -50,7 +50,7 @@ docker run -e ENV=VALUE mapproxy-api:latest
 
 `LOG_LEVEL` set the log level *based on 'winston' logger, available values as declared in [winston logger docs](https://github.com/winstonjs/winston), *default to 'info'*
 
-`MAPPROXY_FILE_PROVIDER` **available values: 'fs', 's3' or 'db'.**
+`MAPPROXY_CONFIG_PROVIDER` **available values: 'fs', 's3' or 'db'.**
 
  determined where the mapproxy.yaml file is stored. no default value
  
@@ -60,7 +60,6 @@ to yaml file that declared in `MAPPROXY_YAML_FILEPATH`.
  **if set to 's3'** -  changes will directly apply to yaml file that is stored in s3 defined bucket.
 
  **if set to 'db'** - changes will directly apply to the database.
-*deafult to fs*
 
 `MAPPROXY_CACHE_GRIDS` set the requested grid name according environment.
 
@@ -121,10 +120,12 @@ if `MAPPROXY_FILE_PROVIDER` is set to 'db' make sure to declare next envs
 
 `DB_PASSWORD` set the database password, default to 'postgres'
 
-`DB_DATABASE` set the database name, *no default value*
+`DB_NAME` set the database name, *no default value*
+
+`DB_PORT` set the database port, default to 5432
 
 `DB_SSL_ENABLE` set to true if you wished to use database ssl.
-default  to false
+default to false
 
 `DB_SSL_REJECT_UNAUTHORIZED` if true, the server certificate is verified against the list of supplied CAs
 

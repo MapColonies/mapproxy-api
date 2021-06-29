@@ -13,6 +13,6 @@ export const getProvider = (provider: string): IConfigProvider => {
     case 'db':
       return new DBProvider();
     default:
-      throw new Error(`Invalid ${provider} Congiuration - Please define one of the config providers:  "fs", "s3", "db"`);
+      throw new Error(`Invalid config provider received: ${provider} - available values:  "fs", "s3" or "db"`);
   }
 };
