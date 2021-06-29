@@ -4,14 +4,14 @@ import config from 'config';
 import { Probe } from '@map-colonies/mc-probe';
 import { MCLogger, ILoggerConfig, IServiceConfig } from '@map-colonies/mc-logger';
 import { Services } from './common/constants';
-import { IConfigProvider, IMapProxyConfig, IS3Config } from './common/interfaces';
+import { IConfigProvider, IFSConfig, IMapProxyConfig, IS3Config } from './common/interfaces';
 import { getProvider } from './getProvider';
 import { PGClient } from './pg/pgClient';
 
 function registerExternalValues(): void {
   const loggerConfig = config.get<ILoggerConfig>('logger');
   const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
-  const fsConfig = config.get<IS3Config>('FS');
+  const fsConfig = config.get<IFSConfig>('FS');
   const s3Config = config.get<IS3Config>('S3');
   const packageContent = readFileSync('./package.json', 'utf8');
   const service = JSON.parse(packageContent) as IServiceConfig;
@@ -21,9 +21,9 @@ function registerExternalValues(): void {
   container.register(Services.MAPPROXY, { useValue: mapproxyConfig });
   container.register(Services.S3, { useValue: s3Config });
   container.register(Services.FS, { useValue: fsConfig });
-  container.register(Services.FILEPROVIDER, {
+  container.register(Services.CONFIGPROVIDER, {
     useFactory: (): IConfigProvider => {
-      return getProvider(mapproxyConfig.fileProvider);
+      return getProvider(mapproxyConfig.configProvider);
     },
   });
   container.register(Services.PG, { useClass: PGClient });

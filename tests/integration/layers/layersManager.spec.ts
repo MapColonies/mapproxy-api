@@ -5,7 +5,7 @@ import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IUpdateMosaic
 import { mockLayerNameIsNotExists } from '../../unit/mock/mockLayerNameIsNotExists';
 import { mockLayerNameAlreadyExists } from '../../unit/mock/mockLayerNameAlreadyExists';
 import { registerTestValues } from '../testContainerConfig';
-import { MockFileProvider } from '../../unit/mock/mockFileProvider';
+import { MockConfigProvider } from '../../unit/mock/mockConfigProvider';
 import * as utils from '../../../src/common/utils';
 import * as requestSender from './helpers/requestSender';
 
@@ -18,8 +18,8 @@ describe('layerManager', function () {
   beforeEach(function () {
     registerTestValues();
     requestSender.init();
-    jest.spyOn(MockFileProvider.prototype, 'getJson').mockResolvedValue(JSON.parse(mockJsonData));
-    jest.spyOn(MockFileProvider.prototype, 'updateJson').mockResolvedValue(undefined);
+    jest.spyOn(MockConfigProvider.prototype, 'getJson').mockResolvedValue(JSON.parse(mockJsonData));
+    jest.spyOn(MockConfigProvider.prototype, 'updateJson').mockResolvedValue(undefined);
     jest.spyOn(utils, 'replaceYamlFileContent').mockResolvedValue(undefined);
   });
   afterEach(function () {

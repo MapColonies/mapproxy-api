@@ -12,7 +12,7 @@
     "port": "8080"
   },
   "mapproxy": {
-    "fileProvider": "",
+    "configProvider": "fs",
     "cache": {
       "grids": "epsg4326ul",
       "requestFormat": "image/png",

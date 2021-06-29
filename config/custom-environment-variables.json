@@ -9,7 +9,7 @@
     "port": "SERVER_PORT"
   },
   "mapproxy": {
-    "fileProvider": "MAPPROXY_FILE_PROVIDER",
+    "configProvider": "MAPPROXY_CONFIG_PROVIDER",
     "cache": {
       "grids": "MAPPROXY_CACHE_GRIDS",
       "requestFormat": "MAPPROXY_CACHE_REQUEST_FORMAT",

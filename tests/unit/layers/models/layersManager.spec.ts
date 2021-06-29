@@ -8,7 +8,7 @@ import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExist
 import { mockLayerNameIsNotExists } from '../../mock/mockLayerNameIsNotExists';
 import * as utils from '../../../../src/common/utils';
 import { NotFoundError } from '../../../../src/common/exceptions/http/notFoundError';
-import { MockFileProvider } from '../../mock/mockFileProvider';
+import { MockConfigProvider } from '../../mock/mockConfigProvider';
 import { Services } from '../../../../src/common/constants';
 
 let layersManager: LayersManager;
@@ -24,11 +24,11 @@ describe('layersManager', () => {
   });
 
   beforeEach(function () {
-    layersManager = new LayersManager({ log: jest.fn() }, mapproxyConfig, MockFileProvider.prototype);
+    layersManager = new LayersManager({ log: jest.fn() }, mapproxyConfig, MockConfigProvider.prototype);
     // stub util functions
     container.register(Services.MAPPROXY, { useValue: mapproxyConfig });
-    getJsonStub = jest.spyOn(MockFileProvider.prototype, 'getJson').mockResolvedValue(JSON.parse(mockJsonData));
-    updateJsonStub = jest.spyOn(MockFileProvider.prototype, 'updateJson').mockResolvedValue(undefined);
+    getJsonStub = jest.spyOn(MockConfigProvider.prototype, 'getJson').mockResolvedValue(JSON.parse(mockJsonData));
+    updateJsonStub = jest.spyOn(MockConfigProvider.prototype, 'updateJson').mockResolvedValue(undefined);
     sortArrayByZIndexStub = jest.spyOn(utils, 'sortArrayByZIndex').mockReturnValueOnce(['mockLayer1', 'mockLayer2', 'mockLayer3']);
   });
 

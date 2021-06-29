@@ -13,7 +13,7 @@ export class RollBackErrorHandler {
 
   public getRollBackHandlerMiddleware(): ErrorRequestHandler {
     return async (err: Error, req: Request, res: Response, next: NextFunction): Promise<void> => {
-      if (this.config.fileProvider.toLowerCase() === Providers.DB) {
+      if (this.config.configProvider.toLowerCase() === Providers.DB) {
         await this.rollback();
       }
       next(err);
