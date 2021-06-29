@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { promises as fsp } from 'fs';
-import { IFileProvider, IMapProxyJsonDocument } from '../../../src/common/interfaces';
+import { IConfigProvider, IMapProxyJsonDocument } from '../../../src/common/interfaces';
 
-export class MockFileProvider implements IFileProvider {
+export class MockFileProvider implements IConfigProvider {
   // eslint-disable-next-line @typescript-eslint/require-await
   public async updateJson(jsonContent: IMapProxyJsonDocument): Promise<void> {
     void Promise.resolve(undefined);

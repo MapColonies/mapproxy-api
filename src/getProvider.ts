@@ -1,10 +1,10 @@
 import { DBProvider } from './common/providers/dbProvider';
 import { FSProvider } from './common/providers/fSProvider';
 import { S3Provider } from './common/providers/s3Provider';
-import { IFileProvider } from './common/interfaces';
+import { IConfigProvider } from './common/interfaces';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-export const getProvider = (provider: string): IFileProvider => {
+export const getProvider = (provider: string): IConfigProvider => {
   switch (provider.toLowerCase()) {
     case 'fs':
       return new FSProvider();
@@ -13,6 +13,6 @@ export const getProvider = (provider: string): IFileProvider => {
     case 'db':
       return new DBProvider();
     default:
-      throw new Error(`Invalid ${provider} Congiuration - Please define one of the config providers:  "fs", "s3", "db"`)
+      throw new Error(`Invalid ${provider} Congiuration - Please define one of the config providers:  "fs", "s3", "db"`);
   }
 };

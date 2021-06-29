@@ -1,10 +1,10 @@
 import { promises as fsp } from 'fs';
 import { container } from 'tsyringe';
 import { Services } from '../constants';
-import { IFileProvider, IFSConfig, ILogger, IMapProxyJsonDocument } from '../interfaces';
+import { IConfigProvider, IFSConfig, ILogger, IMapProxyJsonDocument } from '../interfaces';
 import { convertJsonToYaml, convertYamlToJson, replaceYamlFileContent } from '../utils';
 
-export class FSProvider implements IFileProvider {
+export class FSProvider implements IConfigProvider {
   private readonly logger: ILogger;
   private readonly fsConfig: IFSConfig;
 

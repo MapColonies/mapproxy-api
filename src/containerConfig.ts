@@ -4,7 +4,7 @@ import config from 'config';
 import { Probe } from '@map-colonies/mc-probe';
 import { MCLogger, ILoggerConfig, IServiceConfig } from '@map-colonies/mc-logger';
 import { Services } from './common/constants';
-import { IFileProvider, IMapProxyConfig, IS3Config } from './common/interfaces';
+import { IConfigProvider, IMapProxyConfig, IS3Config } from './common/interfaces';
 import { getProvider } from './getProvider';
 import { PGClient } from './pg/pgClient';
 
@@ -22,7 +22,7 @@ function registerExternalValues(): void {
   container.register(Services.S3, { useValue: s3Config });
   container.register(Services.FS, { useValue: fsConfig });
   container.register(Services.FILEPROVIDER, {
-    useFactory: (): IFileProvider => {
+    useFactory: (): IConfigProvider => {
       return getProvider(mapproxyConfig.fileProvider);
     },
   });

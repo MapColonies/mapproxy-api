@@ -3,11 +3,11 @@ import { container } from 'tsyringe';
 import S3 from 'aws-sdk/clients/s3';
 import * as AWS from 'aws-sdk';
 import { CredentialsOptions } from 'aws-sdk/lib/credentials';
-import { IFileProvider, ILogger, IMapProxyJsonDocument, IS3Config } from '../interfaces';
+import { IConfigProvider, ILogger, IMapProxyJsonDocument, IS3Config } from '../interfaces';
 import { Services } from '../constants';
 import { convertJsonToYaml, convertYamlToJson } from '../utils';
 
-export class S3Provider implements IFileProvider {
+export class S3Provider implements IConfigProvider {
   private readonly s3: S3;
   private readonly logger: ILogger;
   private readonly s3Config: IS3Config;

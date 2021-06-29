@@ -136,7 +136,7 @@ export interface IUpdateMosaicRequest {
   layers: IMosaicLayerObject[];
 }
 
-export interface IFileProvider {
+export interface IConfigProvider {
   updateJson: (jsonConent: IMapProxyJsonDocument) => Promise<void>;
   getJson: () => Promise<IMapProxyJsonDocument>;
 }

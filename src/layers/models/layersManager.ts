@@ -10,7 +10,7 @@ import {
   IMapProxyConfig,
   IUpdateMosaicRequest,
   ILayerToMosaicRequest,
-  IFileProvider,
+  IConfigProvider,
   ICacheProvider,
   IS3Source,
   IGpkgSource,
@@ -27,7 +27,7 @@ class LayersManager {
   public constructor(
     @inject(Services.LOGGER) private readonly logger: ILogger,
     @inject(Services.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig,
-    @inject(Services.FILEPROVIDER) private readonly fileProvider: IFileProvider
+    @inject(Services.FILEPROVIDER) private readonly fileProvider: IConfigProvider
   ) {}
 
   public async getLayer(layerName: string): Promise<IMapProxyCache> {
