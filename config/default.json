@@ -6,13 +6,12 @@
     "uiPath": "/api"
   },
   "logger": {
-    "level": "debug"
+    "level": "info"
   },
   "server": {
     "port": "8080"
   },
   "mapproxy": {
-    "yamlFilePath": "",
     "fileProvider": "fs",
     "cache": {
       "grids": "epsg4326ul",
@@ -22,11 +21,14 @@
       "gpkgExt": ".gpkg"
     }
   },
+  "FS": {
+    "yamlFilePath": ""
+  },
   "S3": {
     "awsAccessKeyId": "minioadmin",
     "awsSecretAccessKey": "minioadmin",
     "endpointUrl": "http://localhost:9000",
-    "bucket": "dtm",
+    "bucket": "",
     "objectKey": "mapproxy.yaml",
     "sslEnabled": false
   },

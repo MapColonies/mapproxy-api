@@ -11,6 +11,7 @@ import { PGClient } from './pg/pgClient';
 function registerExternalValues(): void {
   const loggerConfig = config.get<ILoggerConfig>('logger');
   const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
+  const fsConfig = config.get<IS3Config>('FS');
   const s3Config = config.get<IS3Config>('S3');
   const packageContent = readFileSync('./package.json', 'utf8');
   const service = JSON.parse(packageContent) as IServiceConfig;
@@ -19,6 +20,7 @@ function registerExternalValues(): void {
   container.register(Services.LOGGER, { useValue: logger });
   container.register(Services.MAPPROXY, { useValue: mapproxyConfig });
   container.register(Services.S3, { useValue: s3Config });
+  container.register(Services.FS, { useValue: fsConfig})
   container.register(Services.FILEPROVIDER, {
     useFactory: (): IFileProvider => {
       return getProvider(mapproxyConfig.fileProvider);

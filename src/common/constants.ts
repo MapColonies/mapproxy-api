@@ -4,7 +4,8 @@ export enum Services {
   LOGGER = 'ILogger',
   CONFIG = 'IConfig',
   MAPPROXY = 'IMapProxyConfig',
-  S3 = 'S3',
   FILEPROVIDER = 'IFileProvider',
+  FS = 'FS',
+  S3 = 'S3',
   PG = 'PG',
 }

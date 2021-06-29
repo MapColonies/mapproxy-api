@@ -43,7 +43,6 @@ export interface IDBColumns {
 
 export interface IMapProxyConfig {
   fileProvider: Providers;
-  yamlFilePath: string;
   cache: {
     grids: string;
     requestFormat: string;
@@ -51,6 +50,10 @@ export interface IMapProxyConfig {
     directoryLayout: string;
     gpkgExt: string;
   };
+}
+
+export interface IFSConfig{
+  yamlFilePath: string;
 }
 
 export interface IS3Config {

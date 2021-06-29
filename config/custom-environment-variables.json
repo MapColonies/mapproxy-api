@@ -10,7 +10,6 @@
   },
   "mapproxy": {
     "fileProvider": "MAPPROXY_FILE_PROVIDER",
-    "yamlFilePath": "MAPPROXY_YAML_FILE_PATH",
     "cache": {
       "grids": "MAPPROXY_CACHE_GRIDS",
       "requestFormat": "MAPPROXY_CACHE_REQUEST_FORMAT",
@@ -18,12 +17,14 @@
       "directoryLayout": "MAPPROXY_CACHE_DIRECTORY_LAYOUT"
     }
   },
+  "FS": {
+    "yamlFilePath": "MAPPROXY_YAML_FILE_PATH"
+  },
   "S3": {
     "awsAccessKeyId": "AWS_ACCESS_KEY_ID",
     "awsSecretAccessKey": "AWS_SECRET_ACCESS_KEY",
     "endpointUrl": "AWS_ENDPOINT_URL",
     "bucket": "AWS_BUCKET",
-    "objectKey": "AWS_OBJECT_KEY",
     "sslEnabled": "AWS_SSL_ENABLED"
   },
   "DB": {
