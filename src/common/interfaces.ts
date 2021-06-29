@@ -52,7 +52,7 @@ export interface IMapProxyConfig {
   };
 }
 
-export interface IFSConfig{
+export interface IFSConfig {
   yamlFilePath: string;
 }
 

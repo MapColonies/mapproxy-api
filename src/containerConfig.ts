@@ -20,7 +20,7 @@ function registerExternalValues(): void {
   container.register(Services.LOGGER, { useValue: logger });
   container.register(Services.MAPPROXY, { useValue: mapproxyConfig });
   container.register(Services.S3, { useValue: s3Config });
-  container.register(Services.FS, { useValue: fsConfig})
+  container.register(Services.FS, { useValue: fsConfig });
   container.register(Services.FILEPROVIDER, {
     useFactory: (): IFileProvider => {
       return getProvider(mapproxyConfig.fileProvider);
