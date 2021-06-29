@@ -13,6 +13,6 @@ export const getProvider = (provider: string): IFileProvider => {
     case 'db':
       return new DBProvider();
     default:
-      return new FSProvider();
+      throw new Error('Bad Congiuration - Please define one of the config providers: "fs", "s3", "db"')
   }
 };

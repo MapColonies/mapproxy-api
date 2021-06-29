@@ -52,7 +52,7 @@ docker run -e ENV=VALUE mapproxy-api:latest
 
 `MAPPROXY_FILE_PROVIDER` **available values: 'fs', 's3' or 'db'.**
 
- determined where the mapproxy.yaml file is stored.
+ determined where the mapproxy.yaml file is stored. no default value
  
   **if set to 'fs'** - changes will apply directly 
 to yaml file that declared in `MAPPROXY_YAML_FILEPATH`.
@@ -101,7 +101,7 @@ if `MAPPROXY_FILE_PROVIDER` is set to 's3' make sure to declare next envs
 
 `AWS_ENDPOINT_URL` AWS endpoint URL, *default to 'http://localhost:9000'*
 
-`AWS_BUCKET` AWS bucket name, no default value
+`AWS_BUCKET` AWS bucket name, no default valuenpm
 
 `AWS_SSL_ENABLED` AWS enable SSL, *deafult to 'false'*
 
