@@ -48,6 +48,7 @@
     "http-status-codes": "^2.1.4",
     "js-yaml": "^3.14.1",
     "openapi-validator-middleware": "^3.2.2",
+    "pg": "^8.6.0",
     "reflect-metadata": "^0.1.13",
     "swagger-ui-express": "^4.1.6",
     "tsyringe": "^4.4.0"
@@ -63,6 +64,7 @@
     "@types/js-yaml": "^3.12.5",
     "@types/multer": "^1.4.5",
     "@types/node": "^14.14.32",
+    "@types/pg": "^8.6.0",
     "@types/supertest": "^2.0.10",
     "@types/swagger-ui-express": "^4.1.2",
     "@types/yamljs": "^0.2.31",

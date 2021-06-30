@@ -1,13 +1,12 @@
 import { extname } from 'path';
-import { readFileSync, writeFileSync } from 'fs';
+import { promises as fsp } from 'fs';
 import { safeLoad, safeDump, YAMLException } from 'js-yaml';
 import { ServiceUnavailableError } from './exceptions/http/serviceUnavailableError';
 import { IMapProxyJsonDocument, IMosaicLayerObject } from './interfaces';
 
 // read mapproxy yaml config file and convert it into a json object
-export function convertYamlToJson(yamlFilePath: string): IMapProxyJsonDocument {
+export function convertYamlToJson(yamlContent: string): IMapProxyJsonDocument {
   try {
-    const yamlContent: string = readFileSync(yamlFilePath, 'utf8');
     const jsonDocument: IMapProxyJsonDocument = safeLoad(yamlContent) as IMapProxyJsonDocument;
     return jsonDocument;
   } catch (error) {
@@ -35,9 +34,9 @@ export function convertJsonToYaml(jsonDocument: IMapProxyJsonDocument): string {
 }
 
 // write new content in mapproxy yaml config file
-export function replaceYamlFileContent(yamlFilePath: string, yamlContent: string): void {
+export async function replaceYamlFileContent(yamlFilePath: string, yamlContent: string): Promise<void> {
   try {
-    writeFileSync(yamlFilePath, yamlContent, 'utf8');
+    await fsp.writeFile(yamlFilePath, yamlContent, 'utf8');
   } catch (error) {
     throw new Error(error);
   }

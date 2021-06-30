@@ -1,20 +1,26 @@
+import { readFileSync } from 'fs';
 import httpStatusCodes from 'http-status-codes';
 import { container } from 'tsyringe';
 import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IUpdateMosaicRequest } from '../../../src/common/interfaces';
 import { mockLayerNameIsNotExists } from '../../unit/mock/mockLayerNameIsNotExists';
 import { mockLayerNameAlreadyExists } from '../../unit/mock/mockLayerNameAlreadyExists';
 import { registerTestValues } from '../testContainerConfig';
-import { MockFileProvider } from '../../unit/mock/mockFileProvider';
+import { MockConfigProvider } from '../../unit/mock/mockConfigProvider';
 import * as utils from '../../../src/common/utils';
 import * as requestSender from './helpers/requestSender';
 
+let mockJsonData: string;
 describe('layerManager', function () {
+  beforeAll(function () {
+    mockJsonData = readFileSync('tests/unit/mock/mockJson.json', 'utf8');
+  });
+
   beforeEach(function () {
     registerTestValues();
     requestSender.init();
-    jest.spyOn(MockFileProvider.prototype, 'getFile').mockResolvedValue(undefined);
-    jest.spyOn(MockFileProvider.prototype, 'uploadFile').mockResolvedValue(undefined);
-    jest.spyOn(utils, 'replaceYamlFileContent').mockReturnValueOnce(undefined);
+    jest.spyOn(MockConfigProvider.prototype, 'getJson').mockResolvedValue(JSON.parse(mockJsonData));
+    jest.spyOn(MockConfigProvider.prototype, 'updateJson').mockResolvedValue(undefined);
+    jest.spyOn(utils, 'replaceYamlFileContent').mockResolvedValue(undefined);
   });
   afterEach(function () {
     jest.resetAllMocks();

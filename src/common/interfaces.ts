@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { ILogMethod } from '@map-colonies/mc-logger';
+import { PoolClient } from 'pg';
 import { JsonObject } from 'swagger-ui-express';
 import { Providers } from './enums/providers';
 
@@ -19,11 +20,29 @@ export interface OpenApiConfig {
   uiPath: string;
 }
 
+export interface IDBConfig {
+  host: string;
+  user: string;
+  database: string;
+  password: string;
+  port: number;
+  table: string;
+  columns: IDBColumns;
+  sslEnabled: boolean;
+  rejectUnauthorized: boolean;
+  sslPaths: {
+    ca: string;
+    key: string;
+    cert: string;
+  };
+}
+
+export interface IDBColumns {
+  data: string;
+}
+
 export interface IMapProxyConfig {
-  fileProvider: Providers;
-  yamlFilePath: string;
-  fileExt?: string;
-  defaultFilePath?: string;
+  configProvider: Providers;
   cache: {
     grids: string;
     requestFormat: string;
@@ -31,15 +50,19 @@ export interface IMapProxyConfig {
     directoryLayout: string;
     gpkgExt: string;
   };
-  s3: {
-    awsAccessKeyId: string;
-    awsSecretAccessKey: string;
-    endpointUrl: string;
-    storageBucket: string;
-    configFileBucket: string;
-    objectKey: string;
-    sslEnabled: boolean;
-  };
+}
+
+export interface IFSConfig {
+  yamlFilePath: string;
+}
+
+export interface IS3Config {
+  awsAccessKeyId: string;
+  awsSecretAccessKey: string;
+  endpointUrl: string;
+  bucket: string;
+  objectKey: string;
+  sslEnabled: boolean;
 }
 
 export interface IMapProxyJsonDocument {
@@ -113,11 +136,15 @@ export interface IUpdateMosaicRequest {
   layers: IMosaicLayerObject[];
 }
 
-export interface IFileProvider {
-  uploadFile: (filePath: string) => Promise<void>;
-  getFile: (filePath: string) => Promise<void>;
+export interface IConfigProvider {
+  updateJson: (jsonConent: IMapProxyJsonDocument) => Promise<void>;
+  getJson: () => Promise<IMapProxyJsonDocument>;
 }
 
 export interface ICacheProvider {
   getCacheSource: (sourcePath: string, tableName?: string) => IS3Source | IGpkgSource;
+}
+
+export interface IPGClient {
+  getPoolConnection: () => Promise<PoolClient>;
 }

@@ -8,6 +8,7 @@ import { IConfig, ILogger } from './common/interfaces';
 import { layersRouterFactory } from './layers/routes/layersRouterFactory';
 import { openapiRouterFactory } from './common/routes/openapi';
 import { ErrorHandler } from './common/middlewares/ErrorHanlder';
+import { RollBackErrorHandler } from './common/middlewares/RollBackErrorHandler';
 
 @injectable()
 export class ServerBuilder {
@@ -17,7 +18,8 @@ export class ServerBuilder {
     @inject(Services.CONFIG) private readonly config: IConfig,
     private readonly requestLogger: RequestLogger,
     @inject(Services.LOGGER) private readonly logger: ILogger,
-    private readonly errorHandler: ErrorHandler
+    private readonly errorHandler: ErrorHandler,
+    private readonly rollbackErrorHandler: RollBackErrorHandler
   ) {
     this.serverInstance = express();
   }
@@ -46,6 +48,7 @@ export class ServerBuilder {
   }
 
   private registerPostRoutesMiddleware(): void {
+    this.serverInstance.use(this.rollbackErrorHandler.getRollBackHandlerMiddleware());
     this.serverInstance.use(this.errorHandler.getErrorHandlerMiddleware());
   }
 }

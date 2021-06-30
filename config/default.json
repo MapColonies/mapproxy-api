@@ -12,25 +12,42 @@
     "port": "8080"
   },
   "mapproxy": {
-    "fileProvider": "fs",
-    "fileExt": ".yaml",
-    "defaultFilePath": "config/default.yaml",
-    "yamlFilePath": "/default.yaml",
+    "configProvider": "fs",
     "cache": {
       "grids": "epsg4326ul",
       "requestFormat": "image/png",
       "upscaleTiles": 18,
       "directoryLayout": "tms",
       "gpkgExt": ".gpkg"
+    }
+  },
+  "FS": {
+    "yamlFilePath": ""
+  },
+  "S3": {
+    "awsAccessKeyId": "minioadmin",
+    "awsSecretAccessKey": "minioadmin",
+    "endpointUrl": "http://localhost:9000",
+    "bucket": "",
+    "objectKey": "mapproxy.yaml",
+    "sslEnabled": false
+  },
+  "DB": {
+    "host": "localhost",
+    "user": "postgres",
+    "password": "postgres",
+    "database": "",
+    "port": 5432,
+    "table": "configurations",
+    "columns": {
+      "data": "data"
     },
-    "s3": {
-      "awsAccessKeyId": "minioadmin",
-      "awsSecretAccessKey": "minioadmin",
-      "endpointUrl": "http://localhost:9000",
-      "storageBucket": "storage_bucket",
-      "configFileBucket": "config_file_bucket",
-      "objectKey": "mapproxy.yaml",
-      "sslEnabled": false
+    "enableSslAuth": false,
+    "rejectUnauthorized": true,
+    "sslPaths": {
+      "ca": "",
+      "key": "",
+      "cert": ""
     }
   }
 }
