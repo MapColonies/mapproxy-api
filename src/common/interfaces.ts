@@ -57,8 +57,8 @@ export interface IFSConfig {
 }
 
 export interface IS3Config {
-  awsAccessKeyId: string;
-  awsSecretAccessKey: string;
+  accessKeyId: string;
+  secretAccessKey: string;
   endpointUrl: string;
   bucket: string;
   objectKey: string;

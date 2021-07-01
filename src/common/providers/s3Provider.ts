@@ -16,8 +16,8 @@ export class S3Provider implements IConfigProvider {
     this.logger = container.resolve(Services.LOGGER);
     this.s3Config = container.resolve(Services.S3);
     const credentials: CredentialsOptions = {
-      accessKeyId: this.s3Config.awsAccessKeyId,
-      secretAccessKey: this.s3Config.awsSecretAccessKey,
+      accessKeyId: this.s3Config.accessKeyId,
+      secretAccessKey: this.s3Config.secretAccessKey,
     };
     const awsCredentials = new AWS.Credentials(credentials);
     const endpoint = this.s3Config.endpointUrl;
