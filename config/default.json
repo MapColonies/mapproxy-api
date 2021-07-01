@@ -25,8 +25,8 @@
     "yamlFilePath": ""
   },
   "S3": {
-    "awsAccessKeyId": "minioadmin",
-    "awsSecretAccessKey": "minioadmin",
+    "accessKeyId": "minioadmin",
+    "secretAccessKey": "minioadmin",
     "endpointUrl": "http://localhost:9000",
     "bucket": "",
     "objectKey": "mapproxy.yaml",

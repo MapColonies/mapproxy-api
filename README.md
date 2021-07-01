@@ -94,15 +94,15 @@ if `MAPPROXY_FILE_PROVIDER` is set to 'fs' make sure to declare next envs
 if `MAPPROXY_FILE_PROVIDER` is set to 's3' make sure to declare next envs
 ***
 
-`AWS_ACCESS_KEY_ID` AWS access key, *default to 'minioadmin'*
+`S3_ACCESS_KEY_ID` S3 access key, *default to 'minioadmin'*
 
-`AWS_SECRET_ACCESS_KEY` AWS secret access key, *default to 'minioadmin'*
+`S3_SECRET_ACCESS_KEY` S3 secret access key, *default to 'minioadmin'*
 
-`AWS_ENDPOINT_URL` AWS endpoint URL, *default to 'http://localhost:9000'*
+`S3_ENDPOINT_URL` S3 endpoint URL, *default to 'http://localhost:9000'*
 
-`AWS_BUCKET` AWS bucket name, no default valuenpm
+`S3_BUCKET` S3 bucket name, no default valuenpm
 
-`AWS_SSL_ENABLED` AWS enable SSL, *deafult to 'false'*
+`S3_SSL_ENABLED` S3 enable SSL, *deafult to 'false'*
 
 
 <br>
