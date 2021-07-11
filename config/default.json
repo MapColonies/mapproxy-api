@@ -40,7 +40,8 @@
     "port": 5432,
     "table": "config",
     "columns": {
-      "data": "data"
+      "data": "data",
+      "updatedTime": "updated_time"
     },
     "enableSslAuth": false,
     "rejectUnauthorized": true,

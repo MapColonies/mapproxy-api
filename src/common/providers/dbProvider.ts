@@ -47,7 +47,7 @@ export class DBProvider implements IConfigProvider {
     const client = await this.pool.connect();
     try {
       await client.query('BEGIN');
-      const query = `SELECT ${this.dbConfig.columns.data} FROM ${this.dbConfig.table} ORDER BY timestamp DESC limit 1 FOR UPDATE`;
+      const query = `SELECT ${this.dbConfig.columns.data} FROM ${this.dbConfig.table} ORDER BY ${this.dbConfig.columns.updatedTime} DESC limit 1 FOR UPDATE`;
       const result = await client.query<{ data: string }>(query);
       const jsonContent = (result.rows[0].data as unknown) as IMapProxyJsonDocument;
       return jsonContent;
