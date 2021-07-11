@@ -38,7 +38,7 @@
     "password": "postgres",
     "database": "",
     "port": 5432,
-    "table": "configurations",
+    "table": "config",
     "columns": {
       "data": "data"
     },
