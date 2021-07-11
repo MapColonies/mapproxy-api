@@ -13,7 +13,10 @@
     "cache": {
       "grids": "MAPPROXY_CACHE_GRIDS",
       "requestFormat": "MAPPROXY_CACHE_REQUEST_FORMAT",
-      "upscaleTiles": "MAPPROXY_CACHE_UPSCALE_TILES",
+      "upscaleTiles": {
+        "__name": "MAPPROXY_CACHE_UPSCALE_TILES",
+        "__format": "number"
+      },
       "directoryLayout": "MAPPROXY_CACHE_DIRECTORY_LAYOUT"
     }
   },

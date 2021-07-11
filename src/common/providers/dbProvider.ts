@@ -30,11 +30,7 @@ export class DBProvider implements IConfigProvider {
     const client = await this.pool.connect();
     try {
       const data = JSON.stringify(jsonContent);
-      const table: string = this.dbConfig.table;
-      const columns: IDBColumns = {
-        data: this.dbConfig.columns.data,
-      };
-      const query = `INSERT INTO ${table}(${columns.data}) VALUES('${data}') RETURNING *;`;
+      const query = `INSERT INTO ${this.dbConfig.table}(${this.dbConfig.columns.data}) VALUES('${data}') RETURNING *;`;
       ((await client.query(query)) as unknown) as IMapProxyJsonDocument;
       await client.query('COMMIT');
       this.logger.log('debug', 'Transaction COMMIT called');
@@ -51,7 +47,7 @@ export class DBProvider implements IConfigProvider {
     const client = await this.pool.connect();
     try {
       await client.query('BEGIN');
-      const query = 'SELECT data FROM configurations ORDER BY timestamp DESC limit 1 FOR UPDATE';
+      const query = `SELECT ${this.dbConfig.columns.data} FROM ${this.dbConfig.table} ORDER BY ${this.dbConfig.columns.updatedTime} DESC limit 1 FOR UPDATE`;
       const result = await client.query<{ data: string }>(query);
       const jsonContent = (result.rows[0].data as unknown) as IMapProxyJsonDocument;
       return jsonContent;

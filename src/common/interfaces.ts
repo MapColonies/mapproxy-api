@@ -39,6 +39,7 @@ export interface IDBConfig {
 
 export interface IDBColumns {
   data: string;
+  updatedTime: string;
 }
 
 export interface IMapProxyConfig {
