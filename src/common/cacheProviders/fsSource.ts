@@ -1,25 +1,24 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { DependencyContainer } from 'tsyringe';
-import { SourceTypes } from './enums/sourceTypes';
-import { Services } from './constants';
-import { ICacheProvider, IMapProxyConfig, IS3Source } from './interfaces';
+import { Services } from '../constants';
+import { SourceTypes } from '../enums/sourceTypes';
+import { ICacheProvider, IFSSource, IMapProxyConfig } from '../interfaces';
 
-class S3Source implements ICacheProvider {
+class FSSource implements ICacheProvider {
   private readonly mapproxyConfig: IMapProxyConfig;
 
   public constructor(container: DependencyContainer) {
     this.mapproxyConfig = container.resolve(Services.MAPPROXY);
   }
-
-  public getCacheSource(sourcePath: string): IS3Source {
-    const s3Source: IS3Source = {
-      type: SourceTypes.S3,
+  public getCacheSource(sourcePath: string): IFSSource {
+    const fsSource: IFSSource = {
+      type: SourceTypes.FS,
       directory: sourcePath,
       directory_layout: this.mapproxyConfig.cache.directoryLayout,
     };
 
-    return s3Source;
+    return fsSource;
   }
 }
 
-export { S3Source };
+export { FSSource };

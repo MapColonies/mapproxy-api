@@ -88,6 +88,7 @@ describe('layerManager', function () {
       tilesPath: '/path/to/tiles/directory/in/my/bucket/',
       maxZoomLevel: 18,
       description: 'description for amsterdam layer',
+      cacheType: 's3',
     };
 
     it('Happy Path - should return status 202', async function () {

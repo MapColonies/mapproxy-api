@@ -236,6 +236,7 @@ describe('layersManager', () => {
       tilesPath: '/path/to/tiles/directory/in/my/bucket/',
       maxZoomLevel: 18,
       description: 'description for amsterdam layer',
+      cacheType: 's3',
     };
 
     it('should successfully update layer', async function () {
