@@ -146,11 +146,11 @@ class LayersManager {
     this.logger.log('info', `Successfully updated layer '${layerName}'`);
   }
 
-  public getCacheValues(cacheSoruce: string, sourcePath: string): IMapProxyCache {
+  public getCacheValues(cacheSource: string, sourcePath: string): IMapProxyCache {
     const grids = this.mapproxyConfig.cache.grids.split(',');
     const requestFormat = this.mapproxyConfig.cache.requestFormat;
     const upscaleTiles = this.mapproxyConfig.cache.upscaleTiles;
-    const cacheType = this.getCacheType(cacheSoruce, sourcePath);
+    const cacheType = this.getCacheType(cacheSource, sourcePath);
 
     const cache: IMapProxyCache = {
       sources: [],
@@ -173,14 +173,14 @@ class LayersManager {
     return layer;
   }
 
-  public getCacheType(cacheSoruce: string, sourcePath: string): IS3Source | IGpkgSource {
+  public getCacheType(cacheSource: string, sourcePath: string): IS3Source | IGpkgSource {
     let sourceProvider: ICacheProvider;
 
-    if (cacheSoruce === SourceTypes.GPKG) {
+    if (cacheSource === SourceTypes.GPKG) {
       sourceProvider = new GpkgSource();
-    } else if (cacheSoruce === SourceTypes.S3) {
+    } else if (cacheSource === SourceTypes.S3) {
       sourceProvider = new S3Source(container);
-    } else if (cacheSoruce === SourceTypes.FS) {
+    } else if (cacheSource === SourceTypes.FS) {
       sourceProvider = new FSSource(container);
     } else {
       throw new Error('Invalid source provider due to invalid source path, available values: "geopackage", "s3", "file"');
