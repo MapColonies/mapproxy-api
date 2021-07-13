@@ -12,8 +12,7 @@ import {
   ILayerToMosaicRequest,
   IConfigProvider,
   ICacheProvider,
-  IS3Source,
-  IGpkgSource,
+  ICacheSource,
 } from '../../common/interfaces';
 import { sortArrayByZIndex } from '../../common/utils';
 import { ConfilctError } from '../../common/exceptions/http/confilctError';
@@ -173,7 +172,7 @@ class LayersManager {
     return layer;
   }
 
-  public getCacheType(cacheSource: string, sourcePath: string): IS3Source | IGpkgSource {
+  public getCacheType(cacheSource: string, sourcePath: string): ICacheSource {
     let sourceProvider: ICacheProvider;
 
     if (cacheSource === SourceTypes.GPKG) {

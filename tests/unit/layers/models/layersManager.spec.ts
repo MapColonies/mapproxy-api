@@ -265,4 +265,50 @@ describe('layersManager', () => {
       expect(updateJsonStub).not.toHaveBeenCalled();
     });
   });
+
+  describe('#getCacheType', () => {
+    const mockTilesPath = '/mock/tiles/path';
+    const directoryLayout = 'tms';
+
+    it('should provide s3 cache as source', function () {
+      const cacheType = 's3';
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      const expectedResult = { type: cacheType, directory: mockTilesPath, directory_layout: directoryLayout };
+      // mock
+      jest.mock('../../../../src/common/cacheProviders/S3Source');
+      // action
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      const cacheProvider = layersManager.getCacheType(cacheType, mockTilesPath);
+      // expectation
+      expect(cacheProvider).toEqual(expectedResult);
+    });
+
+    it('should provide geopackage cache as source', function () {
+      const cacheType = 'geopackage';
+      const mockGpkgPath = '/gpkg/path/mock.gpkg';
+      const tableName = 'mock';
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      const expectedResult = { type: cacheType, filename: mockGpkgPath, table_name: tableName };
+      // mock
+      jest.mock('../../../../src/common/cacheProviders/gpkgSource');
+      // action
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      const cacheProvider = layersManager.getCacheType(cacheType, mockGpkgPath);
+      // expectation
+      expect(cacheProvider).toEqual(expectedResult);
+    });
+
+    it('should provide fs cache directory as source', function () {
+      const cacheType = 'file';
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      const expectedResult = { type: cacheType, directory: mockTilesPath, directory_layout: directoryLayout };
+      // mock
+      jest.mock('../../../../src/common/cacheProviders/fsSource');
+      // action
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      const cacheProvider = layersManager.getCacheType(cacheType, mockTilesPath);
+      // expectation
+      expect(cacheProvider).toEqual(expectedResult);
+    });
+  });
 });
