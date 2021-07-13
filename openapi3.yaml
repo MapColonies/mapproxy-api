@@ -245,6 +245,10 @@ components:
       properties:
         cacheType:
           type: string
+          enum:
+          - geopackage
+          - s3
+          - file
           example: 's3'
         name:
           type: string
