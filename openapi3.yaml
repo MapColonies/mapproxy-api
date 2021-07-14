@@ -238,10 +238,18 @@ components:
     layer:
       type: object
       required:
+        - cacheType
         - name
         - tilesPath
         - maxZoomLevel
       properties:
+        cacheType:
+          type: string
+          enum:
+            - geopackage
+            - s3
+            - file
+          example: 's3'
         name:
           type: string
           example: 'amsterdam_5cm'

@@ -96,6 +96,9 @@ export interface IGpkgSource extends ICacheSource {
   filename: string;
   table_name: string;
 }
+
+export interface IFSSource extends IS3Source {}
+
 export interface IMapProxyCache {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
@@ -118,6 +121,7 @@ export interface ILayerPostRequest {
   tilesPath: string;
   maxZoomLevel?: number;
   description: string;
+  cacheType: string;
 }
 
 export interface ILayerToMosaicRequest {

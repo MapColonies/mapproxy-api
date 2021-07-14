@@ -4,7 +4,7 @@
 import { Pool, PoolConfig } from 'pg';
 import { container } from 'tsyringe';
 import { Services } from '../constants';
-import { IConfigProvider, IDBConfig, IConfig, ILogger, IMapProxyJsonDocument, IDBColumns } from '../interfaces';
+import { IConfigProvider, IDBConfig, IConfig, ILogger, IMapProxyJsonDocument } from '../interfaces';
 
 export class DBProvider implements IConfigProvider {
   private readonly config: IConfig;

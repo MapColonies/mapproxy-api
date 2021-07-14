@@ -12,15 +12,16 @@ import {
   ILayerToMosaicRequest,
   IConfigProvider,
   ICacheProvider,
-  IS3Source,
-  IGpkgSource,
+  ICacheSource,
 } from '../../common/interfaces';
-import { sortArrayByZIndex, getFileExtension } from '../../common/utils';
+import { sortArrayByZIndex } from '../../common/utils';
 import { ConfilctError } from '../../common/exceptions/http/confilctError';
 import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
 import { NotFoundError } from '../../common/exceptions/http/notFoundError';
-import { S3Source } from '../../common/S3Source';
-import { GpkgSource } from '../../common/gpkgSource';
+import { S3Source } from '../../common/cacheProviders/S3Source';
+import { GpkgSource } from '../../common/cacheProviders/gpkgSource';
+import { SourceTypes } from '../../common/enums/sourceTypes';
+import { FSSource } from '../../common/cacheProviders/fsSource';
 
 @injectable()
 class LayersManager {
@@ -48,7 +49,7 @@ class LayersManager {
       throw new ConfilctError(`Layer name '${layerRequest.name}' is already exists`);
     }
 
-    const newCache: IMapProxyCache = this.getCacheValues(layerRequest.tilesPath);
+    const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath);
     const newLayer: IMapProxyLayer = this.getLayerValues(layerRequest.name, layerRequest.description, layerRequest.name);
 
     jsonDocument.caches[layerRequest.name] = newCache;
@@ -128,7 +129,7 @@ class LayersManager {
       throw new NotFoundError(`Layer name '${layerName}' is not exists`);
     }
 
-    const newCache: IMapProxyCache = this.getCacheValues(layerRequest.tilesPath);
+    const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath);
     const newLayer: IMapProxyLayer = this.getLayerValues(layerName, layerRequest.description, layerRequest.name);
 
     // update existing layer cache values with the new requested layer cache values
@@ -144,11 +145,11 @@ class LayersManager {
     this.logger.log('info', `Successfully updated layer '${layerName}'`);
   }
 
-  public getCacheValues(sourcePath: string): IMapProxyCache {
+  public getCacheValues(cacheSource: string, sourcePath: string): IMapProxyCache {
     const grids = this.mapproxyConfig.cache.grids.split(',');
     const requestFormat = this.mapproxyConfig.cache.requestFormat;
     const upscaleTiles = this.mapproxyConfig.cache.upscaleTiles;
-    const cacheType = this.getCacheType(sourcePath);
+    const cacheType = this.getCacheType(cacheSource, sourcePath);
 
     const cache: IMapProxyCache = {
       sources: [],
@@ -171,18 +172,23 @@ class LayersManager {
     return layer;
   }
 
-  public getCacheType(sourcePath: string): IS3Source | IGpkgSource {
-    let sourceProvider: ICacheProvider | undefined;
-    const filePathExtension = getFileExtension(sourcePath);
+  public getCacheType(cacheSource: string, sourcePath: string): ICacheSource {
+    let sourceProvider: ICacheProvider;
 
-    if (filePathExtension === this.mapproxyConfig.cache.gpkgExt) {
-      sourceProvider = new GpkgSource();
-    } else if (filePathExtension === '') {
-      sourceProvider = new S3Source(container);
+    switch (cacheSource) {
+      case SourceTypes.GPKG:
+        sourceProvider = new GpkgSource();
+        break;
+      case SourceTypes.S3:
+        sourceProvider = new S3Source(container);
+        break;
+      case SourceTypes.FS:
+        sourceProvider = new FSSource(container);
+        break;
+      default:
+        throw new Error(`Invalid cache source: ${cacheSource} has been provided , available values: "geopackage", "s3", "file"`);
     }
-    if (sourceProvider === undefined) {
-      throw new Error('Invalid source provider due to invalid source path');
-    }
+
     return sourceProvider.getCacheSource(sourcePath);
   }
 }

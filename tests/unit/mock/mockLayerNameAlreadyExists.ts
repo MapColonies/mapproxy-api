@@ -7,4 +7,5 @@ export const mockLayerNameAlreadyExists: ILayerPostRequest = {
   tilesPath: '/path/to/s3/directory/tile',
   maxZoomLevel: 18,
   description: 'amsterdam 5m layer discription',
+  cacheType: 's3',
 };
