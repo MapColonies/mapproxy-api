@@ -175,14 +175,18 @@ class LayersManager {
   public getCacheType(cacheSource: string, sourcePath: string): ICacheSource {
     let sourceProvider: ICacheProvider;
 
-    if (cacheSource === SourceTypes.GPKG) {
-      sourceProvider = new GpkgSource();
-    } else if (cacheSource === SourceTypes.S3) {
-      sourceProvider = new S3Source(container);
-    } else if (cacheSource === SourceTypes.FS) {
-      sourceProvider = new FSSource(container);
-    } else {
-      throw new Error('Invalid source provider due to invalid source path, available values: "geopackage", "s3", "file"');
+    switch (cacheSource) {
+      case SourceTypes.GPKG:
+        sourceProvider = new GpkgSource();
+        break;
+      case SourceTypes.S3:
+        sourceProvider = new S3Source(container);
+        break;
+      case SourceTypes.FS:
+        sourceProvider = new FSSource(container);
+        break;
+      default:
+        throw new Error(`Invalid cache source: ${cacheSource} has been provided , available values: "geopackage", "s3", "file"`);
     }
 
     return sourceProvider.getCacheSource(sourcePath);
