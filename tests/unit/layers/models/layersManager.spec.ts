@@ -267,7 +267,7 @@ describe('layersManager', () => {
   });
 
   describe('#getCacheType', () => {
-    const mockTilesPath = '/mock/tiles/path';
+    const mockTilesPath = '/mock/tiles/path/';
     const directoryLayout = 'tms';
 
     it('should provide s3 cache as source', function () {

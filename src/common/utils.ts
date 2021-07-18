@@ -1,4 +1,4 @@
-import { extname } from 'path';
+import { extname, sep } from 'path';
 import { promises as fsp } from 'fs';
 import { safeLoad, safeDump, YAMLException } from 'js-yaml';
 import { ServiceUnavailableError } from './exceptions/http/serviceUnavailableError';
@@ -58,5 +58,13 @@ export function getFileExtension(path: string): string {
     return extname(path);
   } catch (error) {
     throw new Error(error);
+  }
+}
+
+export function getTilesPath(tilesPath: string): string {
+  if (tilesPath.endsWith(sep)) {
+    return tilesPath;
+  } else {
+    return tilesPath + sep;
   }
 }
