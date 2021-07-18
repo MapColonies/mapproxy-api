@@ -3,7 +3,7 @@ import { DependencyContainer } from 'tsyringe';
 import { Services } from '../constants';
 import { SourceTypes } from '../enums/sourceTypes';
 import { ICacheProvider, IFSSource, IMapProxyConfig } from '../interfaces';
-import { getTilesPath } from '../utils';
+import { adjustTilesPath } from '../utils';
 
 class FSSource implements ICacheProvider {
   private readonly mapproxyConfig: IMapProxyConfig;
@@ -12,9 +12,10 @@ class FSSource implements ICacheProvider {
     this.mapproxyConfig = container.resolve(Services.MAPPROXY);
   }
   public getCacheSource(sourcePath: string): IFSSource {
+    const sourceCacheType = SourceTypes.FS;
     const fsSource: IFSSource = {
-      type: SourceTypes.FS,
-      directory: getTilesPath(sourcePath),
+      type: sourceCacheType,
+      directory: adjustTilesPath(sourcePath, sourceCacheType),
       directory_layout: this.mapproxyConfig.cache.directoryLayout,
     };
 

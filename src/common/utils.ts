@@ -3,6 +3,7 @@ import { promises as fsp } from 'fs';
 import { safeLoad, safeDump, YAMLException } from 'js-yaml';
 import { ServiceUnavailableError } from './exceptions/http/serviceUnavailableError';
 import { IMapProxyJsonDocument, IMosaicLayerObject } from './interfaces';
+import { SourceTypes } from './enums/sourceTypes';
 
 // read mapproxy yaml config file and convert it into a json object
 export function convertYamlToJson(yamlContent: string): IMapProxyJsonDocument {
@@ -61,10 +62,18 @@ export function getFileExtension(path: string): string {
   }
 }
 
-export function getTilesPath(tilesPath: string): string {
-  if (tilesPath.endsWith(sep)) {
-    return tilesPath;
-  } else {
-    return tilesPath + sep;
+export function adjustTilesPath(tilesPath: string, cacheSource: string): string {
+  switch (cacheSource) {
+    case SourceTypes.FS:
+      tilesPath = tilesPath.startsWith(sep) ? tilesPath : sep + tilesPath;
+      tilesPath = tilesPath.endsWith(sep) ? tilesPath : tilesPath + sep;
+      break;
+    case SourceTypes.S3:
+      tilesPath = tilesPath.startsWith('/') ? tilesPath : `/${tilesPath}`;
+      tilesPath = tilesPath.endsWith('/') ? tilesPath : `${tilesPath}/`;
+      break;
+    default:
+      throw new Error(`Invalid cache source: ${cacheSource} has been provided`);
   }
+  return tilesPath;
 }
