@@ -40,7 +40,7 @@
     "@map-colonies/mc-logger": "^1.2.1",
     "@map-colonies/mc-model-types": "^1.0.1",
     "@map-colonies/mc-probe": "^1.0.0",
-    "@types/lodash": "^4.14.168",
+    "@types/lodash": "^4.14.171",
     "aws-sdk": "^2.859.0",
     "config": "^3.3.3",
     "express": "^4.17.1",
