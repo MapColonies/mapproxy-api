@@ -24,7 +24,7 @@ export async function updateLayer(layerName: string, layerRequest: ILayerPostReq
 }
 
 export async function removeLayer(layerNames: string[]): Promise<supertest.Response> {
-  const queryParams = layerNames.map(layer => `layerNames=${layer}`).join('&');
+  const queryParams = layerNames.map((layer) => `layerNames=${layer}`).join('&');
   return supertest.agent(app).delete(`/layer?${queryParams}`).set('Content-Type', 'application/json');
 }
 

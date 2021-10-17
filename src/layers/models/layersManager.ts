@@ -102,10 +102,11 @@ class LayersManager {
   }
 
   public async removeLayer(layersName: string[]): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     this.logger.log('info', `Remove layers: ${layersName} request`);
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
 
-    layersName.forEach(layerName => {
+    layersName.forEach((layerName) => {
       if (!isLayerNameExists(jsonDocument, layerName)) {
         throw new NotFoundError(`Layer name '${layerName}' is not exists`);
       }
@@ -118,7 +119,6 @@ class LayersManager {
         jsonDocument.layers.splice(requestedLayerIndex, 1);
       }
       this.logger.log('info', `Successfully removed layers '${layerName}'`);
-  
     });
     await this.configProvider.updateJson(jsonDocument);
   }
