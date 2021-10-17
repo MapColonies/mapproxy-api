@@ -10,7 +10,7 @@ type GetLayerHandler = RequestHandler<{ name: string }, IMapProxyCache, IMapProx
 type CreateMosaicHandler = RequestHandler<{ name: string }, ILayerToMosaicRequest, ILayerToMosaicRequest>;
 type UpdateLayerHandler = RequestHandler<{ name: string }, ILayerPostRequest, ILayerPostRequest>;
 type PutMosaicHandler = RequestHandler<{ name: string }, IUpdateMosaicRequest, IUpdateMosaicRequest>;
-type DeleteLayerHandler = RequestHandler<undefined, undefined, undefined, { layerNames: string[] }>;
+type DeleteLayerHandler = RequestHandler<undefined, string[] | void, undefined, { layerNames: string[] }>;
 @injectable()
 export class LayersController {
   public constructor(@inject(Services.LOGGER) private readonly logger: ILogger, @inject(LayersManager) private readonly manager: LayersManager) {}
@@ -43,8 +43,8 @@ export class LayersController {
 
   public removeLayer: DeleteLayerHandler = async (req, res, next) => {
     try {
-      await this.manager.removeLayer(req.query.layerNames);
-      return res.sendStatus(httpStatus.ACCEPTED);
+      const failedLayers = await this.manager.removeLayer(req.query.layerNames);
+      return res.status(httpStatus.ACCEPTED).send(failedLayers);
     } catch (error) {
       next(error);
     }

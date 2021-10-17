@@ -101,15 +101,14 @@ class LayersManager {
     this.logger.log('info', `Successfully updated mosaic: '${mosaicName}'`);
   }
 
-  public async removeLayer(layersName: string[]): Promise<void> {
+  public async removeLayer(layersName: string[]): Promise<string[] | void> {
     // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     this.logger.log('info', `Remove layers: ${layersName} request`);
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
+    const failedLayers: string[] = [];
+    let updateCounter = 0;
 
     layersName.forEach((layerName) => {
-      if (!isLayerNameExists(jsonDocument, layerName)) {
-        throw new NotFoundError(`Layer name '${layerName}' is not exists`);
-      }
       // remove requested layer cache source from cache list
       delete jsonDocument.caches[layerName];
       // remove requested layer from layers array
@@ -117,10 +116,17 @@ class LayersManager {
       const negativeResult = -1;
       if (requestedLayerIndex !== negativeResult) {
         jsonDocument.layers.splice(requestedLayerIndex, 1);
+        updateCounter++;
+        this.logger.log('info', `Successfully removed layers '${layerName}'`);
+      } else {
+        failedLayers.push(layerName);
+        this.logger.log('info', `Layer: [${layerName}] is not exists`);
       }
-      this.logger.log('info', `Successfully removed layers '${layerName}'`);
     });
-    await this.configProvider.updateJson(jsonDocument);
+    if (updateCounter > 0) {
+      await this.configProvider.updateJson(jsonDocument);
+    }
+    return failedLayers;
   }
 
   public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<void> {
