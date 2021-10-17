@@ -122,14 +122,16 @@ describe('layerManager', function () {
 
   describe('#removeLayer', function () {
     it('Happy Path - should return status 202', async function () {
-      const response = await requestSender.removeLayer(mockLayerNameAlreadyExists.name);
+      const mockLayerNames = ['mockLayerNameExists', 'NameIsAlreadyExists'];
+      const response = await requestSender.removeLayer(mockLayerNames);
 
       expect(response.status).toBe(httpStatusCodes.ACCEPTED);
     });
 
     it('Sad Path - should fail with response status 404 Not Found and layer name is not exists', async function () {
-      const response = await requestSender.removeLayer(mockLayerNameIsNotExists.name);
-      const notFoundErrorMessage = `Layer name '${mockLayerNameIsNotExists.name}' is not exists`;
+      const mockLayerNames = ['mockLayerNameIsNotExists', 'anotherMockLayerNameNotExists'];
+      const response = await requestSender.removeLayer(mockLayerNames);
+      const notFoundErrorMessage = `Layer name '${mockLayerNames[0]}' is not exists`;
 
       expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
       expect(response.body).toEqual({ message: notFoundErrorMessage });

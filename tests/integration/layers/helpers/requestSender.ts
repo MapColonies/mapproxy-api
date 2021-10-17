@@ -23,8 +23,9 @@ export async function updateLayer(layerName: string, layerRequest: ILayerPostReq
   return supertest.agent(app).put(`/layer/${layerName}`).set('Content-Type', 'application/json').send(layerRequest);
 }
 
-export async function removeLayer(layerName: string): Promise<supertest.Response> {
-  return supertest.agent(app).delete(`/layer/${layerName}`).set('Content-Type', 'application/json');
+export async function removeLayer(layerNames: string[]): Promise<supertest.Response> {
+  const queryParams = layerNames.map(layer => `layerNames=${layer}`).join('&');
+  return supertest.agent(app).delete(`/layer?${queryParams}`).set('Content-Type', 'application/json');
 }
 
 export async function addLayerToMosaic(mosaicName: string, layerToMosaicRequest: ILayerToMosaicRequest): Promise<supertest.Response> {

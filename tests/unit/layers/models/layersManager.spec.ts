@@ -205,10 +205,10 @@ describe('layersManager', () => {
   describe('#removeLayer', () => {
     it('should successfully remove layer', async function () {
       // mock
-      const mockLayerName = 'mockLayerNameExists';
+      const mockLayerNames = ['mockLayerNameExists', 'NameIsAlreadyExists'];
       // action
       const action = async () => {
-        await layersManager.removeLayer(mockLayerName);
+        await layersManager.removeLayer(mockLayerNames);
       };
       // expectation
       await expect(action()).resolves.not.toThrow();
@@ -218,10 +218,10 @@ describe('layersManager', () => {
 
     it('should reject with not found error due layer name is not exists', async function () {
       // mock
-      const mockLayerName = 'mockLayerNameIsNotExists';
+      const mockLayerNames = ['mockLayerNameIsNotExists', 'anotherMockLayerNameNotExists'];
       // action
       const action = async () => {
-        await layersManager.removeLayer(mockLayerName);
+        await layersManager.removeLayer(mockLayerNames);
       };
       // expectation
       await expect(action).rejects.toThrow(NotFoundError);

@@ -101,24 +101,26 @@ class LayersManager {
     this.logger.log('info', `Successfully updated mosaic: '${mosaicName}'`);
   }
 
-  public async removeLayer(layerName: string): Promise<void> {
-    this.logger.log('info', `Remove layer: ${layerName} request`);
+  public async removeLayer(layersName: string[]): Promise<void> {
+    this.logger.log('info', `Remove layers: ${layersName} request`);
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
 
-    if (!isLayerNameExists(jsonDocument, layerName)) {
-      throw new NotFoundError(`Layer name '${layerName}' is not exists`);
-    }
-    // remove requested layer cache source from cache list
-    delete jsonDocument.caches[layerName];
-    // remove requested layer from layers array
-    const requestedLayerIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === layerName);
-    const negativeResult = -1;
-    if (requestedLayerIndex !== negativeResult) {
-      jsonDocument.layers.splice(requestedLayerIndex, 1);
-    }
-
+    layersName.forEach(layerName => {
+      if (!isLayerNameExists(jsonDocument, layerName)) {
+        throw new NotFoundError(`Layer name '${layerName}' is not exists`);
+      }
+      // remove requested layer cache source from cache list
+      delete jsonDocument.caches[layerName];
+      // remove requested layer from layers array
+      const requestedLayerIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === layerName);
+      const negativeResult = -1;
+      if (requestedLayerIndex !== negativeResult) {
+        jsonDocument.layers.splice(requestedLayerIndex, 1);
+      }
+      this.logger.log('info', `Successfully removed layers '${layerName}'`);
+  
+    });
     await this.configProvider.updateJson(jsonDocument);
-    this.logger.log('info', `Successfully removed layer '${layerName}'`);
   }
 
   public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<void> {

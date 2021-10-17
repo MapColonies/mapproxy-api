@@ -9,7 +9,7 @@ const layersRouterFactory: FactoryFunction<Router> = (dependencyContainer) => {
   router.get('/layer/:name', controller.getLayer);
   router.post('/layer', controller.addLayer);
   router.put('/layer/:name', controller.updateLayer);
-  router.delete('/layer/:name', controller.removeLayer);
+  router.delete('/layer', controller.removeLayer);
   router.post('/mosaic/:name', controller.addLayerToMosaic);
   router.put('/mosaic/:name', controller.updateMosaic);
 
