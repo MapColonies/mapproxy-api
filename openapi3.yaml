@@ -299,6 +299,6 @@ components:
       type: array
       items:
         type: string
-      example: 
+      example:
         - 'amsterdam_5cm'
         - 'amsterdam_5cm-ortho'
