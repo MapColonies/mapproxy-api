@@ -44,7 +44,7 @@ export class LayersController {
   public removeLayer: DeleteLayerHandler = async (req, res, next) => {
     try {
       const failedLayers = await this.manager.removeLayer(req.query.layerNames);
-      return res.status(httpStatus.ACCEPTED).send(failedLayers);
+      return res.status(httpStatus.OK).send(failedLayers);
     } catch (error) {
       next(error);
     }

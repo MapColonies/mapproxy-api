@@ -49,7 +49,7 @@ paths:
               type: string
       responses:
         200:
-          description: Accepted
+          description: OK
         400:
           description: Bad Request
           content:
