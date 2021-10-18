@@ -102,8 +102,7 @@ class LayersManager {
   }
 
   public async removeLayer(layersName: string[]): Promise<string[] | void> {
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-    this.logger.log('info', `Remove layers: ${layersName} request`);
+    this.logger.log('info', `Remove layers: ${layersName.join(',')} request`);
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
     const failedLayers: string[] = [];
     let updateCounter = 0;
