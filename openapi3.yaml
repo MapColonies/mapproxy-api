@@ -50,6 +50,10 @@ paths:
       responses:
         200:
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/failedRemoveDiscreteLayers'
         400:
           description: Bad Request
           content:
@@ -291,3 +295,10 @@ components:
               zIndex:
                 type: number
                 example: 1
+    failedRemoveDiscreteLayers:
+      type: array
+      items:
+        type: string
+      example: 
+        - 'amsterdam_5cm'
+        - 'amsterdam_5cm-ortho'

@@ -121,7 +121,7 @@ describe('layerManager', function () {
   });
 
   describe('#removeLayer', function () {
-    it('Happy Path - should return status 202', async function () {
+    it('Happy Path - should return status 200', async function () {
       const mockLayerNames = ['mockLayerNameExists', 'NameIsAlreadyExists'];
       const response = await requestSender.removeLayer(mockLayerNames);
 
