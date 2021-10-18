@@ -125,7 +125,7 @@ describe('layerManager', function () {
       const mockLayerNames = ['mockLayerNameExists', 'NameIsAlreadyExists'];
       const response = await requestSender.removeLayer(mockLayerNames);
 
-      expect(response.status).toBe(httpStatusCodes.ACCEPTED);
+      expect(response.status).toBe(httpStatusCodes.OK);
     });
   });
 

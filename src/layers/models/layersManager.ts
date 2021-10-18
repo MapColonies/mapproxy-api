@@ -102,7 +102,7 @@ class LayersManager {
   }
 
   public async removeLayer(layersName: string[]): Promise<string[] | void> {
-    this.logger.log('info', `Remove layers: ${layersName.join(',')} request`);
+    this.logger.log('info', `Remove layers request for: [${layersName.join(',')}]`);
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
     const failedLayers: string[] = [];
     let updateCounter = 0;
