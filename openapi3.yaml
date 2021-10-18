@@ -34,6 +34,48 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/layer'
+    delete:
+      operationId: removeLayer
+      tags:
+        - Layer
+      summary: remove layer from mapproxy
+      parameters:
+        - name: layerNames
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/failedRemoveDiscreteLayers'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                LayerNotFound:
+                  value:
+                    message: 'Layer name {layerName} is not exists'
+        500:
+          description: Ineternal Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
   /layer/{name}:
     get:
       operationId: getLayer
@@ -99,42 +141,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/layer'
-    delete:
-      operationId: removeLayer
-      tags:
-        - Layer
-      summary: remove layer from mapproxy
-      parameters:
-        - name: name
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: Accepted
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error'
-        404:
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error'
-              examples:
-                LayerNotFound:
-                  value:
-                    message: 'Layer name {layerName} is not exists'
-        500:
-          description: Ineternal Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error'
   /mosaic/{name}:
     post:
       operationId: addLayerToMosaic
@@ -289,3 +295,10 @@ components:
               zIndex:
                 type: number
                 example: 1
+    failedRemoveDiscreteLayers:
+      type: array
+      items:
+        type: string
+      example:
+        - 'amsterdam_5cm'
+        - 'amsterdam_5cm-ortho'

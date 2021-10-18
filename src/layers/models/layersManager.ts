@@ -101,24 +101,31 @@ class LayersManager {
     this.logger.log('info', `Successfully updated mosaic: '${mosaicName}'`);
   }
 
-  public async removeLayer(layerName: string): Promise<void> {
-    this.logger.log('info', `Remove layer: ${layerName} request`);
+  public async removeLayer(layersName: string[]): Promise<string[] | void> {
+    this.logger.log('info', `Remove layers request for: [${layersName.join(',')}]`);
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
+    const failedLayers: string[] = [];
+    let updateCounter = 0;
 
-    if (!isLayerNameExists(jsonDocument, layerName)) {
-      throw new NotFoundError(`Layer name '${layerName}' is not exists`);
+    layersName.forEach((layerName) => {
+      // remove requested layer cache source from cache list
+      delete jsonDocument.caches[layerName];
+      // remove requested layer from layers array
+      const requestedLayerIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === layerName);
+      const negativeResult = -1;
+      if (requestedLayerIndex !== negativeResult) {
+        jsonDocument.layers.splice(requestedLayerIndex, 1);
+        updateCounter++;
+        this.logger.log('info', `Successfully removed layers '${layerName}'`);
+      } else {
+        failedLayers.push(layerName);
+        this.logger.log('info', `Layer: ['${layerName}'] is not exists`);
+      }
+    });
+    if (updateCounter > 0) {
+      await this.configProvider.updateJson(jsonDocument);
     }
-    // remove requested layer cache source from cache list
-    delete jsonDocument.caches[layerName];
-    // remove requested layer from layers array
-    const requestedLayerIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === layerName);
-    const negativeResult = -1;
-    if (requestedLayerIndex !== negativeResult) {
-      jsonDocument.layers.splice(requestedLayerIndex, 1);
-    }
-
-    await this.configProvider.updateJson(jsonDocument);
-    this.logger.log('info', `Successfully removed layer '${layerName}'`);
+    return failedLayers;
   }
 
   public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<void> {
