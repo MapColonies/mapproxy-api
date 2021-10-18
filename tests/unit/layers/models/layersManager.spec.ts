@@ -223,7 +223,7 @@ describe('layersManager', () => {
       const result = await layersManager.removeLayer(mockNotExistsLayerNames);
       // expectation
       //await expect(action).rejects.toThrow(NotFoundError);
-      expect(result).toEqual(expect.any(Array))
+      expect(result).toEqual(expect.any(Array));
       expect(result).toEqual(mockNotExistsLayerNames);
       expect(getJsonStub).toHaveBeenCalledTimes(1);
       expect(updateJsonStub).not.toHaveBeenCalled();
