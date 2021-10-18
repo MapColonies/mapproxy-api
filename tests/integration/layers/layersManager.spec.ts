@@ -127,15 +127,6 @@ describe('layerManager', function () {
 
       expect(response.status).toBe(httpStatusCodes.ACCEPTED);
     });
-
-    it('Sad Path - should fail with response status 404 Not Found and layer name is not exists', async function () {
-      const mockLayerNames = ['mockLayerNameIsNotExists', 'anotherMockLayerNameNotExists'];
-      const response = await requestSender.removeLayer(mockLayerNames);
-      const notFoundErrorMessage = `Layer name '${mockLayerNames[0]}' is not exists`;
-
-      expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
-      expect(response.body).toEqual({ message: notFoundErrorMessage });
-    });
   });
 
   describe('#addLayerToMosaic', function () {

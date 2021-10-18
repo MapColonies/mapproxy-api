@@ -216,15 +216,15 @@ describe('layersManager', () => {
       expect(updateJsonStub).toHaveBeenCalledTimes(1);
     });
 
-    it('should reject with not found error due layer name is not exists', async function () {
+    it('should return not found layers array and not to throw', async function () {
       // mock
-      const mockLayerNames = ['mockLayerNameIsNotExists', 'anotherMockLayerNameNotExists'];
+      const mockNotExistsLayerNames = ['mockLayerNameIsNotExists', 'anotherMockLayerNameNotExists'];
       // action
-      const action = async () => {
-        await layersManager.removeLayer(mockLayerNames);
-      };
+      const result = await layersManager.removeLayer(mockNotExistsLayerNames);
       // expectation
-      await expect(action).rejects.toThrow(NotFoundError);
+      //await expect(action).rejects.toThrow(NotFoundError);
+      expect(result).toEqual(expect.any(Array))
+      expect(result).toEqual(mockNotExistsLayerNames);
       expect(getJsonStub).toHaveBeenCalledTimes(1);
       expect(updateJsonStub).not.toHaveBeenCalled();
     });

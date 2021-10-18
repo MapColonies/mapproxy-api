@@ -120,7 +120,7 @@ class LayersManager {
         this.logger.log('info', `Successfully removed layers '${layerName}'`);
       } else {
         failedLayers.push(layerName);
-        this.logger.log('info', `Layer: [${layerName}] is not exists`);
+        this.logger.log('info', `Layer: ['${layerName}'] is not exists`);
       }
     });
     if (updateCounter > 0) {
