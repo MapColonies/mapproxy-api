@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/MapColonies/mapproxy-api/compare/v1.2.2...v1.3.0) (2021-10-19)
+
+
+### Features
+
+* fix ssl format and npm audit fix ([#74](https://github.com/MapColonies/mapproxy-api/issues/74)) ([cd8fe70](https://github.com/MapColonies/mapproxy-api/commit/cd8fe702b81a7bfdcb1728dde469288b7e55ef70))
+
 ### [1.2.2](https://github.com/MapColonies/mapproxy-api/compare/v1.2.1...v1.2.2) (2021-07-18)
 
 ### [1.2.1](https://github.com/MapColonies/mapproxy-api/compare/v1.2.0...v1.2.1) (2021-07-18)
