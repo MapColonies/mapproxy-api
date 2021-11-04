@@ -1,9 +1,12 @@
-import { extname, sep } from 'path';
+import { extname, sep, join } from 'path';
 import { promises as fsp } from 'fs';
+import { Services } from '../common/constants';
 import { safeLoad, safeDump, YAMLException } from 'js-yaml';
 import { ServiceUnavailableError } from './exceptions/http/serviceUnavailableError';
-import { IMapProxyJsonDocument, IMosaicLayerObject } from './interfaces';
+import { IFSConfig, IMapProxyJsonDocument, IMosaicLayerObject } from './interfaces';
 import { SourceTypes } from './enums/sourceTypes';
+import { container } from 'tsyringe';
+import { Service } from 'aws-sdk';
 
 // read mapproxy yaml config file and convert it into a json object
 export function convertYamlToJson(yamlContent: string): IMapProxyJsonDocument {
@@ -65,7 +68,8 @@ export function getFileExtension(path: string): string {
 export function adjustTilesPath(tilesPath: string, cacheSource: string): string {
   switch (cacheSource) {
     case SourceTypes.FS:
-      tilesPath = tilesPath.startsWith(sep) ? tilesPath : sep + tilesPath;
+      const fsConfig = container.resolve<IFSConfig>(Services.FS);
+      tilesPath = join(fsConfig.internalMountDir, fsConfig.subTilesPath, tilesPath);
       tilesPath = tilesPath.endsWith(sep) ? tilesPath : tilesPath + sep;
       break;
     case SourceTypes.S3:

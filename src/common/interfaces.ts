@@ -55,6 +55,8 @@ export interface IMapProxyConfig {
 
 export interface IFSConfig {
   yamlFilePath: string;
+  internalMountDir: string;
+  subTilesPath: string;
 }
 
 export interface IS3Config {
