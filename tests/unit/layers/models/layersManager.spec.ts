@@ -1,5 +1,4 @@
 import { readFileSync } from 'fs';
-import config from 'config';
 import { container } from 'tsyringe';
 import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IMapProxyConfig, IUpdateMosaicRequest } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
@@ -22,7 +21,7 @@ describe('layersManager', () => {
   beforeAll(function () {
     mockJsonData = readFileSync('tests/unit/mock/mockJson.json', 'utf8');
   });
-  
+
   beforeEach(function () {
     // stub util functions
     registerTestValues();

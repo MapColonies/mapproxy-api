@@ -22,7 +22,7 @@
   },
   "FS": {
     "yamlFilePath": "MAPPROXY_YAML_FILE_PATH",
-    "internalMountDir":  "INTERNAL_MOUNT_DIR",
+    "internalMountDir": "INTERNAL_MOUNT_DIR",
     "rootTilesPath": "ROOT_TILES_PATH"
   },
   "S3": {
