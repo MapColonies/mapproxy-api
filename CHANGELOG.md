@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.1](https://github.com/MapColonies/mapproxy-api/compare/v1.3.0...v1.3.1) (2021-11-07)
+
+
+### Bug Fixes
+
+* fixed tiles path from fs mount directory ([#76](https://github.com/MapColonies/mapproxy-api/issues/76)) ([a3b491b](https://github.com/MapColonies/mapproxy-api/commit/a3b491bdd344974d5b1cf0ec721ff18a8cf9ca54))
+
 ## [1.3.0](https://github.com/MapColonies/mapproxy-api/compare/v1.2.2...v1.3.0) (2021-10-19)
 
 
