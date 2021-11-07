@@ -22,7 +22,9 @@
     }
   },
   "FS": {
-    "yamlFilePath": ""
+    "yamlFilePath": "",
+    "internalMountDir": "",
+    "subTilesPath": ""
   },
   "S3": {
     "accessKeyId": "minioadmin",

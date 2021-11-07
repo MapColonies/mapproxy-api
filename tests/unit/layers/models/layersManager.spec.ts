@@ -1,5 +1,4 @@
 import { readFileSync } from 'fs';
-import config from 'config';
 import { container } from 'tsyringe';
 import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IMapProxyConfig, IUpdateMosaicRequest } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
@@ -10,6 +9,7 @@ import * as utils from '../../../../src/common/utils';
 import { NotFoundError } from '../../../../src/common/exceptions/http/notFoundError';
 import { MockConfigProvider } from '../../mock/mockConfigProvider';
 import { Services } from '../../../../src/common/constants';
+import { registerTestValues } from '../../../integration/testContainerConfig';
 
 let layersManager: LayersManager;
 let sortArrayByZIndexStub: jest.SpyInstance;
@@ -17,16 +17,16 @@ let getJsonStub: jest.SpyInstance;
 let updateJsonStub: jest.SpyInstance;
 let mockJsonData: string;
 
-const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
 describe('layersManager', () => {
   beforeAll(function () {
     mockJsonData = readFileSync('tests/unit/mock/mockJson.json', 'utf8');
   });
 
   beforeEach(function () {
-    layersManager = new LayersManager({ log: jest.fn() }, mapproxyConfig, MockConfigProvider.prototype);
     // stub util functions
-    container.register(Services.MAPPROXY, { useValue: mapproxyConfig });
+    registerTestValues();
+    const mapproxyConfig = container.resolve<IMapProxyConfig>(Services.MAPPROXY);
+    layersManager = new LayersManager({ log: jest.fn() }, mapproxyConfig, MockConfigProvider.prototype);
     getJsonStub = jest.spyOn(MockConfigProvider.prototype, 'getJson').mockResolvedValue(JSON.parse(mockJsonData));
     updateJsonStub = jest.spyOn(MockConfigProvider.prototype, 'updateJson').mockResolvedValue(undefined);
     sortArrayByZIndexStub = jest.spyOn(utils, 'sortArrayByZIndex').mockReturnValueOnce(['mockLayer1', 'mockLayer2', 'mockLayer3']);
