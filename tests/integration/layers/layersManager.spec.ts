@@ -65,7 +65,7 @@ describe('layerManager', function () {
         // mocking bad request with invalid field 'mockName' to test BadRequest status
         mockName: 'NameIsNotExists',
         tilesPath: '/path/to/s3/directory/tile',
-        maxZoomLevel: 18
+        maxZoomLevel: 18,
       } as unknown) as ILayerPostRequest;
       const response = await requestSender.addLayer(mockBadRequestRequest);
 
