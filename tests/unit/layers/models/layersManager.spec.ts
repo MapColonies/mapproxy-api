@@ -235,7 +235,6 @@ describe('layersManager', () => {
       name: 'amsterdam_5cm',
       tilesPath: '/path/to/tiles/directory/in/my/bucket/',
       maxZoomLevel: 18,
-      description: 'description for amsterdam layer',
       cacheType: 's3',
     };
 

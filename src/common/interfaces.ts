@@ -122,7 +122,6 @@ export interface ILayerPostRequest {
   name: string;
   tilesPath: string;
   maxZoomLevel?: number;
-  description: string;
   cacheType: string;
 }
 
