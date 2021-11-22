@@ -265,9 +265,6 @@ components:
         maxZoomLevel:
           type: number
           example: 18
-        description:
-          type: string
-          example: 'description for amsterdam layer'
     mosaicLayer:
       type: object
       required:

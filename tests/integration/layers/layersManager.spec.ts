@@ -66,7 +66,6 @@ describe('layerManager', function () {
         mockName: 'NameIsNotExists',
         tilesPath: '/path/to/s3/directory/tile',
         maxZoomLevel: 18,
-        description: 'amsterdam 5m layer discription',
       } as unknown) as ILayerPostRequest;
       const response = await requestSender.addLayer(mockBadRequestRequest);
 
@@ -87,7 +86,6 @@ describe('layerManager', function () {
       name: 'amsterdam_5cm',
       tilesPath: '/path/to/tiles/directory/in/my/bucket/',
       maxZoomLevel: 18,
-      description: 'description for amsterdam layer',
       cacheType: 's3',
     };
 
@@ -103,7 +101,6 @@ describe('layerManager', function () {
         mockName: 'amsterdam_5cm',
         tilesPath: '/path/to/tiles/directory/in/my/bucket/',
         maxZoomLevel: 18,
-        description: 'description for amsterdam layer',
       } as unknown) as ILayerPostRequest;
 
       const response = await requestSender.updateLayer(mockLayerNameAlreadyExists.name, mockBadRequest);

@@ -50,7 +50,7 @@ class LayersManager {
     }
 
     const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath);
-    const newLayer: IMapProxyLayer = this.getLayerValues(layerRequest.name, layerRequest.description, layerRequest.name);
+    const newLayer: IMapProxyLayer = this.getLayerValues(layerRequest.name);
 
     jsonDocument.caches[layerRequest.name] = newCache;
     jsonDocument.layers.push(newLayer);
@@ -137,7 +137,7 @@ class LayersManager {
     }
 
     const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath);
-    const newLayer: IMapProxyLayer = this.getLayerValues(layerName, layerRequest.description, layerRequest.name);
+    const newLayer: IMapProxyLayer = this.getLayerValues(layerName);
 
     // update existing layer cache values with the new requested layer cache values
     jsonDocument.caches[layerName] = newCache;
@@ -169,11 +169,11 @@ class LayersManager {
     return cache;
   }
 
-  public getLayerValues(layerName: string, title: string, sources: string): IMapProxyLayer {
+  public getLayerValues(layerName: string): IMapProxyLayer {
     const layer: IMapProxyLayer = {
       name: layerName,
-      title: title,
-      sources: [sources],
+      title: layerName,
+      sources: [layerName],
     };
 
     return layer;
