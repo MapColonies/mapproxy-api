@@ -50,7 +50,7 @@
     "openapi-validator-middleware": "^3.2.2",
     "pg": "^8.6.0",
     "reflect-metadata": "^0.1.13",
-    "swagger-ui-express": "^4.1.6",
+    "swagger-ui-express": "^4.2.0",
     "tsyringe": "^4.4.0"
   },
   "devDependencies": {
