@@ -39,6 +39,7 @@
     "user": "postgres",
     "password": "postgres",
     "database": "",
+    "schema": "public",
     "port": 5432,
     "table": "config",
     "columns": {
