@@ -1,4 +1,4 @@
-SET SCHEMA 'public'; -- CHANGE SCHEMA NAME TO MATCH ENVIRONMENT
+SET search_path TO "MapproxyConfig", public;-- CHANGE SCHEMA NAME TO MATCH ENVIRONMENT
 -- Table: config
 -- DROP TABLE config;
 CREATE TABLE config
