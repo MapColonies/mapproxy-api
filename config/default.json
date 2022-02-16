@@ -46,7 +46,7 @@
       "data": "data",
       "updatedTime": "updated_time"
     },
-    "enableSslAuth": false,
+    "sslEnabled": true,
     "rejectUnauthorized": true,
     "sslPaths": {
       "ca": "",
