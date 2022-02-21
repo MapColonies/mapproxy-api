@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs';
-import { Pool, PoolConfig } from 'pg';
+import { Pool, PoolClient, PoolConfig } from 'pg';
 import { container } from 'tsyringe';
 import { Services } from '../constants';
 import { IConfigProvider, IDBConfig, IConfig, ILogger, IMapProxyJsonDocument } from '../interfaces';
@@ -33,7 +33,7 @@ export class DBProvider implements IConfigProvider {
   }
 
   public async updateJson(jsonContent: IMapProxyJsonDocument): Promise<void> {
-    const client = await this.pool.connect();
+    const client = await this.connectToDb();
     try {
       const data = JSON.stringify(jsonContent);
       const query = `INSERT INTO ${this.dbConfig.table}(${this.dbConfig.columns.data}) VALUES('${data}') RETURNING *;`;
@@ -50,7 +50,7 @@ export class DBProvider implements IConfigProvider {
   }
 
   public async getJson(): Promise<IMapProxyJsonDocument> {
-    const client = await this.pool.connect();
+    const client = await this.connectToDb();
     try {
       await client.query('BEGIN');
       const query = `SELECT ${this.dbConfig.columns.data} FROM ${this.dbConfig.table} ORDER BY ${this.dbConfig.columns.updatedTime} DESC limit 1 FOR UPDATE`;
@@ -63,5 +63,11 @@ export class DBProvider implements IConfigProvider {
     } finally {
       client.release();
     }
+  }
+
+  private async connectToDb(): Promise<PoolClient> {
+    const pgClient = await this.pool.connect();
+    await pgClient.query(`SET search_path TO "${this.dbConfig.schema}",public`);
+    return pgClient;
   }
 }
