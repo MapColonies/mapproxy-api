@@ -61,12 +61,12 @@ describe('layerManager', function () {
     });
 
     it('Bad Path - should fail with response status 400 Bad Request', async function () {
-      const mockBadRequestRequest = ({
+      const mockBadRequestRequest = {
         // mocking bad request with invalid field 'mockName' to test BadRequest status
         mockName: 'NameIsNotExists',
         tilesPath: '/path/to/s3/directory/tile',
         maxZoomLevel: 18,
-      } as unknown) as ILayerPostRequest;
+      } as unknown as ILayerPostRequest;
       const response = await requestSender.addLayer(mockBadRequestRequest);
 
       expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
@@ -96,12 +96,12 @@ describe('layerManager', function () {
     });
 
     it('Bad Path - should fail with response status 400 Bad Request', async function () {
-      const mockBadRequest = ({
+      const mockBadRequest = {
         // mocking bad request with invalid field 'mockName' to test BadRequest status
         mockName: 'amsterdam_5cm',
         tilesPath: '/path/to/tiles/directory/in/my/bucket/',
         maxZoomLevel: 18,
-      } as unknown) as ILayerPostRequest;
+      } as unknown as ILayerPostRequest;
 
       const response = await requestSender.updateLayer(mockLayerNameAlreadyExists.name, mockBadRequest);
 
@@ -141,9 +141,9 @@ describe('layerManager', function () {
     it('Bad Path - should fail with response status 400 Bad Request', async function () {
       const mockMosaicName = 'mosaicMockName';
       // mocking bad request with invalid field 'mockName' to test BadRequest status
-      const mockBadRequestRequest = ({
+      const mockBadRequestRequest = {
         mockName: 'layerNameIsNotExists',
-      } as unknown) as ILayerToMosaicRequest;
+      } as unknown as ILayerToMosaicRequest;
       const response = await requestSender.addLayerToMosaic(mockMosaicName, mockBadRequestRequest);
 
       expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
@@ -194,13 +194,13 @@ describe('layerManager', function () {
 
     it('Bad Path - should fail with response status 400 Bad Request', async function () {
       const mockMosaicName = 'existsMosaicName';
-      const mockBadRequest = ({
+      const mockBadRequest = {
         // mocking bad request with invalid field 'mockName' to test BadRequest status
         layers: [
           { mockName: 'amsterdam_5cm', zIndex: 1 },
           { mockName: 'LayerNameIsNotExists', zIndex: 0 },
         ],
-      } as unknown) as IUpdateMosaicRequest;
+      } as unknown as IUpdateMosaicRequest;
       const response = await requestSender.updateMosaic(mockMosaicName, mockBadRequest);
 
       expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
