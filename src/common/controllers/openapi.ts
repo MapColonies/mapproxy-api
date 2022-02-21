@@ -6,6 +6,7 @@ import { injectable, inject } from 'tsyringe';
 import { IConfig } from 'config';
 import { Services } from '../constants';
 import { ILogger, OpenApiConfig } from '../interfaces';
+
 @injectable()
 export class OpenapiController {
   public uiMiddleware: RequestHandler[];

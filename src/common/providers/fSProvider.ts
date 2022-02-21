@@ -27,7 +27,7 @@ export class FSProvider implements IConfigProvider {
   public async getJson(): Promise<IMapProxyJsonDocument> {
     try {
       const yamlContent = await fsp.readFile(this.fsConfig.yamlFilePath, { encoding: 'utf8' });
-      const jsonContent = (convertYamlToJson(yamlContent) as unknown) as IMapProxyJsonDocument;
+      const jsonContent = convertYamlToJson(yamlContent) as unknown as IMapProxyJsonDocument;
       return jsonContent;
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
