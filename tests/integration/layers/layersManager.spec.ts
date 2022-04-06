@@ -26,8 +26,6 @@ import { container } from 'tsyringe';
 import { ServerBuilder } from '../../../src/serverBuilder';
 
 let requestSender: layersRequestSender;
-let getJsonSpy: jest.SpyInstance;
-let updateJsonSpy: jest.SpyInstance;
 describe('layerManager', function () {
   beforeEach(function () {
     console.log("BEFORE EACH")
@@ -55,13 +53,14 @@ describe('layerManager', function () {
     });
     container.resolve<ServerBuilder>(ServerBuilder);
     requestSender = new layersRequestSender(app);
-    getJsonSpy = jest.spyOn(MockConfigProvider.prototype, 'getJson').mockResolvedValue((mockData as unknown) as IMapProxyJsonDocument);
-    updateJsonSpy = jest.spyOn(MockConfigProvider.prototype, 'updateJson').mockResolvedValue(undefined);
+    jest.spyOn(MockConfigProvider.prototype, 'getJson').mockResolvedValue((mockData as unknown) as IMapProxyJsonDocument);
+    jest.spyOn(MockConfigProvider.prototype, 'updateJson').mockResolvedValue(undefined);
     jest.spyOn(utils, 'replaceYamlFileContent').mockResolvedValue(undefined);
   });
 
   afterEach(() => {    
-    console.log("AFTER EACH")
+    jest.restoreAllMocks();
+    jest.resetAllMocks();
     jest.clearAllMocks();
     container.clearInstances();
   });
