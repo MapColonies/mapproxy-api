@@ -2,6 +2,7 @@
 import { PoolClient } from 'pg';
 import { JsonObject } from 'swagger-ui-express';
 import { Providers } from './enums/providers';
+
 export interface IConfig {
   get: <T>(setting: string) => T;
   has: (setting: string) => boolean;

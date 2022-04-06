@@ -2,12 +2,12 @@ import { Request, Response, NextFunction, ErrorRequestHandler } from 'express';
 import { inject, injectable } from 'tsyringe';
 import { BadRequest } from 'express-openapi-validator/dist/framework/types';
 import { StatusCodes } from 'http-status-codes';
+import { Logger } from '@map-colonies/js-logger';
 import { SERVICES } from '../constants';
 import { HttpError } from '../exceptions/http/httpError';
 import { ConfilctError } from '../exceptions/http/confilctError';
 import { NoContentError } from '../exceptions/http/noContentError';
 import { ServiceUnavailableError } from '../exceptions/http/serviceUnavailableError';
-import { Logger } from '@map-colonies/js-logger';
 
 @injectable()
 export class ErrorHandler {

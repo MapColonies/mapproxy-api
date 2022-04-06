@@ -1,5 +1,5 @@
-import { Logger } from '@map-colonies/js-logger';
 import { promises as fsp } from 'fs';
+import { Logger } from '@map-colonies/js-logger';
 import { container } from 'tsyringe';
 import { SERVICES } from '../constants';
 import { IConfigProvider, IFSConfig, IMapProxyJsonDocument } from '../interfaces';

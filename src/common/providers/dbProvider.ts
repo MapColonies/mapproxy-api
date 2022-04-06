@@ -1,5 +1,5 @@
-import { Logger } from '@map-colonies/js-logger';
 import { readFileSync } from 'fs';
+import { Logger } from '@map-colonies/js-logger';
 import { Pool, PoolClient, PoolConfig } from 'pg';
 import { container } from 'tsyringe';
 import { SERVICES } from '../constants';

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { container, inject, injectable } from 'tsyringe';
+import { Logger } from '@map-colonies/js-logger';
 import { SERVICES } from '../../common/constants';
 import {
   ILayerPostRequest,
@@ -21,7 +22,6 @@ import { S3Source } from '../../common/cacheProviders/S3Source';
 import { GpkgSource } from '../../common/cacheProviders/gpkgSource';
 import { SourceTypes } from '../../common/enums/sourceTypes';
 import { FSSource } from '../../common/cacheProviders/fsSource';
-import { Logger } from '@map-colonies/js-logger';
 
 @injectable()
 class LayersManager {
@@ -73,7 +73,7 @@ class LayersManager {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const mosaicCache: IMapProxyCache = jsonDocument.caches[mosaicName];
     mosaicCache.sources.push(layerToMosaicRequest.layerName);
-    
+
     await this.configProvider.updateJson(jsonDocument);
     this.logger.info(`Successfully added layer: '${layerToMosaicRequest.layerName}' to mosaic: '${mosaicName}'`);
   }
@@ -147,7 +147,6 @@ class LayersManager {
     if (requestedLayerIndex !== negativeResult) {
       jsonDocument.layers[requestedLayerIndex] = newLayer;
     }
-    //console.log(jsonDocument)
     await this.configProvider.updateJson(jsonDocument);
     this.logger.info(`Successfully updated layer '${layerName}'`);
   }
