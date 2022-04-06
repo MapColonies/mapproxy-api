@@ -8,13 +8,13 @@ enabled: true
 environment: development
 replicaCount: 1
 initialDelaySeconds: 60
-nodePort: 30002 #for minikube deployment only
+nodePort: 30999 #for minikube deployment only
 resetOnConfigChange: true
 
 cloudProvider:
-  dockerRegistryUrl: my-registry-url.io
+  dockerRegistryUrl: 10.45.130.11:5000
   imagePullSecretName: 'my-registry-secret'
-  flavor: openshift
+  flavor: minikube
 
 caSecretName: ''
 caPath: '/usr/local/share/ca-certificates'
@@ -22,7 +22,7 @@ caKey: 'ca.crt'
 
 image:
   repository: mapproxy-api
-  tag: 'latest'
+  tag: 'tempalte'
 
 rasterCommon:
   storage:
@@ -32,14 +32,14 @@ rasterCommon:
         name: "internal-pvc"
         tilesSubPath: tiles
     s3:
-      endpointUrl: "localhost:9000"
-      tilesBucket: "raster-tiles"
+      endpointUrl: "10.45.130.11:9000"
+      tilesBucket: "dtm"
       sslEnabled: false
       secretName: "s3-secret"
 
   db:
-    host: "localhost"
-    name: "mapproxy-config"
+    host: "10.45.130.11"
+    name: "mapproxy-config-dev"
     port: 5432
     sslEnabled: false
     secrets:
@@ -70,13 +70,13 @@ local: # for local stand alone deployment, external pvc and secrets should be us
     createSecret: false
     secretAccessKey: minioadmin
     accessKeyId: minioadmin
-    
+
 env:
-  dbRejectUnauthorized: true
+  dbRejectUnauthorized: false
   port: 80
   targetPort: 8080
   protocol: TCP
-  logLevel: warn
+  logLevel: info
   logPrettyPrintEnabled: false
   responseCompressionEnabled: true
   requestPayloadLimit: 1mb
@@ -93,7 +93,7 @@ env:
     directoryLayout: tms
 
 resources:
-  enabled: true
+  enabled: false
   value:
     limits:
       cpu: 100m

@@ -1,0 +1,25 @@
+{{- $releaseName := .Release.Name -}}
+{{- $chartName := include "mapproxy-api.name" . -}}
+
+{{- if .Values.local.fs.createComponents -}}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: layer-sources-pv
+  labels:
+    app: {{ $chartName }}
+    component: {{ $chartName }}
+    environment: {{ include "mapproxy-api.environment" . }}
+    release: {{ $releaseName }}
+    {{- include "mapproxy-api.labels" . | nindent 4 }}
+spec:
+  {{- if .Values.local.fs.storageClass }}
+  storageClassName: {{ .Values.local.fs.storageClass }}
+  {{- end }}
+  capacity:
+    storage:  {{ .Values.local.fs.capacity }}
+  accessModes:
+    - {{ .Values.local.fs.accessMode }}
+  hostPath:
+    path: {{ .Values.local.fs.hostPath }}
+{{- end }}

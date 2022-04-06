@@ -1,6 +1,6 @@
 {{- $releaseName := .Release.Name -}}
-{{- $chartName := include "ts-server-boilerplate.name" . -}}
-{{- $cloudProviderFlavor := include "ts-server-boilerplate.cloudProviderFlavor" . -}}
+{{- $chartName := include "mapproxy-api.name" . -}}
+{{- $cloudProviderFlavor := include "mapproxy-api.cloudProviderFlavor" . -}}
 {{- if .Values.enabled -}}
 apiVersion: v1
 kind: Service
@@ -9,9 +9,9 @@ metadata:
   labels:
     app: {{ $chartName }}
     component: {{ $chartName }}
-    environment: {{ include "ts-server-boilerplate.environment" . }}
+    environment: {{ include "mapproxy-api.environment" . }}
     release: {{ $releaseName }}
-    {{- include "ts-server-boilerplate.labels" . | nindent 4 }}
+    {{- include "mapproxy-api.labels" . | nindent 4 }}
 spec:
   {{- if eq $cloudProviderFlavor "minikube" }}
   type: NodePort
@@ -28,5 +28,5 @@ spec:
     app: {{ $chartName }}
     release: {{ $releaseName }}
     run: {{ $releaseName }}-{{ $chartName }}
-    {{- include "ts-server-boilerplate.selectorLabels" . | nindent 4 }}
+    {{- include "mapproxy-api.selectorLabels" . | nindent 4 }}
 {{- end }}

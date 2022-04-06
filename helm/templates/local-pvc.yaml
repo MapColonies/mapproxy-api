@@ -1,0 +1,24 @@
+{{- $releaseName := .Release.Name -}}
+{{- $chartName := include "mapproxy-api.name" . -}}
+
+{{- if .Values.local.fs.createComponents -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.rasterCommon.storage.fs.tilesPvc.name }}
+  labels:
+    app: {{ $chartName }}
+    component: {{ $chartName }}
+    environment: {{ include "mapproxy-api.environment" . }}
+    release: {{ $releaseName }}
+    {{- include "mapproxy-api.labels" . | nindent 4 }}
+spec:
+  {{- if .Values.local.fs.storageClass }}
+  storageClassName: {{ .Values.local.fs.storageClass }}
+  {{- end }}
+  accessModes:
+    - {{ .Values.local.fs.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.local.fs.capacity }}
+{{- end }}
