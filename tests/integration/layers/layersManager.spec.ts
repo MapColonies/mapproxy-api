@@ -28,7 +28,6 @@ import { ServerBuilder } from '../../../src/serverBuilder';
 let requestSender: layersRequestSender;
 describe('layerManager', function () {
   beforeEach(function () {
-    console.log("BEFORE EACH")
     const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
     const fsConfig = config.get<IFSConfig>('FS');
     const s3Config = config.get<IS3Config>('S3');

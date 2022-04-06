@@ -62,7 +62,6 @@ class LayersManager {
   public async addLayerToMosaic(mosaicName: string, layerToMosaicRequest: ILayerToMosaicRequest): Promise<void> {
     this.logger.info(`Add layer: ${layerToMosaicRequest.layerName} to mosaic: ${mosaicName} request`);
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
-    console.log(jsonDocument);
 
     if (!isLayerNameExists(jsonDocument, layerToMosaicRequest.layerName)) {
       throw new NotFoundError(`Layer name '${layerToMosaicRequest.layerName}' is not exists`);
