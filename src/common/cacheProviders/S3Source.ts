@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { DependencyContainer } from 'tsyringe';
 import { SourceTypes } from '../enums/sourceTypes';
-import { Services } from '../constants';
+import { SERVICES } from '../constants';
 import { ICacheProvider, IMapProxyConfig, IS3Source } from '../interfaces';
 import { adjustTilesPath } from '../utils';
 
@@ -9,7 +9,7 @@ class S3Source implements ICacheProvider {
   private readonly mapproxyConfig: IMapProxyConfig;
 
   public constructor(container: DependencyContainer) {
-    this.mapproxyConfig = container.resolve(Services.MAPPROXY);
+    this.mapproxyConfig = container.resolve(SERVICES.MAPPROXY);
   }
 
   public getCacheSource(sourcePath: string): IS3Source {

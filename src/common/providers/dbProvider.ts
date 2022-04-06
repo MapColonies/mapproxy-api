@@ -1,18 +1,19 @@
+import { Logger } from '@map-colonies/js-logger';
 import { readFileSync } from 'fs';
 import { Pool, PoolClient, PoolConfig } from 'pg';
 import { container } from 'tsyringe';
-import { Services } from '../constants';
-import { IConfigProvider, IDBConfig, IConfig, ILogger, IMapProxyJsonDocument } from '../interfaces';
+import { SERVICES } from '../constants';
+import { IConfigProvider, IDBConfig, IConfig, IMapProxyJsonDocument } from '../interfaces';
 
 export class DBProvider implements IConfigProvider {
   private readonly config: IConfig;
   private readonly dbConfig: IDBConfig;
-  private readonly logger: ILogger;
+  private readonly logger: Logger;
   private readonly pool: Pool;
   public constructor() {
-    this.logger = container.resolve(Services.LOGGER);
-    this.config = container.resolve(Services.CONFIG);
-    const config: IConfig = container.resolve(Services.CONFIG);
+    this.logger = container.resolve(SERVICES.LOGGER);
+    this.config = container.resolve(SERVICES.CONFIG);
+    const config: IConfig = container.resolve(SERVICES.CONFIG);
     this.dbConfig = config.get<IDBConfig>('DB');
     const pgClientConfig: PoolConfig = {
       host: this.dbConfig.host,
@@ -39,8 +40,8 @@ export class DBProvider implements IConfigProvider {
       const query = `INSERT INTO ${this.dbConfig.table}(${this.dbConfig.columns.data}) VALUES('${data}') RETURNING *;`;
       (await client.query(query)) as unknown as IMapProxyJsonDocument;
       await client.query('COMMIT');
-      this.logger.log('debug', 'Transaction COMMIT called');
-      this.logger.log('info', 'Successfully updated database');
+      this.logger.debug('Transaction COMMIT called');
+      this.logger.info('Successfully updated database');
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       throw new Error(`Failed to update database: ${error}`);

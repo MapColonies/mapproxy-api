@@ -1,30 +1,68 @@
-import { readFileSync } from 'fs';
 import httpStatusCodes from 'http-status-codes';
-import { container } from 'tsyringe';
-import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IUpdateMosaicRequest } from '../../../src/common/interfaces';
+import {
+  IConfigProvider,
+  IFSConfig,
+  ILayerPostRequest,
+  ILayerToMosaicRequest,
+  IMapProxyCache,
+  IMapProxyConfig,
+  IMapProxyJsonDocument,
+  IS3Config,
+  IUpdateMosaicRequest,
+} from '../../../src/common/interfaces';
 import { mockLayerNameIsNotExists } from '../../unit/mock/mockLayerNameIsNotExists';
 import { mockLayerNameAlreadyExists } from '../../unit/mock/mockLayerNameAlreadyExists';
-import { registerTestValues } from '../testContainerConfig';
 import { MockConfigProvider } from '../../unit/mock/mockConfigProvider';
 import * as utils from '../../../src/common/utils';
-import * as requestSender from './helpers/requestSender';
+import { getApp } from '../../../src/app';
+import jsLogger from '@map-colonies/js-logger';
+import { trace } from '@opentelemetry/api';
+import { SERVICES } from '../../../src/common/constants';
+import config from 'config';
+import { layersRouterFactory, LAYERS_ROUTER_SYMBOL } from '../../../src/layers/routes/layersRouterFactory';
+import { layersRequestSender } from '../layers/helpers/requestSender';
+import { mockData } from '../../unit/mock/mockData';
+import { container } from 'tsyringe';
+import { ServerBuilder } from '../../../src/serverBuilder';
 
-let mockJsonData: string;
+let requestSender: layersRequestSender;
+let getJsonSpy: jest.SpyInstance;
+let updateJsonSpy: jest.SpyInstance;
 describe('layerManager', function () {
-  beforeAll(function () {
-    mockJsonData = readFileSync('tests/unit/mock/mockJson.json', 'utf8');
-  });
-
   beforeEach(function () {
-    registerTestValues();
-    requestSender.init();
-    jest.spyOn(MockConfigProvider.prototype, 'getJson').mockResolvedValue(JSON.parse(mockJsonData));
-    jest.spyOn(MockConfigProvider.prototype, 'updateJson').mockResolvedValue(undefined);
+    console.log("BEFORE EACH")
+    const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
+    const fsConfig = config.get<IFSConfig>('FS');
+    const s3Config = config.get<IS3Config>('S3');
+    const mockConfigProvider = new MockConfigProvider();
+    const app = getApp({
+      override: [
+        { token: SERVICES.MAPPROXY, provider: { useValue: mapproxyConfig } },
+        { token: SERVICES.LOGGER, provider: { useValue: jsLogger({ enabled: false }) } },
+        { token: SERVICES.TRACER, provider: { useValue: trace.getTracer('testTracer') } },
+        { token: SERVICES.CONFIG, provider: { useValue: config } },
+        { token: LAYERS_ROUTER_SYMBOL, provider: { useFactory: layersRouterFactory } },
+        { token: SERVICES.FS, provider: { useValue: fsConfig } },
+        { token: SERVICES.S3, provider: { useValue: s3Config } },
+        {
+          token: SERVICES.CONFIGPROVIDER,
+          provider: {
+            useValue: mockConfigProvider,
+          },
+        },
+      ],
+      useChild: false,
+    });
+    container.resolve<ServerBuilder>(ServerBuilder);
+    requestSender = new layersRequestSender(app);
+    getJsonSpy = jest.spyOn(MockConfigProvider.prototype, 'getJson').mockResolvedValue((mockData as unknown) as IMapProxyJsonDocument);
+    updateJsonSpy = jest.spyOn(MockConfigProvider.prototype, 'updateJson').mockResolvedValue(undefined);
     jest.spyOn(utils, 'replaceYamlFileContent').mockResolvedValue(undefined);
   });
-  afterEach(function () {
-    jest.resetAllMocks();
-    jest.restoreAllMocks();
+
+  afterEach(() => {    
+    console.log("AFTER EACH")
+    jest.clearAllMocks();
     container.clearInstances();
   });
 
@@ -56,19 +94,19 @@ describe('layerManager', function () {
   describe('#addLayer', function () {
     it('Happy Path - should return status 201', async function () {
       const response = await requestSender.addLayer(mockLayerNameIsNotExists);
+      //console.log(response);
 
       expect(response.status).toBe(httpStatusCodes.CREATED);
     });
 
     it('Bad Path - should fail with response status 400 Bad Request', async function () {
-      const mockBadRequestRequest = {
+      const mockBadRequestRequest = ({
         // mocking bad request with invalid field 'mockName' to test BadRequest status
         mockName: 'NameIsNotExists',
         tilesPath: '/path/to/s3/directory/tile',
         maxZoomLevel: 18,
-      } as unknown as ILayerPostRequest;
+      } as unknown) as ILayerPostRequest;
       const response = await requestSender.addLayer(mockBadRequestRequest);
-
       expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
     });
 
@@ -96,12 +134,12 @@ describe('layerManager', function () {
     });
 
     it('Bad Path - should fail with response status 400 Bad Request', async function () {
-      const mockBadRequest = {
+      const mockBadRequest = ({
         // mocking bad request with invalid field 'mockName' to test BadRequest status
         mockName: 'amsterdam_5cm',
         tilesPath: '/path/to/tiles/directory/in/my/bucket/',
         maxZoomLevel: 18,
-      } as unknown as ILayerPostRequest;
+      } as unknown) as ILayerPostRequest;
 
       const response = await requestSender.updateLayer(mockLayerNameAlreadyExists.name, mockBadRequest);
 
@@ -134,16 +172,16 @@ describe('layerManager', function () {
 
     it('Happy Path - should return status 201', async function () {
       const response = await requestSender.addLayerToMosaic(mockMosaicName, mockLayerToMosaicRequest);
-
+      //console.log(response)
       expect(response.status).toBe(httpStatusCodes.CREATED);
     });
 
     it('Bad Path - should fail with response status 400 Bad Request', async function () {
       const mockMosaicName = 'mosaicMockName';
       // mocking bad request with invalid field 'mockName' to test BadRequest status
-      const mockBadRequestRequest = {
+      const mockBadRequestRequest = ({
         mockName: 'layerNameIsNotExists',
-      } as unknown as ILayerToMosaicRequest;
+      } as unknown) as ILayerToMosaicRequest;
       const response = await requestSender.addLayerToMosaic(mockMosaicName, mockBadRequestRequest);
 
       expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
@@ -194,13 +232,13 @@ describe('layerManager', function () {
 
     it('Bad Path - should fail with response status 400 Bad Request', async function () {
       const mockMosaicName = 'existsMosaicName';
-      const mockBadRequest = {
+      const mockBadRequest = ({
         // mocking bad request with invalid field 'mockName' to test BadRequest status
         layers: [
           { mockName: 'amsterdam_5cm', zIndex: 1 },
           { mockName: 'LayerNameIsNotExists', zIndex: 0 },
         ],
-      } as unknown as IUpdateMosaicRequest;
+      } as unknown) as IUpdateMosaicRequest;
       const response = await requestSender.updateMosaic(mockMosaicName, mockBadRequest);
 
       expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);

@@ -1,16 +1,17 @@
+import { Logger } from '@map-colonies/js-logger';
 import { promises as fsp } from 'fs';
 import { container } from 'tsyringe';
-import { Services } from '../constants';
-import { IConfigProvider, IFSConfig, ILogger, IMapProxyJsonDocument } from '../interfaces';
+import { SERVICES } from '../constants';
+import { IConfigProvider, IFSConfig, IMapProxyJsonDocument } from '../interfaces';
 import { convertJsonToYaml, convertYamlToJson, replaceYamlFileContent } from '../utils';
 
 export class FSProvider implements IConfigProvider {
-  private readonly logger: ILogger;
+  private readonly logger: Logger;
   private readonly fsConfig: IFSConfig;
 
   public constructor() {
-    this.logger = container.resolve(Services.LOGGER);
-    this.fsConfig = container.resolve(Services.FS);
+    this.logger = container.resolve(SERVICES.LOGGER);
+    this.fsConfig = container.resolve(SERVICES.FS);
   }
 
   public async updateJson(jsonContent: IMapProxyJsonDocument): Promise<void> {
@@ -19,7 +20,7 @@ export class FSProvider implements IConfigProvider {
       await replaceYamlFileContent(this.fsConfig.yamlFilePath, yamlContent);
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      this.logger.log('error', `Failed to update file: ${error}`);
+      this.logger.error(`Failed to update file: ${error}`);
       throw new Error(error);
     }
   }
@@ -31,7 +32,7 @@ export class FSProvider implements IConfigProvider {
       return jsonContent;
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      this.logger.log('error', `Failed to provied json from file: ${error}`);
+      this.logger.error(`Failed to provied json from file: ${error}`);
       throw new Error(error);
     }
   }

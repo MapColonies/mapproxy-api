@@ -3,18 +3,19 @@ import { container } from 'tsyringe';
 import S3 from 'aws-sdk/clients/s3';
 import * as AWS from 'aws-sdk';
 import { CredentialsOptions } from 'aws-sdk/lib/credentials';
-import { IConfigProvider, ILogger, IMapProxyJsonDocument, IS3Config } from '../interfaces';
-import { Services } from '../constants';
+import { IConfigProvider, IMapProxyJsonDocument, IS3Config } from '../interfaces';
+import { SERVICES } from '../constants';
 import { convertJsonToYaml, convertYamlToJson } from '../utils';
+import { Logger } from '@map-colonies/js-logger';
 
 export class S3Provider implements IConfigProvider {
   private readonly s3: S3;
-  private readonly logger: ILogger;
+  private readonly logger: Logger;
   private readonly s3Config: IS3Config;
 
   public constructor() {
-    this.logger = container.resolve(Services.LOGGER);
-    this.s3Config = container.resolve(Services.S3);
+    this.logger = container.resolve(SERVICES.LOGGER);
+    this.s3Config = container.resolve(SERVICES.S3);
     const credentials: CredentialsOptions = {
       accessKeyId: this.s3Config.accessKeyId,
       secretAccessKey: this.s3Config.secretAccessKey,
@@ -43,10 +44,10 @@ export class S3Provider implements IConfigProvider {
       };
       // Uploading files to the bucket
       await this.s3.upload(params).promise();
-      this.logger.log('info', `File uploaded successfully.`);
+      this.logger.info(`File uploaded successfully.`);
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      this.logger.log('error', `Failed to upload file: ${error}`);
+      this.logger.info(`Failed to upload file: ${error}`);
       throw new Error(error);
     }
   }
@@ -59,14 +60,14 @@ export class S3Provider implements IConfigProvider {
         Key: this.s3Config.objectKey, // File name you want to read from S3
       };
       // Reads file from the bucket
-      this.logger.log('info', `Reading file from bucket: ${this.s3Config.bucket}`);
+      this.logger.info(`Reading file from bucket: ${this.s3Config.bucket}`);
       const data = (await this.s3.getObject(params).promise()) as { Body: string };
       const jsonContent: IMapProxyJsonDocument = convertYamlToJson(data.Body);
-      this.logger.log('info', `Successfully read the file`);
+      this.logger.info(`Successfully read the file`);
       return jsonContent;
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      this.logger.log('error', `Failed to read file: ${error}`);
+      this.logger.error(`Failed to read file: ${error}`);
       throw new Error(error);
     }
   }

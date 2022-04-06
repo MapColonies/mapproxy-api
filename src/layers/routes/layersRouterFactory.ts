@@ -15,5 +15,5 @@ const layersRouterFactory: FactoryFunction<Router> = (dependencyContainer) => {
 
   return router;
 };
-
+export const LAYERS_ROUTER_SYMBOL = Symbol('layersRouterFactory');
 export { layersRouterFactory };

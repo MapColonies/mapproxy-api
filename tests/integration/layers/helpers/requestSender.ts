@@ -4,34 +4,35 @@ import { container } from 'tsyringe';
 import { ServerBuilder } from '../../../../src/serverBuilder';
 import { ILayerPostRequest, ILayerToMosaicRequest, IUpdateMosaicRequest } from '../../../../src/common/interfaces';
 
-let app: Application | null = null;
+export class layersRequestSender {
+  public constructor(private readonly app: Express.Application) {}
 
-export function init(): void {
-  const builder = container.resolve<ServerBuilder>(ServerBuilder);
-  app = builder.build();
-}
-
-export async function getLayer(layerName: string): Promise<supertest.Response> {
-  return supertest.agent(app).get(`/layer/${layerName}`).set('Content-Type', 'application/json');
-}
-
-export async function addLayer(layerRequest: ILayerPostRequest): Promise<supertest.Response> {
-  return supertest.agent(app).post(`/layer`).set('Content-Type', 'application/json').send(layerRequest);
-}
-
-export async function updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<supertest.Response> {
-  return supertest.agent(app).put(`/layer/${layerName}`).set('Content-Type', 'application/json').send(layerRequest);
-}
-
-export async function removeLayer(layerNames: string[]): Promise<supertest.Response> {
-  const queryParams = layerNames.map((layer) => `layerNames=${layer}`).join('&');
-  return supertest.agent(app).delete(`/layer?${queryParams}`).set('Content-Type', 'application/json');
-}
-
-export async function addLayerToMosaic(mosaicName: string, layerToMosaicRequest: ILayerToMosaicRequest): Promise<supertest.Response> {
-  return supertest.agent(app).post(`/mosaic/${mosaicName}`).set('Content-Type', 'application/json').send(layerToMosaicRequest);
-}
-
-export async function updateMosaic(mosaicName: string, updateMosaicRequest: IUpdateMosaicRequest): Promise<supertest.Response> {
-  return supertest.agent(app).put(`/mosaic/${mosaicName}`).set('Content-Type', 'application/json').send(updateMosaicRequest);
+  public init(): void {
+    const builder = container.resolve<ServerBuilder>(ServerBuilder);
+  }
+  
+  public async getLayer(layerName: string): Promise<supertest.Response> {
+    return supertest.agent(this.app).get(`/layer/${layerName}`).set('Content-Type', 'application/json');
+  }
+  
+  public async addLayer(layerRequest: ILayerPostRequest): Promise<supertest.Response> {
+    return supertest.agent(this.app).post(`/layer`).set('Content-Type', 'application/json').send(layerRequest);
+  }
+  
+  public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<supertest.Response> {
+    return supertest.agent(this.app).put(`/layer/${layerName}`).set('Content-Type', 'application/json').send(layerRequest);
+  }
+  
+  public async removeLayer(layerNames: string[]): Promise<supertest.Response> {
+    const queryParams = layerNames.map((layer) => `layerNames=${layer}`).join('&');
+    return supertest.agent(this.app).delete(`/layer?${queryParams}`).set('Content-Type', 'application/json');
+  }
+  
+  public async addLayerToMosaic(mosaicName: string, layerToMosaicRequest: ILayerToMosaicRequest): Promise<supertest.Response> {
+    return supertest.agent(this.app).post(`/mosaic/${mosaicName}`).set('Content-Type', 'application/json').send(layerToMosaicRequest);
+  }
+  
+  public async updateMosaic(mosaicName: string, updateMosaicRequest: IUpdateMosaicRequest): Promise<supertest.Response> {
+    return supertest.agent(this.app).put(`/mosaic/${mosaicName}`).set('Content-Type', 'application/json').send(updateMosaicRequest);
+  }
 }

@@ -2,7 +2,7 @@ import { extname, sep, join } from 'path';
 import { promises as fsp } from 'fs';
 import { safeLoad, safeDump, YAMLException } from 'js-yaml';
 import { container } from 'tsyringe';
-import { Services } from '../common/constants';
+import { SERVICES } from '../common/constants';
 import { ServiceUnavailableError } from './exceptions/http/serviceUnavailableError';
 import { IFSConfig, IMapProxyJsonDocument, IMosaicLayerObject } from './interfaces';
 import { SourceTypes } from './enums/sourceTypes';
@@ -30,7 +30,6 @@ export function convertJsonToYaml(jsonDocument: IMapProxyJsonDocument): string {
   try {
     const yamlContent: string = safeDump(jsonDocument, { noArrayIndent: true });
     return yamlContent;
-    //TODO: add yaml content validation
   } catch (error) {
     throw new Error(error);
   }
@@ -65,7 +64,7 @@ export function getFileExtension(path: string): string {
 }
 
 export function adjustTilesPath(tilesPath: string, cacheSource: string): string {
-  const fsConfig = container.resolve<IFSConfig>(Services.FS);
+  const fsConfig = container.resolve<IFSConfig>(SERVICES.FS);
   switch (cacheSource) {
     case SourceTypes.FS:
       tilesPath = join(fsConfig.internalMountDir, fsConfig.subTilesPath, tilesPath);

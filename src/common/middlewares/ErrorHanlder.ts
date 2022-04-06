@@ -2,16 +2,16 @@ import { Request, Response, NextFunction, ErrorRequestHandler } from 'express';
 import { inject, injectable } from 'tsyringe';
 import { BadRequest } from 'express-openapi-validator/dist/framework/types';
 import { StatusCodes } from 'http-status-codes';
-import { Services } from '../constants';
-import { ILogger } from '../interfaces';
+import { SERVICES } from '../constants';
 import { HttpError } from '../exceptions/http/httpError';
 import { ConfilctError } from '../exceptions/http/confilctError';
 import { NoContentError } from '../exceptions/http/noContentError';
 import { ServiceUnavailableError } from '../exceptions/http/serviceUnavailableError';
+import { Logger } from '@map-colonies/js-logger';
 
 @injectable()
 export class ErrorHandler {
-  public constructor(@inject(Services.LOGGER) private readonly logger: ILogger) {}
+  public constructor(@inject(SERVICES.LOGGER) private readonly logger: Logger) {}
 
   public getErrorHandlerMiddleware(): ErrorRequestHandler {
     return (
@@ -62,7 +62,7 @@ export class ErrorHandler {
           };
         }
       }
-      this.logger.log('error', `${req.method} request to ${req.originalUrl}  has failed with error: ${err.message}`);
+      this.logger.error(`${req.method} request to ${req.originalUrl}  has failed with error: ${err.message}`);
       res.status(status).json(body);
     };
   }

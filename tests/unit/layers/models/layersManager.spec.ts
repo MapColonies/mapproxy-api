@@ -8,14 +8,16 @@ import { mockLayerNameIsNotExists } from '../../mock/mockLayerNameIsNotExists';
 import * as utils from '../../../../src/common/utils';
 import { NotFoundError } from '../../../../src/common/exceptions/http/notFoundError';
 import { MockConfigProvider } from '../../mock/mockConfigProvider';
-import { Services } from '../../../../src/common/constants';
+import { SERVICES } from '../../../../src/common/constants';
 import { registerTestValues } from '../../../integration/testContainerConfig';
+import jsLogger from '@map-colonies/js-logger';
 
 let layersManager: LayersManager;
 let sortArrayByZIndexStub: jest.SpyInstance;
 let getJsonStub: jest.SpyInstance;
 let updateJsonStub: jest.SpyInstance;
 let mockJsonData: string;
+const logger = jsLogger({ enabled: false });
 
 describe('layersManager', () => {
   beforeAll(function () {
@@ -25,8 +27,8 @@ describe('layersManager', () => {
   beforeEach(function () {
     // stub util functions
     registerTestValues();
-    const mapproxyConfig = container.resolve<IMapProxyConfig>(Services.MAPPROXY);
-    layersManager = new LayersManager({ log: jest.fn() }, mapproxyConfig, MockConfigProvider.prototype);
+    const mapproxyConfig = container.resolve<IMapProxyConfig>(SERVICES.MAPPROXY);
+    layersManager = new LayersManager(logger, mapproxyConfig, MockConfigProvider.prototype);
     getJsonStub = jest.spyOn(MockConfigProvider.prototype, 'getJson').mockResolvedValue(JSON.parse(mockJsonData));
     updateJsonStub = jest.spyOn(MockConfigProvider.prototype, 'updateJson').mockResolvedValue(undefined);
     sortArrayByZIndexStub = jest.spyOn(utils, 'sortArrayByZIndex').mockReturnValueOnce(['mockLayer1', 'mockLayer2', 'mockLayer3']);

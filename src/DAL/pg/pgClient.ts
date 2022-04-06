@@ -1,14 +1,14 @@
 import { readFileSync } from 'fs';
 import { Pool, PoolClient, PoolConfig } from 'pg';
 import { container, injectable } from 'tsyringe';
-import { Services } from '../common/constants';
-import { IConfig, IDBConfig } from '../common/interfaces';
+import { SERVICES } from '../../common/constants';
+import { IConfig, IDBConfig } from '../../common/interfaces';
 
 @injectable()
 export class PGClient {
   private readonly pool: Pool;
   public constructor() {
-    const config: IConfig = container.resolve(Services.CONFIG);
+    const config: IConfig = container.resolve(SERVICES.CONFIG);
     const dbConfig: IDBConfig = config.get<IDBConfig>('DB');
     const pgClientConfig: PoolConfig = {
       host: dbConfig.host,
