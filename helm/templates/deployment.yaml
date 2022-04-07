@@ -56,13 +56,13 @@ spec:
             {{- end }}
             {{- if and .Values.rasterCommon.db.sslEnabled (eq (upper .Values.rasterCommon.storage.mapproxyConfigStorageProvider) "DB") }}
             - name: ca-file
-              mountPath: /pg/certs/ca.pem
+              mountPath: "/opt/certs/ca/ca.pem"
               subPath: ca.pem
             - name: key-file
-              mountPath: /pg/certs/key.pem
+              mountPath: "/opt/certs/key/key.pem"
               subPath: key.pem
             - name: cert-file
-              mountPath: /pg/certs/cert.pem
+              mountPath: "/opt/certs/cert/cert.pem"
               subPath: cert.pem
             {{- end }}
             {{- if  eq (upper .Values.rasterCommon.storage.mapproxyConfigStorageProvider) "FS" }}
@@ -79,8 +79,6 @@ spec:
             - name: NODE_EXTRA_CA_CERTS
               value: {{ printf "[%s/%s]" .Values.caPath .Values.caKey | quote }}
             {{- end }}
-
-
             {{- if eq (upper .Values.rasterCommon.storage.mapproxyConfigStorageProvider) "S3" }}                                    
             - name: S3_ACCESS_KEY_ID
               valueFrom:
@@ -114,11 +112,11 @@ spec:
                   key: password
             {{- if eq (upper .Values.rasterCommon.storage.mapproxyConfigStorageProvider) "DB" }}
             - name: DB_SSL_CA
-              value:  /pg/certs/ca.pem
+              value: "/opt/certs/ca/ca.pem"
             - name: DB_SSL_KEY
-              value:  /pg/certs/key.pem
+              value: "/opt/certs/key/key.pem"
             - name: DB_SSL_CERT
-              value:  /pg/certs/cert.pem
+              value: "/opt/certs/cert/cert.pem"
             {{- end }}
             {{- end }}
           envFrom:
@@ -168,5 +166,4 @@ spec:
               - key: certFile
                 path: cert.pem
         {{- end }}
-
 {{- end -}}

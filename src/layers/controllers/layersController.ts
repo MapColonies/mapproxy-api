@@ -36,7 +36,7 @@ export class LayersController {
   public updateLayer: UpdateLayerHandler = async (req, res, next) => {
     try {
       await this.manager.updateLayer(req.params.name, req.body);
-      return res.sendStatus(httpStatus.ACCEPTED);
+      return res.status(httpStatus.ACCEPTED).send(req.body);
     } catch (error) {
       next(error);
     }

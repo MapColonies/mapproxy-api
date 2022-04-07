@@ -72,6 +72,7 @@ describe('layerManager', () => {
       expect(response.status).toBe(httpStatusCodes.OK);
 
       const resource = response.body as IMapProxyCache;
+      expect(response).toSatisfyApiSpec();
       expect(resource.sources).toEqual([]);
       expect(resource.upscale_tiles).toBe(18);
       expect(resource.request_format).toBe('image/png');
@@ -85,6 +86,7 @@ describe('layerManager', () => {
       const response = await requestSender.getLayer(mockLayerName);
       const notFoundErrorMessage = `Layer name '${mockLayerName}' is not exists`;
 
+      expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
       expect(response.body).toEqual({ message: notFoundErrorMessage });
     });
@@ -105,13 +107,15 @@ describe('layerManager', () => {
         maxZoomLevel: 18,
       } as unknown as ILayerPostRequest;
       const response = await requestSender.addLayer(mockBadRequestRequest);
+      expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
     });
 
     it('Sad Path - should fail with response status 409 and layer name is already exists', async () => {
       const response = await requestSender.addLayer(mockLayerNameAlreadyExists);
       const conflictErrorMessage = `Layer name '${mockLayerNameAlreadyExists.name}' is already exists`;
-
+      
+      expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.CONFLICT);
       expect(response.body).toEqual({ message: conflictErrorMessage });
     });
@@ -128,6 +132,7 @@ describe('layerManager', () => {
     it('Happy Path - should return status 202', async () => {
       const response = await requestSender.updateLayer(mockLayerNameAlreadyExists.name, mockUpdateLayerRequest);
 
+      expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.ACCEPTED);
     });
 
@@ -141,6 +146,7 @@ describe('layerManager', () => {
 
       const response = await requestSender.updateLayer(mockLayerNameAlreadyExists.name, mockBadRequest);
 
+      expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
     });
 
@@ -148,6 +154,7 @@ describe('layerManager', () => {
       const response = await requestSender.updateLayer(mockLayerNameIsNotExists.name, mockUpdateLayerRequest);
       const notFoundErrorMessage = `Layer name '${mockLayerNameIsNotExists.name}' is not exists`;
 
+      expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
       expect(response.body).toEqual({ message: notFoundErrorMessage });
     });
@@ -158,6 +165,7 @@ describe('layerManager', () => {
       const mockLayerNames = ['mockLayerNameExists', 'NameIsAlreadyExists'];
       const response = await requestSender.removeLayer(mockLayerNames);
 
+      expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.OK);
     });
   });
@@ -171,6 +179,7 @@ describe('layerManager', () => {
     it('Happy Path - should return status 201', async () => {
       const response = await requestSender.addLayerToMosaic(mockMosaicName, mockLayerToMosaicRequest);
 
+      expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.CREATED);
     });
 
@@ -182,6 +191,7 @@ describe('layerManager', () => {
       } as unknown as ILayerToMosaicRequest;
       const response = await requestSender.addLayerToMosaic(mockMosaicName, mockBadRequestRequest);
 
+      expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
     });
 
@@ -194,6 +204,7 @@ describe('layerManager', () => {
       const response = await requestSender.addLayerToMosaic(mockMosaicName, mockLayerNotExistsRequest);
       const notFoundErrorMessage = `Layer name '${mockLayerNotExistsRequest.layerName}' is not exists`;
 
+      expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
       expect(response.body).toEqual({ message: notFoundErrorMessage });
     });
@@ -206,6 +217,8 @@ describe('layerManager', () => {
       };
 
       const response = await requestSender.addLayerToMosaic(mockMosaicName, mockMosaicNotExistsRequest);
+      
+      expect(response).toSatisfyApiSpec();
       const notFoundErrorMessage = `Mosaic name '${mockMosaicName}' is not exists`;
 
       expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
@@ -225,6 +238,7 @@ describe('layerManager', () => {
     it('Happy Path - should return status 201', async () => {
       const response = await requestSender.updateMosaic(mockMosaicName, mockUpdateMosaicRequest);
 
+      expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.CREATED);
     });
 
@@ -239,6 +253,7 @@ describe('layerManager', () => {
       } as unknown as IUpdateMosaicRequest;
       const response = await requestSender.updateMosaic(mockMosaicName, mockBadRequest);
 
+      expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
     });
 
@@ -254,6 +269,7 @@ describe('layerManager', () => {
       const response = await requestSender.updateMosaic(mockMosaicName, mockLayerNotExistsRequest);
       const notFoundErrorMessage = `Layer name '${mockLayerNotExistsRequest.layers[1].layerName}' is not exists`;
 
+      expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
       expect(response.body).toEqual({ message: notFoundErrorMessage });
     });
@@ -271,6 +287,7 @@ describe('layerManager', () => {
       const response = await requestSender.updateMosaic(mockMosaicName, mockMosaicNotExistsRequest);
       const notFoundErrorMessage = `Mosaic name '${mockMosaicName}' is not exists`;
 
+      expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
       expect(response.body).toEqual({ message: notFoundErrorMessage });
     });

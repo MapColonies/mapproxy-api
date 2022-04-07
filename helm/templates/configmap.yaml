@@ -27,13 +27,12 @@ data:
   S3_ENDPOINT_URL: {{ quote .Values.rasterCommon.storage.s3.endpointUrl }}
   S3_BUCKET:  {{ quote .Values.rasterCommon.storage.s3.tilesBucket }}
   S3_SSL_ENABLED: {{ quote .Values.rasterCommon.storage.s3.sslEnabled }}
-
   {{- if eq (upper .Values.rasterCommon.storage.mapproxyConfigStorageProvider) "DB" }}
   DB_HOST: {{ quote .Values.rasterCommon.db.host }}
   DB_NAME: {{ .Values.mapproxy.db.nameOverride | default .Values.rasterCommon.db.name | quote }}
   DB_PORT: {{ quote .Values.rasterCommon.db.port }}
   DB_SCHEMA: {{ quote .Values.mapproxy.db.schema }}
   DB_SSL_ENABLE: {{ quote .Values.rasterCommon.db.sslEnabled }}
-  DB_SSL_REJECT_UNAUTHORIZED: {{ quote .Values.env.dbRejectUnauthorized }}
+  DB_SSL_REJECT_UNAUTHORIZED: {{ .Values.env.dbRejectUnauthorized | quote }}
   {{- end }}
 {{- end }}

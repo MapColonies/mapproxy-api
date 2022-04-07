@@ -22,6 +22,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
+        409:
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
         500:
           description: Ineternal Error
           content:
@@ -94,7 +100,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/layer'
+                $ref: '#/components/schemas/getLayerResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
         500:
           description: Ineternal Error
           content:
@@ -115,6 +127,14 @@ paths:
       responses:
         200:
           description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/layer'
+        201:
+          description: Created
+        202:
+          description: Accepted
           content:
             application/json:
               schema:
@@ -156,6 +176,10 @@ paths:
       responses:
         201:
           description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mosaicLayer'
         400:
           description: Bad Request
           content:
@@ -201,6 +225,12 @@ paths:
       responses:
         204:
           description: Updated
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/mosaic'
         400:
           description: Bad Request
           content:
@@ -265,6 +295,36 @@ components:
         maxZoomLevel:
           type: number
           example: 18
+    getLayerResponse:
+      type: object
+      required:
+        - cache
+        - grids
+        - sources
+        - upscale_tiles
+        - request_format
+      properties:
+        cache:
+          type: object
+          properties:
+            type:
+              type: string
+            directory:
+              type: string
+            directory_layout:
+              type: string
+        grids:
+          type: array
+          items:
+            type: string
+        sources:
+          type: array
+          items:
+            type: string
+        upscale_tiles:
+          type: number
+        request_format:
+          type: string  
     mosaicLayer:
       type: object
       required:

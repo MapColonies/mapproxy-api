@@ -36,15 +36,15 @@
     }
   },
   "FS": {
-    "yamlFilePath": "/home/shlomiko/Downloads/mapproxy.yaml",
+    "yamlFilePath": "",
     "internalMountDir": "",
     "subTilesPath": ""
   },
   "S3": {
     "accessKeyId": "minioadmin",
     "secretAccessKey": "minioadmin",
-    "endpointUrl": "http://10.45.130.11:9000",
-    "bucket": "dtm",
+    "endpointUrl": "http://locatlhost:9000",
+    "bucket": "",
     "objectKey": "mapproxy.yaml",
     "sslEnabled": false
   },

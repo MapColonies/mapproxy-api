@@ -42,6 +42,7 @@ rasterCommon:
     name: "mapproxy-config"
     port: 5432
     sslEnabled: false
+    
     secrets:
       useExternal: false
       externalSecretName: ''
@@ -72,11 +73,11 @@ local: # for local stand alone deployment, external pvc and secrets should be us
     accessKeyId: minioadmin
     
 env:
-  dbRejectUnauthorized: true
   port: 80
   targetPort: 8080
   protocol: TCP
   logLevel: warn
+  dbRejectUnauthorized: true
   logPrettyPrintEnabled: false
   responseCompressionEnabled: true
   requestPayloadLimit: 1mb
