@@ -324,7 +324,7 @@ components:
         upscale_tiles:
           type: number
         request_format:
-          type: string  
+          type: string
     mosaicLayer:
       type: object
       required:

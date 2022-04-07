@@ -1,15 +1,8 @@
 import * as supertest from 'supertest';
-import { Application } from 'express';
-import { container } from 'tsyringe';
-import { ServerBuilder } from '../../../../src/serverBuilder';
 import { ILayerPostRequest, ILayerToMosaicRequest, IUpdateMosaicRequest } from '../../../../src/common/interfaces';
 
-export class layersRequestSender {
+export class LayersRequestSender {
   public constructor(private readonly app: Express.Application) {}
-
-  public init(): void {
-    const builder = container.resolve<ServerBuilder>(ServerBuilder);
-  }
 
   public async getLayer(layerName: string): Promise<supertest.Response> {
     return supertest.agent(this.app).get(`/layer/${layerName}`).set('Content-Type', 'application/json');

@@ -1,21 +1,21 @@
 import { container } from 'tsyringe';
 import config from 'config';
-import jsLogger from '@map-colonies/js-logger';
 import { SERVICES } from '../../src/common/constants';
-import { IFSConfig, IMapProxyConfig } from '../../src/common/interfaces';
+import { IConfigProvider, IFSConfig, IMapProxyConfig } from '../../src/common/interfaces';
 import { MockConfigProvider } from '../unit/mock/mockConfigProvider';
 
 function registerTestValues(): void {
   const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
   const fsConfig = config.get<IFSConfig>('FS');
-  const mockConfigProvider = new MockConfigProvider();
 
   container.register(SERVICES.CONFIG, { useValue: config });
-  container.register(SERVICES.LOGGER, { useValue: jsLogger({ enabled: false }) });
+  container.register(SERVICES.LOGGER, { useValue: { log: jest.fn() } });
   container.register(SERVICES.MAPPROXY, { useValue: mapproxyConfig });
   container.register(SERVICES.FS, { useValue: fsConfig });
   container.register(SERVICES.CONFIGPROVIDER, {
-    useValue: mockConfigProvider,
+    useFactory: (): IConfigProvider => {
+      return new MockConfigProvider();
+    },
   });
   container.register(SERVICES.PG, { useValue: {} });
 }

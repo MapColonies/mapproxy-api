@@ -4,7 +4,6 @@ import { trace } from '@opentelemetry/api';
 import config from 'config';
 import { container } from 'tsyringe';
 import {
-  IConfigProvider,
   IFSConfig,
   ILayerPostRequest,
   ILayerToMosaicRequest,
@@ -21,16 +20,16 @@ import * as utils from '../../../src/common/utils';
 import { getApp } from '../../../src/app';
 import { SERVICES } from '../../../src/common/constants';
 import { layersRouterFactory, LAYERS_ROUTER_SYMBOL } from '../../../src/layers/routes/layersRouterFactory';
-import { layersRequestSender } from '../layers/helpers/requestSender';
+import { LayersRequestSender } from '../layers/helpers/requestSender';
 import { mockData } from '../../unit/mock/mockData';
-import { ServerBuilder } from '../../../src/serverBuilder';
 
-let requestSender: layersRequestSender;
+let requestSender: LayersRequestSender;
 describe('layerManager', () => {
   beforeEach(() => {
     const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
     const fsConfig = config.get<IFSConfig>('FS');
     const s3Config = config.get<IS3Config>('S3');
+    /* eslint-disable-next-line @typescript-eslint/naming-convention*/
     const mockConfigProvider = new MockConfigProvider();
     const app = getApp({
       override: [
@@ -51,7 +50,7 @@ describe('layerManager', () => {
       useChild: false,
     });
     //container.resolve<ServerBuilder>(ServerBuilder);
-    requestSender = new layersRequestSender(app);
+    requestSender = new LayersRequestSender(app);
     jest.spyOn(MockConfigProvider.prototype, 'getJson').mockResolvedValue(mockData() as unknown as IMapProxyJsonDocument);
     jest.spyOn(MockConfigProvider.prototype, 'updateJson').mockResolvedValue(undefined);
     jest.spyOn(utils, 'replaceYamlFileContent').mockResolvedValue(undefined);
@@ -114,7 +113,7 @@ describe('layerManager', () => {
     it('Sad Path - should fail with response status 409 and layer name is already exists', async () => {
       const response = await requestSender.addLayer(mockLayerNameAlreadyExists);
       const conflictErrorMessage = `Layer name '${mockLayerNameAlreadyExists.name}' is already exists`;
-      
+
       expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.CONFLICT);
       expect(response.body).toEqual({ message: conflictErrorMessage });
@@ -217,7 +216,7 @@ describe('layerManager', () => {
       };
 
       const response = await requestSender.addLayerToMosaic(mockMosaicName, mockMosaicNotExistsRequest);
-      
+
       expect(response).toSatisfyApiSpec();
       const notFoundErrorMessage = `Mosaic name '${mockMosaicName}' is not exists`;
 

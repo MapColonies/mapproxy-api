@@ -21,46 +21,30 @@ export function convertYamlToJson(yamlContent: string): IMapProxyJsonDocument {
     if (error instanceof YAMLException) {
       throw new YAMLException('Invalid YAML syntax error');
     }
-    throw new Error(error);
+    throw error;
   }
 }
 
 // read json object and convert it into a yaml content
 export function convertJsonToYaml(jsonDocument: IMapProxyJsonDocument): string {
-  try {
-    const yamlContent: string = safeDump(jsonDocument, { noArrayIndent: true });
-    return yamlContent;
-  } catch (error) {
-    throw new Error(error);
-  }
+  const yamlContent: string = safeDump(jsonDocument, { noArrayIndent: true });
+  return yamlContent;
 }
 
 // write new content in mapproxy yaml config file
 export async function replaceYamlFileContent(yamlFilePath: string, yamlContent: string): Promise<void> {
-  try {
-    await fsp.writeFile(yamlFilePath, yamlContent, 'utf8');
-  } catch (error) {
-    throw new Error(error);
-  }
+  await fsp.writeFile(yamlFilePath, yamlContent, 'utf8');
 }
 
 // sort an array in numerical order
 export function sortArrayByZIndex(layersArr: IMosaicLayerObject[]): string[] {
-  try {
-    const sortedArray = layersArr.sort((a, b) => a.zIndex - b.zIndex);
-    return sortedArray.map((val) => val.layerName);
-  } catch (error) {
-    throw new Error(error);
-  }
+  const sortedArray = layersArr.sort((a, b) => a.zIndex - b.zIndex);
+  return sortedArray.map((val) => val.layerName);
 }
 
 // get the extension from a file path
 export function getFileExtension(path: string): string {
-  try {
-    return extname(path);
-  } catch (error) {
-    throw new Error(error);
-  }
+  return extname(path);
 }
 
 export function adjustTilesPath(tilesPath: string, cacheSource: string): string {

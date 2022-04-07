@@ -12,3 +12,4 @@ node_modules
 *.html
 coverage
 helm
+mockInvalidYamlSyntax.yaml

@@ -2,7 +2,14 @@ import { normalize } from 'path';
 import { readFileSync } from 'fs';
 import { container } from 'tsyringe';
 import jsLogger from '@map-colonies/js-logger';
-import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IMapProxyConfig, IUpdateMosaicRequest } from '../../../../src/common/interfaces';
+import {
+  ILayerPostRequest,
+  ILayerToMosaicRequest,
+  IMapProxyCache,
+  IMapProxyConfig,
+  IMapProxyJsonDocument,
+  IUpdateMosaicRequest,
+} from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { ConfilctError } from '../../../../src/common/exceptions/http/confilctError';
 import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExists';
@@ -30,7 +37,7 @@ describe('layersManager', () => {
     registerTestValues();
     const mapproxyConfig = container.resolve<IMapProxyConfig>(SERVICES.MAPPROXY);
     layersManager = new LayersManager(logger, mapproxyConfig, MockConfigProvider.prototype);
-    getJsonStub = jest.spyOn(MockConfigProvider.prototype, 'getJson').mockResolvedValue(JSON.parse(mockJsonData));
+    getJsonStub = jest.spyOn(MockConfigProvider.prototype, 'getJson').mockResolvedValue(JSON.parse(mockJsonData) as IMapProxyJsonDocument);
     updateJsonStub = jest.spyOn(MockConfigProvider.prototype, 'updateJson').mockResolvedValue(undefined);
     sortArrayByZIndexStub = jest.spyOn(utils, 'sortArrayByZIndex').mockReturnValueOnce(['mockLayer1', 'mockLayer2', 'mockLayer3']);
   });

@@ -47,8 +47,8 @@ export class S3Provider implements IConfigProvider {
       this.logger.info(`File uploaded successfully.`);
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      this.logger.info(`Failed to upload file: ${error}`);
-      throw new Error(error);
+      this.logger.info(`Failed to upload file: ${(error as Error).message}`);
+      throw error;
     }
   }
 
@@ -67,8 +67,8 @@ export class S3Provider implements IConfigProvider {
       return jsonContent;
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      this.logger.error(`Failed to read file: ${error}`);
-      throw new Error(error);
+      this.logger.error(`Failed to read file: ${(error as Error).message}`);
+      throw error;
     }
   }
 }

@@ -19,9 +19,8 @@ export class FSProvider implements IConfigProvider {
       const yamlContent = convertJsonToYaml(jsonContent);
       await replaceYamlFileContent(this.fsConfig.yamlFilePath, yamlContent);
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      this.logger.error(`Failed to update file: ${error}`);
-      throw new Error(error);
+      this.logger.error(`Failed to update file: ${(error as Error).message}`);
+      throw error;
     }
   }
 
@@ -31,9 +30,8 @@ export class FSProvider implements IConfigProvider {
       const jsonContent = convertYamlToJson(yamlContent) as unknown as IMapProxyJsonDocument;
       return jsonContent;
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      this.logger.error(`Failed to provied json from file: ${error}`);
-      throw new Error(error);
+      this.logger.error(`Failed to provied json from file: ${(error as Error).message}`);
+      throw error;
     }
   }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { IMapProxyJsonDocument } from '../../../src/common/interfaces';
 
 export const mockData = (): IMapProxyJsonDocument => {
