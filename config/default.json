@@ -43,7 +43,7 @@
   "S3": {
     "accessKeyId": "minioadmin",
     "secretAccessKey": "minioadmin",
-    "endpointUrl": "http://locatlhost:9000",
+    "endpointUrl": "http://localhost:9000",
     "bucket": "",
     "objectKey": "mapproxy.yaml",
     "sslEnabled": false
