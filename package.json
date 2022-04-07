@@ -60,7 +60,8 @@
     "js-yaml": "^3.14.1",
     "pg": "^8.7.3",
     "reflect-metadata": "^0.1.13",
-    "swagger-ui-express": "^4.1.6",
+    "swagger-ui-dist": "^4.10.3",
+    "swagger-ui-express": "^4.3.0",
     "tsyringe": "^4.6.0"
   },
   "devDependencies": {
