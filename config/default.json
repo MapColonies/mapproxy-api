@@ -2,14 +2,28 @@
   "openapiConfig": {
     "filePath": "./openapi3.yaml",
     "basePath": "/docs",
-    "jsonPath": "/api.json",
+    "rawPath": "/api",
     "uiPath": "/api"
   },
-  "logger": {
-    "level": "info"
+  "telemetry": {
+    "logger": {
+      "level": "info",
+      "prettyPrint": false
+    }
   },
   "server": {
-    "port": "8080"
+    "port": "8080",
+    "request": {
+      "payload": {
+        "limit": "1mb"
+      }
+    },
+    "response": {
+      "compression": {
+        "enabled": true,
+        "options": null
+      }
+    }
   },
   "mapproxy": {
     "configProvider": "fs",

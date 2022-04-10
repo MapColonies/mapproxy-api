@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { container, inject, injectable } from 'tsyringe';
-import { Services } from '../../common/constants';
+import { Logger } from '@map-colonies/js-logger';
+import { SERVICES } from '../../common/constants';
 import {
-  ILogger,
   ILayerPostRequest,
   IMapProxyCache,
   IMapProxyJsonDocument,
@@ -26,9 +26,9 @@ import { FSSource } from '../../common/cacheProviders/fsSource';
 @injectable()
 class LayersManager {
   public constructor(
-    @inject(Services.LOGGER) private readonly logger: ILogger,
-    @inject(Services.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig,
-    @inject(Services.CONFIGPROVIDER) private readonly configProvider: IConfigProvider
+    @inject(SERVICES.LOGGER) private readonly logger: Logger,
+    @inject(SERVICES.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig,
+    @inject(SERVICES.CONFIGPROVIDER) private readonly configProvider: IConfigProvider
   ) {}
 
   public async getLayer(layerName: string): Promise<IMapProxyCache> {
@@ -42,7 +42,7 @@ class LayersManager {
   }
 
   public async addLayer(layerRequest: ILayerPostRequest): Promise<void> {
-    this.logger.log('info', `Add layer request: ${layerRequest.name}`);
+    this.logger.info(`Add layer request: ${layerRequest.name}`);
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
 
     if (isLayerNameExists(jsonDocument, layerRequest.name)) {
@@ -56,11 +56,11 @@ class LayersManager {
     jsonDocument.layers.push(newLayer);
 
     await this.configProvider.updateJson(jsonDocument);
-    this.logger.log('info', `Successfully added layer: ${layerRequest.name}`);
+    this.logger.info(`Successfully added layer: ${layerRequest.name}`);
   }
 
   public async addLayerToMosaic(mosaicName: string, layerToMosaicRequest: ILayerToMosaicRequest): Promise<void> {
-    this.logger.log('info', `Add layer: ${layerToMosaicRequest.layerName} to mosaic: ${mosaicName} request`);
+    this.logger.info(`Add layer: ${layerToMosaicRequest.layerName} to mosaic: ${mosaicName} request`);
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
 
     if (!isLayerNameExists(jsonDocument, layerToMosaicRequest.layerName)) {
@@ -75,11 +75,11 @@ class LayersManager {
     mosaicCache.sources.push(layerToMosaicRequest.layerName);
 
     await this.configProvider.updateJson(jsonDocument);
-    this.logger.log('info', `Successfully added layer: '${layerToMosaicRequest.layerName}' to mosaic: '${mosaicName}'`);
+    this.logger.info(`Successfully added layer: '${layerToMosaicRequest.layerName}' to mosaic: '${mosaicName}'`);
   }
 
   public async updateMosaic(mosaicName: string, updateMosaicRequest: IUpdateMosaicRequest): Promise<void> {
-    this.logger.log('info', `Update mosaic: ${mosaicName} request`);
+    this.logger.info(`Update mosaic: ${mosaicName} request`);
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
 
     if (!isLayerNameExists(jsonDocument, mosaicName)) {
@@ -98,11 +98,11 @@ class LayersManager {
     mosaicCache.sources = sortedLayers;
 
     await this.configProvider.updateJson(jsonDocument);
-    this.logger.log('info', `Successfully updated mosaic: '${mosaicName}'`);
+    this.logger.info(`Successfully updated mosaic: '${mosaicName}'`);
   }
 
   public async removeLayer(layersName: string[]): Promise<string[] | void> {
-    this.logger.log('info', `Remove layers request for: [${layersName.join(',')}]`);
+    this.logger.info(`Remove layers request for: [${layersName.join(',')}]`);
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
     const failedLayers: string[] = [];
     let updateCounter = 0;
@@ -116,10 +116,10 @@ class LayersManager {
       if (requestedLayerIndex !== negativeResult) {
         jsonDocument.layers.splice(requestedLayerIndex, 1);
         updateCounter++;
-        this.logger.log('info', `Successfully removed layers '${layerName}'`);
+        this.logger.info(`Successfully removed layers '${layerName}'`);
       } else {
         failedLayers.push(layerName);
-        this.logger.log('info', `Layer: ['${layerName}'] is not exists`);
+        this.logger.info(`Layer: ['${layerName}'] is not exists`);
       }
     });
     if (updateCounter > 0) {
@@ -129,7 +129,7 @@ class LayersManager {
   }
 
   public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<void> {
-    this.logger.log('info', `Update layer: '${layerName}' request`);
+    this.logger.info(`Update layer: '${layerName}' request`);
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
 
     if (!isLayerNameExists(jsonDocument, layerName)) {
@@ -147,9 +147,8 @@ class LayersManager {
     if (requestedLayerIndex !== negativeResult) {
       jsonDocument.layers[requestedLayerIndex] = newLayer;
     }
-
     await this.configProvider.updateJson(jsonDocument);
-    this.logger.log('info', `Successfully updated layer '${layerName}'`);
+    this.logger.info(`Successfully updated layer '${layerName}'`);
   }
 
   public getCacheValues(cacheSource: string, sourcePath: string): IMapProxyCache {

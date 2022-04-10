@@ -1,8 +1,9 @@
+import { Logger } from '@map-colonies/js-logger';
 import { RequestHandler } from 'express';
 import httpStatus from 'http-status-codes';
 import { injectable, inject } from 'tsyringe';
-import { Services } from '../../common/constants';
-import { ILogger, ILayerPostRequest, ILayerToMosaicRequest, IUpdateMosaicRequest, IMapProxyCache } from '../../common/interfaces';
+import { SERVICES } from '../../common/constants';
+import { ILayerPostRequest, ILayerToMosaicRequest, IUpdateMosaicRequest, IMapProxyCache } from '../../common/interfaces';
 import { LayersManager } from '../models/layersManager';
 
 type CreateLayerHandler = RequestHandler<undefined, ILayerPostRequest, ILayerPostRequest>;
@@ -13,7 +14,7 @@ type PutMosaicHandler = RequestHandler<{ name: string }, IUpdateMosaicRequest, I
 type DeleteLayerHandler = RequestHandler<undefined, string[] | void, undefined, { layerNames: string[] }>;
 @injectable()
 export class LayersController {
-  public constructor(@inject(Services.LOGGER) private readonly logger: ILogger, @inject(LayersManager) private readonly manager: LayersManager) {}
+  public constructor(@inject(SERVICES.LOGGER) private readonly logger: Logger, @inject(LayersManager) private readonly manager: LayersManager) {}
 
   public getLayer: GetLayerHandler = async (req, res, next) => {
     try {
@@ -35,7 +36,7 @@ export class LayersController {
   public updateLayer: UpdateLayerHandler = async (req, res, next) => {
     try {
       await this.manager.updateLayer(req.params.name, req.body);
-      return res.sendStatus(httpStatus.ACCEPTED);
+      return res.status(httpStatus.ACCEPTED).send(req.body);
     } catch (error) {
       next(error);
     }

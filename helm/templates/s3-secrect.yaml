@@ -1,0 +1,10 @@
+{{- if .Values.local.s3.createSecret -}}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.rasterCommon.storage.s3.secretName }}
+type: Opaque
+stringData:
+  accessKeyId: {{ quote .Values.local.s3.accessKeyId }}
+  secretAccessKey: {{ quote .Values.local.s3.secretAccessKey }}
+{{- end }}

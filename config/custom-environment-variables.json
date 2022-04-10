@@ -2,11 +2,42 @@
   "openapiConfig": {
     "filePath": "OPENAPI_FILE_PATH"
   },
-  "logger": {
-    "level": "LOG_LEVEL"
+  "telemetry": {
+    "serviceName": "TELEMETRY_SERVICE_NAME",
+    "hostname": "TELEMETRY_HOST_NAME",
+    "version": "TELEMETRY_SERVICE_VERSION",
+    "logger": {
+      "level": "LOG_LEVEL",
+      "prettyPrint": {
+        "__name": "LOG_PRETTY_PRINT_ENABLED",
+        "__format": "boolean"
+      }
+    },
+    "tracing": {
+      "enabled": "TELEMETRY_TRACING_ENABLED",
+      "url": "TELEMETRY_TRACING_URL"
+    },
+    "metrics": {
+      "enabled": "TELEMETRY_METRICS_ENABLED",
+      "url": "TELEMETRY_METRICS_URL",
+      "interval": "TELEMETRY_METRICS_INTERVAL"
+    }
   },
   "server": {
-    "port": "SERVER_PORT"
+    "port": "SERVER_PORT",
+    "request": {
+      "payload": {
+        "limit": "REQUEST_PAYLOAD_LIMIT"
+      }
+    },
+    "response": {
+      "compression": {
+        "enabled": {
+          "__name": "RESPONSE_COMPRESSION_ENABLED",
+          "__format": "boolean"
+        }
+      }
+    }
   },
   "mapproxy": {
     "configProvider": "MAPPROXY_CONFIG_PROVIDER",

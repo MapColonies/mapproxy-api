@@ -12,9 +12,17 @@ jobs:
       - name: Checkout code for CHANGELOG.md
         uses: actions/checkout@v2
 
+      - name: Generate postman collection for service
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - run: 'npx openapi-to-postmanv2 -s openapi3.yaml -o dump-server-postman-collection.json'
+
       - name: Publish Release to Github
         uses: softprops/action-gh-release@v1
         with:
           body_path: CHANGELOG.md
+          files: dump-server-postman-collection.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

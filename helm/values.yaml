@@ -1,0 +1,119 @@
+global:
+  cloudProvider: {}
+  tracing: {}
+  metrics: {}
+  environment: {}
+
+enabled: true
+environment: development
+replicaCount: 1
+initialDelaySeconds: 60
+nodePort: 30002 #for minikube deployment only
+resetOnConfigChange: true
+
+cloudProvider:
+  dockerRegistryUrl: my-registry-url.io
+  imagePullSecretName: 'my-registry-secret'
+  flavor: openshift
+
+caSecretName: ''
+caPath: '/usr/local/share/ca-certificates'
+caKey: 'ca.crt'
+
+image:
+  repository: mapproxy-api
+  tag: 'latest'
+
+rasterCommon:
+  storage:
+    mapproxyConfigStorageProvider: 'DB'
+    fs:
+      tilesPvc:
+        name: "internal-pvc"
+        tilesSubPath: tiles
+    s3:
+      endpointUrl: "localhost:9000"
+      tilesBucket: "raster-tiles"
+      sslEnabled: false
+      secretName: "s3-secret"
+
+  db:
+    host: "localhost"
+    name: "mapproxy-config"
+    port: 5432
+    sslEnabled: false
+    
+    secrets:
+      useExternal: false
+      externalSecretName: ''
+
+mapproxy:
+    db:
+      nameOverride:
+      schema: MapproxyConfig
+
+local: # for local stand alone deployment, external pvc and secrets should be used for full deployment  
+  fs:
+    createComponents: false
+    storageClass: hostPath
+    capacity: 5Gi
+    accessMode: ReadWriteOnce
+    hostPath: /hostDir
+  db:
+    createSecret: false
+    userName: postgres
+    password: postgres
+    certs:
+      ca: certs/ca.pem
+      key: certs/key.pem
+      cert: certs/cert.pem
+  s3:
+    createSecret: false
+    secretAccessKey: minioadmin
+    accessKeyId: minioadmin
+    
+env:
+  port: 80
+  targetPort: 8080
+  protocol: TCP
+  logLevel: warn
+  dbRejectUnauthorized: true
+  logPrettyPrintEnabled: false
+  responseCompressionEnabled: true
+  requestPayloadLimit: 1mb
+  tracing:
+    enabled: false
+    url: http://localhost:55681/v1/trace
+  metrics:
+    enabled: false
+    url: http://localhost:55681/v1/metrics
+  mapproxyCache:
+    grids: epsg4326grid
+    requestFormat: image/png
+    upscaleTiles: 18
+    directoryLayout: tms
+
+resources:
+  enabled: true
+  value:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+route:
+  enabled: false
+  path: /
+  timeout:
+    enabled: false # defaults to 30s by openshift
+    duration: 60s # supported units (us, ms, s, m, h, d)
+
+ingress:
+  enabled: false
+  path: /
+  host: 'localhost'
+  cors:
+    enabled: true
+    origin: '*'

@@ -1,10 +1,9 @@
-import { container } from 'tsyringe';
 import { Application } from 'express';
-import { registerExternalValues } from './containerConfig';
+import { registerExternalValues, RegisterOptions } from './containerConfig';
 import { ServerBuilder } from './serverBuilder';
 
-function getApp(): Application {
-  registerExternalValues();
+function getApp(registerOptions?: RegisterOptions): Application {
+  const container = registerExternalValues(registerOptions);
   const app = container.resolve(ServerBuilder).build();
   return app;
 }

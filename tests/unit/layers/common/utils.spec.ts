@@ -116,7 +116,7 @@ describe('utils', () => {
       const action = () => utils.getFileExtension(path);
 
       // expectation
-      expect(action()).toEqual('.gpkg');
+      expect(action()).toBe('.gpkg');
     });
 
     it('should return the empty string if the path does not contain file extension', function () {
@@ -126,7 +126,7 @@ describe('utils', () => {
       const action = () => utils.getFileExtension(path);
 
       // expectation
-      expect(action()).toEqual('');
+      expect(action()).toBe('');
     });
   });
 });

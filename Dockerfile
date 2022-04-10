@@ -9,23 +9,24 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-FROM node:12.22-slim as production
+FROM node:12.20.1-alpine3.9 as production
+
+RUN apk add dumb-init
 
 ENV NODE_ENV=production
 ENV SERVER_PORT=8080
 
-WORKDIR /usr/app
-RUN chgrp -R 0 /usr && \
-    chmod -R g=u /usr
-RUN useradd -ms /bin/bash user && usermod -a -G root user
 
-COPY package*.json ./
-RUN npm install --only=production
+WORKDIR /usr/src/app
 
-COPY --from=build /tmp/buildApp/dist .
-COPY --from=build /tmp/buildApp/node_modules ./node_modules
-COPY ./config ./config
+COPY --chown=node:node package*.json ./
 
-USER user
-EXPOSE ${SERVER_PORT}
-CMD ["node", "--max_old_space_size=512", "./index.js"]
+RUN npm ci --only=production
+
+COPY --chown=node:node --from=build /tmp/buildApp/dist .
+COPY --chown=node:node ./config ./config
+
+
+USER node
+EXPOSE 8080
+CMD ["dumb-init", "node", "--max_old_space_size=512", "./index.js"]

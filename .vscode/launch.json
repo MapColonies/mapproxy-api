@@ -16,7 +16,19 @@
       "cwd": "${workspaceFolder}/dist",
       "skipFiles": ["${workspaceFolder}/node_modules/**/*.js", "<node_internals>/**/*.js"],
       "outFiles": ["${workspaceFolder}/dist/**/*.js", "!**/node_modules/**"],
-      "program": "${workspaceFolder}/src/index.ts"
+      "program": "${workspaceFolder}/src/index.ts",
+      "env": {
+        "NODE_ENV": "development",
+        "SERVER_PORT": "8080",
+        "RESPONSE_COMPRESSION_ENABLED": "true",
+        "REQUEST_PAYLOAD_LIMIT": "1mb",
+        "LOG_PRETTY_PRINT_ENABLED": "true",
+        "TELEMETRY_TRACING_ENABLED": "false",
+        "TELEMETRY_METRICS_ENABLED": "false",
+        "TELEMETRY_TRACING_URL": "http://localhost:55681/v1/trace",
+        "TELEMETRY_METRICS_URL": "http://localhost:55681/v1/metrics"
+        // "OPENAPI_FILE_PATH": "./openapi3.yaml"
+      }
     }
   ]
 }

@@ -1,6 +1,15 @@
+import { normalize } from 'path';
 import { readFileSync } from 'fs';
 import { container } from 'tsyringe';
-import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IMapProxyConfig, IUpdateMosaicRequest } from '../../../../src/common/interfaces';
+import jsLogger from '@map-colonies/js-logger';
+import {
+  ILayerPostRequest,
+  ILayerToMosaicRequest,
+  IMapProxyCache,
+  IMapProxyConfig,
+  IMapProxyJsonDocument,
+  IUpdateMosaicRequest,
+} from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { ConfilctError } from '../../../../src/common/exceptions/http/confilctError';
 import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExists';
@@ -8,7 +17,7 @@ import { mockLayerNameIsNotExists } from '../../mock/mockLayerNameIsNotExists';
 import * as utils from '../../../../src/common/utils';
 import { NotFoundError } from '../../../../src/common/exceptions/http/notFoundError';
 import { MockConfigProvider } from '../../mock/mockConfigProvider';
-import { Services } from '../../../../src/common/constants';
+import { SERVICES } from '../../../../src/common/constants';
 import { registerTestValues } from '../../../integration/testContainerConfig';
 
 let layersManager: LayersManager;
@@ -16,18 +25,19 @@ let sortArrayByZIndexStub: jest.SpyInstance;
 let getJsonStub: jest.SpyInstance;
 let updateJsonStub: jest.SpyInstance;
 let mockJsonData: string;
+const logger = jsLogger({ enabled: false });
 
 describe('layersManager', () => {
-  beforeAll(function () {
+  beforeAll(() => {
     mockJsonData = readFileSync('tests/unit/mock/mockJson.json', 'utf8');
   });
 
-  beforeEach(function () {
+  beforeEach(() => {
     // stub util functions
     registerTestValues();
-    const mapproxyConfig = container.resolve<IMapProxyConfig>(Services.MAPPROXY);
-    layersManager = new LayersManager({ log: jest.fn() }, mapproxyConfig, MockConfigProvider.prototype);
-    getJsonStub = jest.spyOn(MockConfigProvider.prototype, 'getJson').mockResolvedValue(JSON.parse(mockJsonData));
+    const mapproxyConfig = container.resolve<IMapProxyConfig>(SERVICES.MAPPROXY);
+    layersManager = new LayersManager(logger, mapproxyConfig, MockConfigProvider.prototype);
+    getJsonStub = jest.spyOn(MockConfigProvider.prototype, 'getJson').mockResolvedValue(JSON.parse(mockJsonData) as IMapProxyJsonDocument);
     updateJsonStub = jest.spyOn(MockConfigProvider.prototype, 'updateJson').mockResolvedValue(undefined);
     sortArrayByZIndexStub = jest.spyOn(utils, 'sortArrayByZIndex').mockReturnValueOnce(['mockLayer1', 'mockLayer2', 'mockLayer3']);
   });
@@ -39,20 +49,20 @@ describe('layersManager', () => {
   });
 
   describe('#getLayer', () => {
-    it('should successfully return the requested layer', async function () {
+    it('should successfully return the requested layer', async () => {
       // action
       const resource: IMapProxyCache = await layersManager.getLayer('mockLayerNameExists');
       // expectation;
       expect(getJsonStub).toHaveBeenCalledTimes(1);
       expect(resource.sources).toEqual([]);
-      expect(resource.upscale_tiles).toEqual(18);
-      expect(resource.request_format).toEqual('image/png');
+      expect(resource.upscale_tiles).toBe(18);
+      expect(resource.request_format).toBe('image/png');
       expect(resource.grids).toEqual(['epsg4326dir']);
       // eslint-disable-next-line @typescript-eslint/naming-convention
       expect(resource.cache).toEqual({ directory: '/path/to/s3/directory/tile', directory_layout: 'tms', type: 's3' });
     });
 
-    it('should reject with not found error', async function () {
+    it('should reject with not found error', async () => {
       // action
       const action = async () => {
         await layersManager.getLayer('mockLayerNameIsNotExists');
@@ -65,7 +75,7 @@ describe('layersManager', () => {
   });
 
   describe('#addLayer', () => {
-    it('should reject with conflict error', async function () {
+    it('should reject with conflict error', async () => {
       // action
       const action = async () => {
         await layersManager.addLayer(mockLayerNameAlreadyExists);
@@ -77,7 +87,7 @@ describe('layersManager', () => {
       expect(updateJsonStub).not.toHaveBeenCalled();
     });
 
-    it('should successfully add layer', async function () {
+    it('should successfully add layer', async () => {
       // action
       const action = async () => {
         await layersManager.addLayer(mockLayerNameIsNotExists);
@@ -91,7 +101,7 @@ describe('layersManager', () => {
   });
 
   describe('#addLayerToMosaic', () => {
-    it('should reject with not found error due layer name is not exists', async function () {
+    it('should reject with not found error due layer name is not exists', async () => {
       // mock
       const mockMosaicName = 'mosaicMockName';
       const mockLayerNotExistsToMosaicRequest: ILayerToMosaicRequest = {
@@ -107,7 +117,7 @@ describe('layersManager', () => {
       expect(updateJsonStub).not.toHaveBeenCalled();
     });
 
-    it('should reject with not found error due mosaic name is not exists', async function () {
+    it('should reject with not found error due mosaic name is not exists', async () => {
       // mock
       const mockMosaicName = 'mosaicNameIsNotExists';
       const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
@@ -123,7 +133,7 @@ describe('layersManager', () => {
       expect(updateJsonStub).not.toHaveBeenCalled();
     });
 
-    it('should successfully add layer to mosaic', async function () {
+    it('should successfully add layer to mosaic', async () => {
       // mock
       const mockMosaicName = 'existsMosaicName';
       const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
@@ -141,7 +151,7 @@ describe('layersManager', () => {
   });
 
   describe('#updateMosaic', () => {
-    it('should successfully update mosaic layers by thier z-index', async function () {
+    it('should successfully update mosaic layers by thier z-index', async () => {
       // mock
       const mockMosaicName = 'existsMosaicName';
       const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
@@ -161,7 +171,7 @@ describe('layersManager', () => {
       expect(updateJsonStub).toHaveBeenCalledTimes(1);
     });
 
-    it('should reject with not found error due layer name is not exists', async function () {
+    it('should reject with not found error due layer name is not exists', async () => {
       // mock
       const mockMosaicName = 'existsMosaicName';
       const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
@@ -181,7 +191,7 @@ describe('layersManager', () => {
       expect(updateJsonStub).not.toHaveBeenCalled();
     });
 
-    it('should reject with not found error due mosaic name is not exists', async function () {
+    it('should reject with not found error due mosaic name is not exists', async () => {
       // mock
       const mockMosaicName = 'NotExistsMosaicName';
       const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
@@ -203,7 +213,7 @@ describe('layersManager', () => {
   });
 
   describe('#removeLayer', () => {
-    it('should successfully remove layer', async function () {
+    it('should successfully remove layer', async () => {
       // mock
       const mockLayerNames = ['mockLayerNameExists', 'NameIsAlreadyExists'];
       // action
@@ -216,7 +226,7 @@ describe('layersManager', () => {
       expect(updateJsonStub).toHaveBeenCalledTimes(1);
     });
 
-    it('should return not found layers array and not to throw', async function () {
+    it('should return not found layers array and not to throw', async () => {
       // mock
       const mockNotExistsLayerNames = ['mockLayerNameIsNotExists', 'anotherMockLayerNameNotExists'];
       // action
@@ -238,7 +248,7 @@ describe('layersManager', () => {
       cacheType: 's3',
     };
 
-    it('should successfully update layer', async function () {
+    it('should successfully update layer', async () => {
       // mock
       const mockLayerName = 'mockLayerNameExists';
       // action
@@ -251,7 +261,7 @@ describe('layersManager', () => {
       expect(updateJsonStub).toHaveBeenCalledTimes(1);
     });
 
-    it('should reject with not found error due layer name is not exists', async function () {
+    it('should reject with not found error due layer name is not exists', async () => {
       // mock
       const mockLayerName = 'mockLayerNameIsNotExists';
       // action
@@ -269,7 +279,7 @@ describe('layersManager', () => {
     const mockTilesPath = '/mock/tiles/path/';
     const directoryLayout = 'tms';
 
-    it('should provide s3 cache as source', function () {
+    it('should provide s3 cache as source', () => {
       const cacheType = 's3';
       // eslint-disable-next-line @typescript-eslint/naming-convention
       const expectedResult = { type: cacheType, directory: mockTilesPath, directory_layout: directoryLayout };
@@ -282,7 +292,7 @@ describe('layersManager', () => {
       expect(cacheProvider).toEqual(expectedResult);
     });
 
-    it('should provide geopackage cache as source', function () {
+    it('should provide geopackage cache as source', () => {
       const cacheType = 'geopackage';
       const mockGpkgPath = '/gpkg/path/mock.gpkg';
       const tableName = 'mock';
@@ -297,10 +307,10 @@ describe('layersManager', () => {
       expect(cacheProvider).toEqual(expectedResult);
     });
 
-    it('should provide fs cache directory as source', function () {
+    it('should provide fs cache directory as source', () => {
       const cacheType = 'file';
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      const expectedResult = { type: cacheType, directory: mockTilesPath, directory_layout: directoryLayout };
+      const expectedResult = { type: cacheType, directory: normalize(mockTilesPath), directory_layout: directoryLayout };
       // mock
       jest.mock('../../../../src/common/cacheProviders/fsSource');
       // action

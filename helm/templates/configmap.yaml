@@ -1,0 +1,38 @@
+{{- $chartName := include "mapproxy-api.name" . -}}
+{{- $tracingUrl := include "mapproxy-api.tracingUrl" . -}}
+{{- $metricsUrl := include "mapproxy-api.metricsUrl" . -}}
+{{- if .Values.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-{{ $chartName }}-configmap
+data:
+  REQUEST_PAYLOAD_LIMIT: {{ .Values.env.requestPayloadLimit | quote }}
+  RESPONSE_COMPRESSION_ENABLED: {{ .Values.env.responseCompressionEnabled | quote }}
+  LOG_LEVEL: {{ .Values.env.logLevel | quote }}
+  LOG_PRETTY_PRINT_ENABLED: {{ .Values.env.logPrettyPrintEnabled | quote }}
+  {{ if .Values.env.tracing.enabled }}
+  TELEMETRY_TRACING_ENABLED: 'true'
+  TELEMETRY_TRACING_URL: {{ $tracingUrl }}
+  {{ end }}
+  {{ if .Values.env.metrics.enabled }}
+  TELEMETRY_METRICS_ENABLED: 'true'
+  TELEMETRY_METRICS_URL: {{ $metricsUrl }}
+  {{ end }}
+  MAPPROXY_CONFIG_PROVIDER: {{ quote .Values.rasterCommon.storage.mapproxyConfigStorageProvider }}
+  MAPPROXY_CACHE_GRIDS: {{ quote .Values.env.mapproxyCache.grids }}
+  MAPPROXY_CACHE_REQUEST_FORMAT: {{ quote .Values.env.mapproxyCache.requestFormat }}
+  MAPPROXY_CACHE_UPSCALE_TILES: {{ quote .Values.env.mapproxyCache.upscaleTiles }}
+  MAPPROXY_CACHE_DIRECTORY_LAYOUT: {{ quote .Values.env.mapproxyCache.directoryLayout }}
+  S3_ENDPOINT_URL: {{ quote .Values.rasterCommon.storage.s3.endpointUrl }}
+  S3_BUCKET:  {{ quote .Values.rasterCommon.storage.s3.tilesBucket }}
+  S3_SSL_ENABLED: {{ quote .Values.rasterCommon.storage.s3.sslEnabled }}
+  {{- if eq (upper .Values.rasterCommon.storage.mapproxyConfigStorageProvider) "DB" }}
+  DB_HOST: {{ quote .Values.rasterCommon.db.host }}
+  DB_NAME: {{ .Values.mapproxy.db.nameOverride | default .Values.rasterCommon.db.name | quote }}
+  DB_PORT: {{ quote .Values.rasterCommon.db.port }}
+  DB_SCHEMA: {{ quote .Values.mapproxy.db.schema }}
+  DB_SSL_ENABLE: {{ quote .Values.rasterCommon.db.sslEnabled }}
+  DB_SSL_REJECT_UNAUTHORIZED: {{ .Values.env.dbRejectUnauthorized | quote }}
+  {{- end }}
+{{- end }}
