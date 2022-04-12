@@ -99,7 +99,7 @@ spec:
               value: /layerSources
             - name: ROOT_TILES_PATH
               value: {{ .Values.rasterCommon.storage.fs.tilesPvc.tilesSubPath }}
-            {{- if .Values.rasterCommon.db.sslEnabled }}
+            {{- if eq (upper .Values.rasterCommon.storage.mapproxyConfigStorageProvider) "DB" }}
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
@@ -110,7 +110,7 @@ spec:
                 secretKeyRef:
                   name: {{ $postgresSecretName }}
                   key: password
-            {{- if eq (upper .Values.rasterCommon.storage.mapproxyConfigStorageProvider) "DB" }}
+            {{- if .Values.rasterCommon.db.sslEnabled }}
             - name: DB_SSL_CA
               value: "/opt/certs/ca/ca.pem"
             - name: DB_SSL_KEY
