@@ -1,3 +1,9 @@
+#local configs
+config/*local*.json
+helm/certs
+helm/local.yaml
+helm/local
+
 # Logs
 logs
 *.log
