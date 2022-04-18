@@ -1,6 +1,6 @@
 {
   "name": "mapproxy-api",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "This is template for map colonies typescript service",
   "main": "./src/index.ts",
   "scripts": {

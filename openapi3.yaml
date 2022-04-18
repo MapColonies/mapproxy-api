@@ -2,7 +2,7 @@ openapi: 3.0.1
 info:
   title: mapproxy-api
   description: rest api service to manage layers in mapproxy
-  version: 1.0.0
+  version: 1.4.4
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
@@ -14,21 +14,21 @@ paths:
         - Layer
       summary: add layer to mapproxy
       responses:
-        201:
+        '201':
           description: Created
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-        409:
+        '409':
           description: Conflict
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-        500:
+        '500':
           description: Ineternal Error
           content:
             application/json:
@@ -54,19 +54,19 @@ paths:
             items:
               type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/failedRemoveDiscreteLayers'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-        404:
+        '404':
           description: Not found
           content:
             application/json:
@@ -75,8 +75,8 @@ paths:
               examples:
                 LayerNotFound:
                   value:
-                    message: 'Layer name {layerName} is not exists'
-        500:
+                    message: Layer name {layerName} is not exists
+        '500':
           description: Ineternal Error
           content:
             application/json:
@@ -95,19 +95,19 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/getLayerResponse'
-        404:
+        '404':
           description: Not Found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-        500:
+        '500':
           description: Ineternal Error
           content:
             application/json:
@@ -125,27 +125,27 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: Updated
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/layer'
-        201:
+        '201':
           description: Created
-        202:
+        '202':
           description: Accepted
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/layer'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-        404:
+        '404':
           description: Not found
           content:
             application/json:
@@ -154,7 +154,7 @@ paths:
               examples:
                 LayerNotFound:
                   value:
-                    message: 'Layer name {layerName} is not exists'
+                    message: Layer name {layerName} is not exists
       requestBody:
         required: true
         content:
@@ -174,19 +174,19 @@ paths:
           schema:
             type: string
       responses:
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/mosaicLayer'
-        400:
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-        404:
+        '404':
           description: Not found
           content:
             application/json:
@@ -195,11 +195,11 @@ paths:
               examples:
                 LayerNotFound:
                   value:
-                    message: 'Layer name {layerName} is not exists'
+                    message: Layer name {layerName} is not exists
                 MosaicNotFound:
                   value:
-                    message: 'Mosaic name {mosaicName} is not exists'
-        500:
+                    message: Mosaic name {mosaicName} is not exists
+        '500':
           description: Ineternal Error
           content:
             application/json:
@@ -223,21 +223,21 @@ paths:
           schema:
             type: string
       responses:
-        204:
-          description: Updated
-        201:
+        '201':
           description: Created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/mosaic'
-        400:
+        '204':
+          description: Updated
+        '400':
           description: Bad Request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-        404:
+        '404':
           description: Not found
           content:
             application/json:
@@ -246,11 +246,11 @@ paths:
               examples:
                 LayerNotFound:
                   value:
-                    message: 'Layer name {layerName} is not exists'
+                    message: Layer name {layerName} is not exists
                 MosaicNotFound:
                   value:
-                    message: 'Mosaic name {mosaicName} is not exists'
-        500:
+                    message: Mosaic name {mosaicName} is not exists
+        '500':
           description: Ineternal Error
           content:
             application/json:
@@ -285,13 +285,13 @@ components:
             - geopackage
             - s3
             - file
-          example: 's3'
+          example: s3
         name:
           type: string
-          example: 'amsterdam_5cm'
+          example: amsterdam_5cm
         tilesPath:
           type: string
-          example: '/path/to/tiles/directory/in/bucket/'
+          example: /path/to/tiles/directory/in/bucket/
         maxZoomLevel:
           type: number
           example: 18
@@ -332,7 +332,7 @@ components:
       properties:
         layerName:
           type: string
-          example: 'amsterdam_5cm'
+          example: amsterdam_5cm
     mosaic:
       type: object
       required:
@@ -348,7 +348,7 @@ components:
             properties:
               layerName:
                 type: string
-                example: 'amsterdam_5cm'
+                example: amsterdam_5cm
               zIndex:
                 type: number
                 example: 1
@@ -357,5 +357,5 @@ components:
       items:
         type: string
       example:
-        - 'amsterdam_5cm'
-        - 'amsterdam_5cm-ortho'
+        - amsterdam_5cm
+        - amsterdam_5cm-ortho

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.4](https://github.com/MapColonies/mapproxy-api/compare/v1.4.3...v1.4.4) (2022-04-18)
+
+
+### Bug Fixes
+
+* helm db configs ([#86](https://github.com/MapColonies/mapproxy-api/issues/86)) ([5bb6611](https://github.com/MapColonies/mapproxy-api/commit/5bb6611900cf12479ed1b094f583707d59bb9f8e))
+
 ### [1.4.3](https://github.com/MapColonies/mapproxy-api/compare/v1.4.2...v1.4.3) (2022-02-21)
 
 ### [1.4.2](https://github.com/MapColonies/mapproxy-api/compare/v1.4.1...v1.4.2) (2022-02-21)
