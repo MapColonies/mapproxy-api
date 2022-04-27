@@ -36,7 +36,10 @@ rasterCommon:
       tilesBucket: "raster-tiles"
       sslEnabled: false
       secretName: "s3-secret"
-
+  ca:
+    secretName: ''
+    path: '/usr/local/share/ca-certificates'
+    key: 'ca.crt'
   db:
     host: "localhost"
     name: "mapproxy-config"
