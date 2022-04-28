@@ -49,10 +49,10 @@ spec:
           image: {{ $cloudProviderDockerRegistryUrl }}{{ .repository }}:{{ $imageTag }}
           {{- end }}
           volumeMounts:
-            {{- if .Values.caSecretName }}
-            - mountPath: {{ printf "%s/%s" .Values.caPath .Values.caKey | quote }}
+            {{- if .Values.rasterCommon.ca.secretName }}
+            - mountPath: {{ printf "%s/%s" .Values.rasterCommon.ca.path .Values.rasterCommon.ca.key | quote }}
               name: root-ca
-              subPath: {{ quote .Values.caKey }}
+              subPath: {{ quote .Values.rasterCommon.ca.key }}
             {{- end }}
             {{- if and .Values.rasterCommon.db.sslEnabled (eq (upper .Values.rasterCommon.storage.mapproxyConfigStorageProvider) "DB") }}
             - name: ca-file
@@ -73,11 +73,11 @@ spec:
           env:
             - name: SERVER_PORT
               value: {{ .Values.env.targetPort | quote }}
-            {{- if .Values.caSecretName }}
+            {{- if .Values.rasterCommon.ca.secretName }}
             - name: REQUESTS_CA_BUNDLE
-              value: {{ printf "%s/%s" .Values.caPath .Values.caKey | quote }}
+              value: {{ printf "%s/%s" .Values.rasterCommon.ca.path .Values.rasterCommon.ca.key | quote }}
             - name: NODE_EXTRA_CA_CERTS
-              value: {{ printf "[%s/%s]" .Values.caPath .Values.caKey | quote }}
+              value: {{ printf "[%s/%s]" .Values.rasterCommon.ca.path .Values.rasterCommon.ca.key | quote }}
             {{- end }}
             {{- if eq (upper .Values.rasterCommon.storage.mapproxyConfigStorageProvider) "S3" }}                                    
             - name: S3_ACCESS_KEY_ID
@@ -136,10 +136,10 @@ spec:
             {{- toYaml .Values.resources.value | nindent 12 }}
           {{- end }}
       volumes:
-        {{- if .Values.caSecretName }}
+        {{- if .Values.rasterCommon.ca.secretName }}
         - name: root-ca
           secret:
-            secretName: {{ .Values.caSecretName }}
+            secretName: {{ .Values.rasterCommon.ca.secretName }}
         {{- end }}
         {{- if  eq (upper .Values.rasterCommon.storage.mapproxyConfigStorageProvider) "FS" }}
         - name: sources-storage
