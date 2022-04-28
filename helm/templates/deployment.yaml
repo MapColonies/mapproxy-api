@@ -54,7 +54,7 @@ spec:
               name: root-ca
               subPath: {{ quote .Values.rasterCommon.ca.key }}
             {{- end }}
-            {{- if and .Values.rasterCommon.db.sslEnabled (eq (upper .Values.rasterCommon.storage.mapproxyConfigStorageProvider) "DB") }}
+            {{- if and .Values.rasterCommon.db.sslEnabled (eq (upper .Values.rasterCommon.storage.mapproxyConfigProvider) "DB") }}
             - name: ca-file
               mountPath: "/opt/certs/ca/ca.pem"
               subPath: ca.pem
@@ -65,7 +65,7 @@ spec:
               mountPath: "/opt/certs/cert/cert.pem"
               subPath: cert.pem
             {{- end }}
-            {{- if  eq (upper .Values.rasterCommon.storage.mapproxyConfigStorageProvider) "FS" }}
+            {{- if  eq (upper .Values.rasterCommon.storage.mapproxyConfigProvider) "FS" }}
             - mountPath: /configSource/mapproxy.yaml
               name: sources-storage
               subPath: {{ .Values.storage.configSubPath}}
@@ -79,7 +79,7 @@ spec:
             - name: NODE_EXTRA_CA_CERTS
               value: {{ printf "[%s/%s]" .Values.rasterCommon.ca.path .Values.rasterCommon.ca.key | quote }}
             {{- end }}
-            {{- if eq (upper .Values.rasterCommon.storage.mapproxyConfigStorageProvider) "S3" }}                                    
+            {{- if eq (upper .Values.rasterCommon.storage.mapproxyConfigProvider) "S3" }}                                    
             - name: S3_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
@@ -91,7 +91,7 @@ spec:
                   name: {{ $s3SecretName }}
                   key: secretAccessKey
             {{- end }}
-            {{- if eq (upper .Values.rasterCommon.storage.mapproxyConfigStorageProvider) "FS" }}
+            {{- if eq (upper .Values.rasterCommon.storage.mapproxyConfigProvider) "FS" }}
             - name: MAPPROXY_YAML_FILE_PATH  
               value: /configSource/mapproxy.yaml
             {{- end }} 
@@ -99,7 +99,7 @@ spec:
               value: /layerSources
             - name: ROOT_TILES_PATH
               value: {{ .Values.rasterCommon.storage.fs.tilesPvc.tilesSubPath }}
-            {{- if eq (upper .Values.rasterCommon.storage.mapproxyConfigStorageProvider) "DB" }}
+            {{- if eq (upper .Values.rasterCommon.storage.mapproxyConfigProvider) "DB" }}
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
@@ -141,7 +141,7 @@ spec:
           secret:
             secretName: {{ .Values.rasterCommon.ca.secretName }}
         {{- end }}
-        {{- if  eq (upper .Values.rasterCommon.storage.mapproxyConfigStorageProvider) "FS" }}
+        {{- if  eq (upper .Values.rasterCommon.storage.mapproxyConfigProvider) "FS" }}
         - name: sources-storage
           persistentVolumeClaim:
             claimName: {{ .Values.rasterCommon.storage.fs.tilesPvc.name }}

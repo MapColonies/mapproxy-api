@@ -19,7 +19,7 @@ data:
   TELEMETRY_METRICS_ENABLED: 'true'
   TELEMETRY_METRICS_URL: {{ $metricsUrl }}
   {{ end }}
-  MAPPROXY_CONFIG_PROVIDER: {{ quote .Values.rasterCommon.storage.mapproxyConfigStorageProvider }}
+  MAPPROXY_CONFIG_PROVIDER: {{ quote .Values.rasterCommon.storage.mapproxyConfigProvider }}
   MAPPROXY_CACHE_GRIDS: {{ quote .Values.env.mapproxyCache.grids }}
   MAPPROXY_CACHE_REQUEST_FORMAT: {{ quote .Values.env.mapproxyCache.requestFormat }}
   MAPPROXY_CACHE_UPSCALE_TILES: {{ quote .Values.env.mapproxyCache.upscaleTiles }}
@@ -27,7 +27,7 @@ data:
   S3_ENDPOINT_URL: {{ quote .Values.rasterCommon.storage.s3.endpointUrl }}
   S3_BUCKET:  {{ quote .Values.rasterCommon.storage.s3.tilesBucket }}
   S3_SSL_ENABLED: {{ quote .Values.rasterCommon.storage.s3.sslEnabled }}
-  {{- if eq (upper .Values.rasterCommon.storage.mapproxyConfigStorageProvider) "DB" }}
+  {{- if eq (upper .Values.rasterCommon.storage.mapproxyConfigProvider) "DB" }}
   DB_HOST: {{ quote .Values.rasterCommon.db.host }}
   DB_NAME: {{ .Values.mapproxy.db.nameOverride | default .Values.rasterCommon.db.name | quote }}
   DB_PORT: {{ quote .Values.rasterCommon.db.port }}
