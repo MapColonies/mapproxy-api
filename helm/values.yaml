@@ -28,7 +28,7 @@ rasterCommon:
   storage:
     mapproxyConfigProvider: 'DB'
     fs:
-      tilesPvc:
+      internalPvc:
         name: "internal-pvc"
         tilesSubPath: tiles
     s3:

@@ -5,7 +5,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Values.rasterCommon.storage.fs.tilesPvc.name }}
+  name: {{ .Values.rasterCommon.storage.fs.internalPvc.name }}
   labels:
     app: {{ $chartName }}
     component: {{ $chartName }}
