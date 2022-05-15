@@ -66,9 +66,9 @@ spec:
               subPath: cert.pem
             {{- end }}
             {{- if  eq (upper .Values.rasterCommon.storage.mapproxyConfigProvider) "FS" }}
-            - mountPath: /configSource/mapproxy.yaml
+            - mountPath: /configSource
               name: sources-storage
-              subPath: {{ .Values.storage.configSubPath}}
+              subPath: {{ .Values.rasterCommon.storage.fs.internalPvc.configSubPath }}
             {{- end }}
           env:
             - name: SERVER_PORT
@@ -98,7 +98,7 @@ spec:
             - name: INTERNAL_MOUNT_DIR
               value: /layerSources
             - name: ROOT_TILES_PATH
-              value: {{ .Values.rasterCommon.storage.fs.tilesPvc.tilesSubPath }}
+              value: {{ .Values.rasterCommon.storage.fs.internalPvc.tilesSubPath }}
             {{- if eq (upper .Values.rasterCommon.storage.mapproxyConfigProvider) "DB" }}
             - name: DB_USER
               valueFrom:
@@ -144,7 +144,7 @@ spec:
         {{- if  eq (upper .Values.rasterCommon.storage.mapproxyConfigProvider) "FS" }}
         - name: sources-storage
           persistentVolumeClaim:
-            claimName: {{ .Values.rasterCommon.storage.fs.tilesPvc.name }}
+            claimName: {{ .Values.rasterCommon.storage.fs.internalPvc.name }}
         {{- end }}
         {{- if .Values.rasterCommon.db.sslEnabled }}
         - name: ca-file

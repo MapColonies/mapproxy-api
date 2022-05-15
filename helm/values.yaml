@@ -28,9 +28,10 @@ rasterCommon:
   storage:
     mapproxyConfigProvider: 'DB'
     fs:
-      tilesPvc:
+      internalPvc:
         name: "internal-pvc"
         tilesSubPath: tiles
+        configSubPath: config
     s3:
       endpointUrl: "localhost:9000"
       tilesBucket: "raster-tiles"
