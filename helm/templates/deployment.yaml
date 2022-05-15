@@ -66,9 +66,9 @@ spec:
               subPath: cert.pem
             {{- end }}
             {{- if  eq (upper .Values.rasterCommon.storage.mapproxyConfigProvider) "FS" }}
-            - mountPath: /configSource/mapproxy.yaml
+            - mountPath: /configSource
               name: sources-storage
-              subPath: {{ .Values.storage.configSubPath}}
+              subPath: {{ .Values.rasterCommon.storage.fs.internalPvc.configSubPath }}
             {{- end }}
           env:
             - name: SERVER_PORT
