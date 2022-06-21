@@ -1,9 +1,6 @@
 name: Build-and-push
 
-on:
-  push:
-    tags:
-      - 'v*'
+on: [pull_request]
 
 jobs:
 

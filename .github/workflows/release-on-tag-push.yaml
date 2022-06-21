@@ -1,6 +1,9 @@
 name: "Publish release on tag push"
 
-on: [pull_request]
+on:
+  push:
+    tags:
+      - "v*"
 
 jobs:
   publish_release:
