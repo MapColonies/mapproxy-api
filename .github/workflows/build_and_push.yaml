@@ -1,8 +1,9 @@
 name: Build-and-push
 
 on:
-  create:
+  push:
     tags:
+      - 'v*'
 
 jobs:
 
