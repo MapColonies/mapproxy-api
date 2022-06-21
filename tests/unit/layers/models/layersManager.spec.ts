@@ -244,7 +244,6 @@ describe('layersManager', () => {
     const mockUpdateLayerRequest: ILayerPostRequest = {
       name: 'amsterdam_5cm',
       tilesPath: '/path/to/tiles/directory/in/my/bucket/',
-      maxZoomLevel: 18,
       cacheType: 's3',
     };
 
