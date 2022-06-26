@@ -277,7 +277,6 @@ components:
         - cacheType
         - name
         - tilesPath
-        - maxZoomLevel
       properties:
         cacheType:
           type: string
@@ -292,9 +291,6 @@ components:
         tilesPath:
           type: string
           example: /path/to/tiles/directory/in/bucket/
-        maxZoomLevel:
-          type: number
-          example: 18
     getLayerResponse:
       type: object
       required:

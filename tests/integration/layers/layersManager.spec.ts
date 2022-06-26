@@ -103,7 +103,6 @@ describe('layerManager', () => {
         // mocking bad request with invalid field 'mockName' to test BadRequest status
         mockName: 'NameIsNotExists',
         tilesPath: '/path/to/s3/directory/tile',
-        maxZoomLevel: 18,
       } as unknown as ILayerPostRequest;
       const response = await requestSender.addLayer(mockBadRequestRequest);
       expect(response).toSatisfyApiSpec();
@@ -124,7 +123,6 @@ describe('layerManager', () => {
     const mockUpdateLayerRequest: ILayerPostRequest = {
       name: 'amsterdam_5cm',
       tilesPath: '/path/to/tiles/directory/in/my/bucket/',
-      maxZoomLevel: 18,
       cacheType: 's3',
     };
 
@@ -140,7 +138,6 @@ describe('layerManager', () => {
         // mocking bad request with invalid field 'mockName' to test BadRequest status
         mockName: 'amsterdam_5cm',
         tilesPath: '/path/to/tiles/directory/in/my/bucket/',
-        maxZoomLevel: 18,
       } as unknown as ILayerPostRequest;
 
       const response = await requestSender.updateLayer(mockLayerNameAlreadyExists.name, mockBadRequest);
