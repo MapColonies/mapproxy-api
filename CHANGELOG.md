@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.7](https://github.com/MapColonies/mapproxy-api/compare/v1.4.6...v1.4.7) (2022-06-27)
+
+
+### Bug Fixes
+
+* remove maxZoom param ([#92](https://github.com/MapColonies/mapproxy-api/issues/92)) ([70774a0](https://github.com/MapColonies/mapproxy-api/commit/70774a0f1c9314165b6921753eb2b47f6253e8f0))
+* run audit fix ([#91](https://github.com/MapColonies/mapproxy-api/issues/91)) ([37c52d5](https://github.com/MapColonies/mapproxy-api/commit/37c52d5e742babafb79b69ee6deec85fedfb19ad))
+
 ### [1.4.6](https://github.com/MapColonies/mapproxy-api/compare/v1.4.5...v1.4.6) (2022-04-24)
 
 
