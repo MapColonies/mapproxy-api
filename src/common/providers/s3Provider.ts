@@ -32,10 +32,11 @@ export class S3Provider implements IConfigProvider {
     });
   }
 
-  public async updateJson(jsonContent: IMapProxyJsonDocument): Promise<void> {
+  public async updateJson(editJson: (content: IMapProxyJsonDocument) => IMapProxyJsonDocument): Promise<void> {
     try {
+      const jsonContent = await this.getJson();
       //convert the updated json content to yaml content
-      const yamlContent = convertJsonToYaml(jsonContent);
+      const yamlContent = convertJsonToYaml(editJson(jsonContent));
       // Setting up S3 upload parameters
       const params = {
         Bucket: this.s3Config.bucket,
