@@ -23,8 +23,6 @@ describe('layersManager', () => {
     initConfigProvider();
     const mapproxyConfig = container.resolve<IMapProxyConfig>(SERVICES.MAPPROXY);
     layersManager = new LayersManager(logger, mapproxyConfig, MockConfigProvider);
-    //getJsonMock.mockResolvedValue(JSON.parse(mockJsonData) as IMapProxyJsonDocument);
-    //updateJsonMock.mockResolvedValue(undefined);
     sortArrayByZIndexStub = jest.spyOn(utils, 'sortArrayByZIndex').mockReturnValueOnce(['mockLayer1', 'mockLayer2', 'mockLayer3']);
   });
 
@@ -209,7 +207,6 @@ describe('layersManager', () => {
       // action
       const result = await layersManager.removeLayer(mockNotExistsLayerNames);
       // expectation
-      //await expect(action).rejects.toThrow(NotFoundError);
       expect(result).toEqual(expect.any(Array));
       expect(result).toEqual(mockNotExistsLayerNames);
       expect(updateJsonMock).toHaveBeenCalledTimes(1);
