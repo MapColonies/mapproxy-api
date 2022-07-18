@@ -9,19 +9,17 @@ import {
   ILayerToMosaicRequest,
   IMapProxyCache,
   IMapProxyConfig,
-  IMapProxyJsonDocument,
   IS3Config,
   IUpdateMosaicRequest,
 } from '../../../src/common/interfaces';
 import { mockLayerNameIsNotExists } from '../../unit/mock/mockLayerNameIsNotExists';
 import { mockLayerNameAlreadyExists } from '../../unit/mock/mockLayerNameAlreadyExists';
-import { MockConfigProvider } from '../../unit/mock/mockConfigProvider';
+import { MockConfigProvider, init as configProviderInit } from '../../unit/mock/mockConfigProvider';
 import * as utils from '../../../src/common/utils';
 import { getApp } from '../../../src/app';
 import { SERVICES } from '../../../src/common/constants';
 import { layersRouterFactory, LAYERS_ROUTER_SYMBOL } from '../../../src/layers/routes/layersRouterFactory';
 import { LayersRequestSender } from '../layers/helpers/requestSender';
-import { mockData } from '../../unit/mock/mockData';
 
 let requestSender: LayersRequestSender;
 describe('layerManager', () => {
@@ -29,8 +27,8 @@ describe('layerManager', () => {
     const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
     const fsConfig = config.get<IFSConfig>('FS');
     const s3Config = config.get<IS3Config>('S3');
+    configProviderInit();
     /* eslint-disable-next-line @typescript-eslint/naming-convention*/
-    const mockConfigProvider = new MockConfigProvider();
     const app = getApp({
       override: [
         { token: SERVICES.MAPPROXY, provider: { useValue: mapproxyConfig } },
@@ -43,7 +41,7 @@ describe('layerManager', () => {
         {
           token: SERVICES.CONFIGPROVIDER,
           provider: {
-            useValue: mockConfigProvider,
+            useValue: MockConfigProvider,
           },
         },
       ],
@@ -51,8 +49,6 @@ describe('layerManager', () => {
     });
     //container.resolve<ServerBuilder>(ServerBuilder);
     requestSender = new LayersRequestSender(app);
-    jest.spyOn(MockConfigProvider.prototype, 'getJson').mockResolvedValue(mockData() as unknown as IMapProxyJsonDocument);
-    jest.spyOn(MockConfigProvider.prototype, 'updateJson').mockResolvedValue(undefined);
     jest.spyOn(utils, 'replaceYamlFileContent').mockResolvedValue(undefined);
   });
 

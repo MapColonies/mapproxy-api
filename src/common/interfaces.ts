@@ -138,7 +138,7 @@ export interface IUpdateMosaicRequest {
 }
 
 export interface IConfigProvider {
-  updateJson: (jsonConent: IMapProxyJsonDocument) => Promise<void>;
+  updateJson: (editJson: (content: IMapProxyJsonDocument) => IMapProxyJsonDocument) => Promise<void>;
   getJson: () => Promise<IMapProxyJsonDocument>;
 }
 

@@ -14,9 +14,10 @@ export class FSProvider implements IConfigProvider {
     this.fsConfig = container.resolve(SERVICES.FS);
   }
 
-  public async updateJson(jsonContent: IMapProxyJsonDocument): Promise<void> {
+  public async updateJson(editJson: (content: IMapProxyJsonDocument) => IMapProxyJsonDocument): Promise<void> {
     try {
-      const yamlContent = convertJsonToYaml(jsonContent);
+      const jsonContent = await this.getJson();
+      const yamlContent = convertJsonToYaml(editJson(jsonContent));
       await replaceYamlFileContent(this.fsConfig.yamlFilePath, yamlContent);
     } catch (error) {
       this.logger.error(`Failed to update file: ${(error as Error).message}`);

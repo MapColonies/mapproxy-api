@@ -5,7 +5,7 @@ import { StatusCodes } from 'http-status-codes';
 import { Logger } from '@map-colonies/js-logger';
 import { SERVICES } from '../constants';
 import { HttpError } from '../exceptions/http/httpError';
-import { ConfilctError } from '../exceptions/http/confilctError';
+import { ConflictError } from '../exceptions/http/conflictError';
 import { NoContentError } from '../exceptions/http/noContentError';
 import { ServiceUnavailableError } from '../exceptions/http/serviceUnavailableError';
 
@@ -29,7 +29,7 @@ export class ErrorHandler {
           message: 'request validation failed',
           validationErrors: err.errors,
         };
-      } else if (err instanceof ConfilctError) {
+      } else if (err instanceof ConflictError) {
         status = err.status;
         body = {
           message: err.message,

@@ -1,44 +1,28 @@
 import { normalize } from 'path';
-import { readFileSync } from 'fs';
 import { container } from 'tsyringe';
 import jsLogger from '@map-colonies/js-logger';
-import {
-  ILayerPostRequest,
-  ILayerToMosaicRequest,
-  IMapProxyCache,
-  IMapProxyConfig,
-  IMapProxyJsonDocument,
-  IUpdateMosaicRequest,
-} from '../../../../src/common/interfaces';
+import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IMapProxyConfig, IUpdateMosaicRequest } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
-import { ConfilctError } from '../../../../src/common/exceptions/http/confilctError';
+import { ConflictError } from '../../../../src/common/exceptions/http/conflictError';
 import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExists';
 import { mockLayerNameIsNotExists } from '../../mock/mockLayerNameIsNotExists';
 import * as utils from '../../../../src/common/utils';
 import { NotFoundError } from '../../../../src/common/exceptions/http/notFoundError';
-import { MockConfigProvider } from '../../mock/mockConfigProvider';
+import { MockConfigProvider, getJsonMock, updateJsonMock, init as initConfigProvider } from '../../mock/mockConfigProvider';
 import { SERVICES } from '../../../../src/common/constants';
 import { registerTestValues } from '../../../integration/testContainerConfig';
 
 let layersManager: LayersManager;
 let sortArrayByZIndexStub: jest.SpyInstance;
-let getJsonStub: jest.SpyInstance;
-let updateJsonStub: jest.SpyInstance;
-let mockJsonData: string;
 const logger = jsLogger({ enabled: false });
 
 describe('layersManager', () => {
-  beforeAll(() => {
-    mockJsonData = readFileSync('tests/unit/mock/mockJson.json', 'utf8');
-  });
-
   beforeEach(() => {
     // stub util functions
     registerTestValues();
+    initConfigProvider();
     const mapproxyConfig = container.resolve<IMapProxyConfig>(SERVICES.MAPPROXY);
-    layersManager = new LayersManager(logger, mapproxyConfig, MockConfigProvider.prototype);
-    getJsonStub = jest.spyOn(MockConfigProvider.prototype, 'getJson').mockResolvedValue(JSON.parse(mockJsonData) as IMapProxyJsonDocument);
-    updateJsonStub = jest.spyOn(MockConfigProvider.prototype, 'updateJson').mockResolvedValue(undefined);
+    layersManager = new LayersManager(logger, mapproxyConfig, MockConfigProvider);
     sortArrayByZIndexStub = jest.spyOn(utils, 'sortArrayByZIndex').mockReturnValueOnce(['mockLayer1', 'mockLayer2', 'mockLayer3']);
   });
 
@@ -53,7 +37,7 @@ describe('layersManager', () => {
       // action
       const resource: IMapProxyCache = await layersManager.getLayer('mockLayerNameExists');
       // expectation;
-      expect(getJsonStub).toHaveBeenCalledTimes(1);
+      expect(getJsonMock).toHaveBeenCalledTimes(1);
       expect(resource.sources).toEqual([]);
       expect(resource.upscale_tiles).toBe(18);
       expect(resource.request_format).toBe('image/png');
@@ -69,8 +53,8 @@ describe('layersManager', () => {
       };
       // expectation;
       await expect(action).rejects.toThrow(NotFoundError);
-      expect(getJsonStub).toHaveBeenCalledTimes(1);
-      expect(updateJsonStub).not.toHaveBeenCalled();
+      expect(getJsonMock).toHaveBeenCalledTimes(1);
+      expect(updateJsonMock).not.toHaveBeenCalled();
     });
   });
 
@@ -82,9 +66,8 @@ describe('layersManager', () => {
       };
 
       // expectation
-      await expect(action).rejects.toThrow(ConfilctError);
-      expect(getJsonStub).toHaveBeenCalledTimes(1);
-      expect(updateJsonStub).not.toHaveBeenCalled();
+      await expect(action).rejects.toThrow(ConflictError);
+      expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
 
     it('should successfully add layer', async () => {
@@ -95,8 +78,7 @@ describe('layersManager', () => {
 
       // expectation
       await expect(action()).resolves.not.toThrow();
-      expect(getJsonStub).toHaveBeenCalledTimes(1);
-      expect(updateJsonStub).toHaveBeenCalledTimes(1);
+      expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -113,8 +95,7 @@ describe('layersManager', () => {
       };
       // expectation
       await expect(action).rejects.toThrow(NotFoundError);
-      expect(getJsonStub).toHaveBeenCalledTimes(1);
-      expect(updateJsonStub).not.toHaveBeenCalled();
+      expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
 
     it('should reject with not found error due mosaic name is not exists', async () => {
@@ -129,8 +110,7 @@ describe('layersManager', () => {
       };
       // expectation
       await expect(action).rejects.toThrow(NotFoundError);
-      expect(getJsonStub).toHaveBeenCalledTimes(1);
-      expect(updateJsonStub).not.toHaveBeenCalled();
+      expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
 
     it('should successfully add layer to mosaic', async () => {
@@ -145,13 +125,12 @@ describe('layersManager', () => {
       };
       // expectation
       await expect(action()).resolves.not.toThrow();
-      expect(getJsonStub).toHaveBeenCalledTimes(1);
-      expect(updateJsonStub).toHaveBeenCalledTimes(1);
+      expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('#updateMosaic', () => {
-    it('should successfully update mosaic layers by thier z-index', async () => {
+    it('should successfully update mosaic layers by their z-index', async () => {
       // mock
       const mockMosaicName = 'existsMosaicName';
       const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
@@ -166,9 +145,8 @@ describe('layersManager', () => {
       };
       // expectation
       await expect(action()).resolves.not.toThrow();
-      expect(getJsonStub).toHaveBeenCalledTimes(1);
       expect(sortArrayByZIndexStub).toHaveBeenCalledTimes(1);
-      expect(updateJsonStub).toHaveBeenCalledTimes(1);
+      expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
 
     it('should reject with not found error due layer name is not exists', async () => {
@@ -186,9 +164,8 @@ describe('layersManager', () => {
       };
       // expectation
       await expect(action).rejects.toThrow(NotFoundError);
-      expect(getJsonStub).toHaveBeenCalledTimes(1);
       expect(sortArrayByZIndexStub).toHaveBeenCalledTimes(0);
-      expect(updateJsonStub).not.toHaveBeenCalled();
+      expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
 
     it('should reject with not found error due mosaic name is not exists', async () => {
@@ -206,9 +183,8 @@ describe('layersManager', () => {
       };
       // expectation
       await expect(action).rejects.toThrow(NotFoundError);
-      expect(getJsonStub).toHaveBeenCalledTimes(1);
       expect(sortArrayByZIndexStub).toHaveBeenCalledTimes(0);
-      expect(updateJsonStub).not.toHaveBeenCalled();
+      expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -222,8 +198,7 @@ describe('layersManager', () => {
       };
       // expectation
       await expect(action()).resolves.not.toThrow();
-      expect(getJsonStub).toHaveBeenCalledTimes(1);
-      expect(updateJsonStub).toHaveBeenCalledTimes(1);
+      expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
 
     it('should return not found layers array and not to throw', async () => {
@@ -232,11 +207,9 @@ describe('layersManager', () => {
       // action
       const result = await layersManager.removeLayer(mockNotExistsLayerNames);
       // expectation
-      //await expect(action).rejects.toThrow(NotFoundError);
       expect(result).toEqual(expect.any(Array));
       expect(result).toEqual(mockNotExistsLayerNames);
-      expect(getJsonStub).toHaveBeenCalledTimes(1);
-      expect(updateJsonStub).not.toHaveBeenCalled();
+      expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -256,8 +229,7 @@ describe('layersManager', () => {
       };
       // expectation
       await expect(action()).resolves.not.toThrow();
-      expect(getJsonStub).toHaveBeenCalledTimes(1);
-      expect(updateJsonStub).toHaveBeenCalledTimes(1);
+      expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
 
     it('should reject with not found error due layer name is not exists', async () => {
@@ -269,8 +241,6 @@ describe('layersManager', () => {
       };
       // expectation
       await expect(action).rejects.toThrow(NotFoundError);
-      expect(getJsonStub).toHaveBeenCalledTimes(1);
-      expect(updateJsonStub).not.toHaveBeenCalled();
     });
   });
 

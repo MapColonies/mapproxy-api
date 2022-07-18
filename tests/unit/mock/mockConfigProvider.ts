@@ -1,16 +1,25 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { promises as fsp } from 'fs';
+import { readFileSync } from 'fs';
 import { IConfigProvider, IMapProxyJsonDocument } from '../../../src/common/interfaces';
 
-export class MockConfigProvider implements IConfigProvider {
-  // eslint-disable-next-line @typescript-eslint/require-await
-  public async updateJson(jsonContent: IMapProxyJsonDocument): Promise<void> {
-    void Promise.resolve(undefined);
-  }
+const updateJsonMock = jest.fn();
+const getJsonMock = jest.fn();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public async getJson(): Promise<IMapProxyJsonDocument> {
-    const mockJsonData = await fsp.readFile('tests/unit/mock/mockJson.json', { encoding: 'utf8' });
-    return Promise.resolve(JSON.parse(mockJsonData)) as unknown as IMapProxyJsonDocument;
-  }
-}
+const MockConfigProvider = {
+  updateJson: updateJsonMock,
+  getJson: getJsonMock,
+} as IConfigProvider;
+
+const init = (): void => {
+  const mockJsonData = readFileSync('tests/unit/mock/mockJson.json', { encoding: 'utf8' });
+  const doc = JSON.parse(mockJsonData) as unknown as IMapProxyJsonDocument;
+
+  updateJsonMock.mockImplementation(async (readJson: (doc: IMapProxyJsonDocument) => IMapProxyJsonDocument) => {
+    readJson(doc);
+    return Promise.resolve(undefined);
+  });
+  getJsonMock.mockImplementation(async (): Promise<IMapProxyJsonDocument> => {
+    return Promise.resolve(doc);
+  });
+};
+
+export { updateJsonMock, getJsonMock, MockConfigProvider, init };
