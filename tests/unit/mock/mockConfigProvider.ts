@@ -6,20 +6,20 @@ const getJsonMock = jest.fn();
 
 const MockConfigProvider = {
   updateJson: updateJsonMock,
-  getJson: getJsonMock
+  getJson: getJsonMock,
 } as IConfigProvider;
 
-const init = (): void =>{
-  const mockJsonData =  readFileSync('tests/unit/mock/mockJson.json', { encoding: 'utf8' });
+const init = (): void => {
+  const mockJsonData = readFileSync('tests/unit/mock/mockJson.json', { encoding: 'utf8' });
   const doc = JSON.parse(mockJsonData) as unknown as IMapProxyJsonDocument;
 
-  updateJsonMock.mockImplementation(async (readJson:((doc:IMapProxyJsonDocument)=>IMapProxyJsonDocument))=>{
+  updateJsonMock.mockImplementation(async (readJson: (doc: IMapProxyJsonDocument) => IMapProxyJsonDocument) => {
     readJson(doc);
     return Promise.resolve(undefined);
   });
-  getJsonMock.mockImplementation(async ():Promise<IMapProxyJsonDocument> =>{
+  getJsonMock.mockImplementation(async (): Promise<IMapProxyJsonDocument> => {
     return Promise.resolve(doc);
-  })
-}
+  });
+};
 
-export {updateJsonMock, getJsonMock, MockConfigProvider, init}
+export { updateJsonMock, getJsonMock, MockConfigProvider, init };

@@ -1,39 +1,26 @@
 import { normalize } from 'path';
-import { readFileSync } from 'fs';
 import { container } from 'tsyringe';
 import jsLogger from '@map-colonies/js-logger';
-import {
-  ILayerPostRequest,
-  ILayerToMosaicRequest,
-  IMapProxyCache,
-  IMapProxyConfig,
-  IMapProxyJsonDocument,
-  IUpdateMosaicRequest,
-} from '../../../../src/common/interfaces';
+import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IMapProxyConfig, IUpdateMosaicRequest } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { ConflictError } from '../../../../src/common/exceptions/http/conflictError';
 import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExists';
 import { mockLayerNameIsNotExists } from '../../mock/mockLayerNameIsNotExists';
 import * as utils from '../../../../src/common/utils';
 import { NotFoundError } from '../../../../src/common/exceptions/http/notFoundError';
-import { MockConfigProvider,getJsonMock,updateJsonMock, init as initConfigProvider } from '../../mock/mockConfigProvider';
+import { MockConfigProvider, getJsonMock, updateJsonMock, init as initConfigProvider } from '../../mock/mockConfigProvider';
 import { SERVICES } from '../../../../src/common/constants';
 import { registerTestValues } from '../../../integration/testContainerConfig';
 
 let layersManager: LayersManager;
 let sortArrayByZIndexStub: jest.SpyInstance;
-let mockJsonData: string;
 const logger = jsLogger({ enabled: false });
 
 describe('layersManager', () => {
-  beforeAll(() => {
-    mockJsonData = readFileSync('tests/unit/mock/mockJson.json', 'utf8');
-  });
-
   beforeEach(() => {
     // stub util functions
     registerTestValues();
-    initConfigProvider()
+    initConfigProvider();
     const mapproxyConfig = container.resolve<IMapProxyConfig>(SERVICES.MAPPROXY);
     layersManager = new LayersManager(logger, mapproxyConfig, MockConfigProvider);
     //getJsonMock.mockResolvedValue(JSON.parse(mockJsonData) as IMapProxyJsonDocument);

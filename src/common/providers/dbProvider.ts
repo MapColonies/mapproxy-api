@@ -37,7 +37,8 @@ export class DBProvider implements IConfigProvider {
     const client = await this.connectToDb();
     let reThrow = false;
     try {
-      await client.query('BEGIN');
+      await client.query(`BEGIN; LOCK TABLE ${this.dbConfig.table} IN SHARE UPDATE EXCLUSIVE MODE;`);
+      //await client.query(`LOCK TABLE ${this.dbConfig.table} IN SHARE UPDATE EXCLUSIVE MODE`)
       let query = `SELECT ${this.dbConfig.columns.data} FROM ${this.dbConfig.table} ORDER BY ${this.dbConfig.columns.updatedTime} DESC limit 1 FOR UPDATE`;
       const result = await client.query<{ data: string }>(query);
       const jsonContent = result.rows[0].data as unknown as IMapProxyJsonDocument;
@@ -55,6 +56,7 @@ export class DBProvider implements IConfigProvider {
       this.logger.debug('Transaction COMMIT called');
       this.logger.info('Successfully updated database');
     } catch (error) {
+      await client.query('ROLLBACK');
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unnecessary-condition
       throw reThrow ? error : new Error(`Failed to update database: ${error}`);
     } finally {
