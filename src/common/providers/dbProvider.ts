@@ -38,7 +38,7 @@ export class DBProvider implements IConfigProvider {
     let reThrow = false;
     try {
       await client.query(`BEGIN; LOCK TABLE ${this.dbConfig.table} IN SHARE UPDATE EXCLUSIVE MODE;`);
-      let query = `SELECT ${this.dbConfig.columns.data} FROM ${this.dbConfig.table} ORDER BY ${this.dbConfig.columns.updatedTime} DESC limit 1 FOR UPDATE`;
+      let query = `SELECT ${this.dbConfig.columns.data} FROM ${this.dbConfig.table} ORDER BY ${this.dbConfig.columns.updatedTime} DESC limit 1`;
       const result = await client.query<{ data: string }>(query);
       const jsonContent = result.rows[0].data as unknown as IMapProxyJsonDocument;
       let rawData: IMapProxyJsonDocument;
