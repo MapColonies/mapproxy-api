@@ -109,7 +109,6 @@ class LayersManager {
 
   public async removeLayer(layersName: string[]): Promise<string[] | void> {
     this.logger.info(`Remove layers request for: [${layersName.join(',')}]`);
-    //const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
     const failedLayers: string[] = [];
     const errorMessage = 'no valid layers to delete';
 
