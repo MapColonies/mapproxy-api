@@ -7,8 +7,8 @@ metadata:
   name: {{ $releaseName }}-{{ $chartName }}-ingress
   annotations:
     kubernetes.io/ingress.class: "nginx"
-    nginx.org/mergeable-ingress-type: "minion"
     {{- if eq .Values.ingress.type "nginx-org" }}
+    nginx.org/mergeable-ingress-type: "minion"
     nginx.org/rewrites: 'serviceName={{ $releaseName }}-{{ $chartName }} rewrite=/'
     {{- end }}
     {{- if eq .Values.ingress.type "nginx-kubernetes" }}
