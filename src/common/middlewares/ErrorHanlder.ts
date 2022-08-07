@@ -1,13 +1,10 @@
 import { Request, Response, NextFunction, ErrorRequestHandler } from 'express';
 import { inject, injectable } from 'tsyringe';
 import { BadRequest } from 'express-openapi-validator/dist/framework/types';
+import { HttpError, ConflictError, NoContentError, ServiceUnavailableError } from '@map-colonies/error-types';
 import { StatusCodes } from 'http-status-codes';
 import { Logger } from '@map-colonies/js-logger';
 import { SERVICES } from '../constants';
-import { HttpError } from '../exceptions/http/httpError';
-import { ConflictError } from '../exceptions/http/conflictError';
-import { NoContentError } from '../exceptions/http/noContentError';
-import { ServiceUnavailableError } from '../exceptions/http/serviceUnavailableError';
 
 @injectable()
 export class ErrorHandler {

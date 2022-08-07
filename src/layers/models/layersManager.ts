@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { container, inject, injectable } from 'tsyringe';
 import { Logger } from '@map-colonies/js-logger';
+import { ConflictError, NotFoundError } from '@map-colonies/error-types';
 import { SERVICES } from '../../common/constants';
 import {
   ILayerPostRequest,
@@ -15,9 +16,7 @@ import {
   ICacheSource,
 } from '../../common/interfaces';
 import { sortArrayByZIndex } from '../../common/utils';
-import { ConflictError } from '../../common/exceptions/http/conflictError';
 import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
-import { NotFoundError } from '../../common/exceptions/http/notFoundError';
 import { S3Source } from '../../common/cacheProviders/S3Source';
 import { GpkgSource } from '../../common/cacheProviders/gpkgSource';
 import { SourceTypes } from '../../common/enums/sourceTypes';
