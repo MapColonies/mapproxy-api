@@ -1,7 +1,7 @@
 import { normalize } from 'path';
 import { container } from 'tsyringe';
 import jsLogger from '@map-colonies/js-logger';
-import {ConflictError, NotFoundError} from '@map-colonies/error-types'
+import { ConflictError, NotFoundError } from '@map-colonies/error-types';
 import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IMapProxyConfig, IUpdateMosaicRequest } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExists';
