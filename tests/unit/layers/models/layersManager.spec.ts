@@ -1,13 +1,12 @@
 import { normalize } from 'path';
 import { container } from 'tsyringe';
 import jsLogger from '@map-colonies/js-logger';
+import { ConflictError, NotFoundError } from '@map-colonies/error-types';
 import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IMapProxyConfig, IUpdateMosaicRequest } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
-import { ConflictError } from '../../../../src/common/exceptions/http/conflictError';
 import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExists';
 import { mockLayerNameIsNotExists } from '../../mock/mockLayerNameIsNotExists';
 import * as utils from '../../../../src/common/utils';
-import { NotFoundError } from '../../../../src/common/exceptions/http/notFoundError';
 import { MockConfigProvider, getJsonMock, updateJsonMock, init as initConfigProvider } from '../../mock/mockConfigProvider';
 import { SERVICES } from '../../../../src/common/constants';
 import { registerTestValues } from '../../../integration/testContainerConfig';

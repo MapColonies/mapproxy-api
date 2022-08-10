@@ -3,7 +3,6 @@ import { promises as fsp } from 'fs';
 import { safeLoad, safeDump, YAMLException } from 'js-yaml';
 import { container } from 'tsyringe';
 import { SERVICES } from '../common/constants';
-import { ServiceUnavailableError } from './exceptions/http/serviceUnavailableError';
 import { IFSConfig, IMapProxyJsonDocument, IMosaicLayerObject } from './interfaces';
 import { SourceTypes } from './enums/sourceTypes';
 
@@ -13,10 +12,6 @@ export function convertYamlToJson(yamlContent: string): IMapProxyJsonDocument {
     const jsonDocument: IMapProxyJsonDocument = safeLoad(yamlContent) as IMapProxyJsonDocument;
     return jsonDocument;
   } catch (error) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (error.code === 'ENOENT') {
-      throw new ServiceUnavailableError('Yaml file is not found');
-    }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (error instanceof YAMLException) {
       throw new YAMLException('Invalid YAML syntax error');
