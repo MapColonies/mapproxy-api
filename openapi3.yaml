@@ -327,6 +327,9 @@ components:
           type: number
         format:
           type: string
+          enum:
+            - image/png
+            - image/jpeg
     mosaicLayer:
       type: object
       required:
