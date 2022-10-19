@@ -15,7 +15,6 @@
     "configProvider": "fs",
     "cache": {
       "grids": "epsg4326dir",
-      "format": "image/png",
       "upscale_tiles": 18,
       "type": "s3",
       "directory_layout": "tms"
