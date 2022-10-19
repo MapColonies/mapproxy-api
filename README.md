@@ -67,9 +67,6 @@ to yaml file that declared in `MAPPROXY_YAML_FILEPATH`.
 
 **example: MAPPROXY_CACHE_GRIDS="epsg4326ul,epsg4326ll"**, *default to 'epsg4326ul'*
 
-`MAPPROXY_CACHE_REQUEST_FORMAT` set the requested format.
-
- available values: 'image/png', 'image/jpeg', *deafult to image/png*
 
 `MAPPROXY_CACHE_UPSCALE_TILES` determine zoom level for upscale missing tiles
 

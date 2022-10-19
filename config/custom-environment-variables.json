@@ -43,7 +43,6 @@
     "configProvider": "MAPPROXY_CONFIG_PROVIDER",
     "cache": {
       "grids": "MAPPROXY_CACHE_GRIDS",
-      "requestFormat": "MAPPROXY_CACHE_REQUEST_FORMAT",
       "upscaleTiles": {
         "__name": "MAPPROXY_CACHE_UPSCALE_TILES",
         "__format": "number"

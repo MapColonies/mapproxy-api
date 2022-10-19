@@ -4,7 +4,7 @@ caches:
     sources: []
     grids:
       - epsg4326dir
-    request_format: image/png
+    format: image/png
     upscale_tiles: 18
     cache:
       type: s3
@@ -14,7 +14,7 @@ caches:
     sources: []
     grids:
       - epsg4326dir
-    request_format: image/png
+    format: image/png
     upscale_tiles: 18
     cache:
       type: s3
@@ -29,7 +29,7 @@ caches:
     sources: []
     grids:
       - epsg4326dir
-    request_format: image/png
+    format: image/png
     upscale_tiles: 18
     cache:
       type: s3

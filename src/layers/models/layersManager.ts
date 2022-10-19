@@ -19,8 +19,8 @@ import { sortArrayByZIndex } from '../../common/utils';
 import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
 import { S3Source } from '../../common/cacheProviders/S3Source';
 import { GpkgSource } from '../../common/cacheProviders/gpkgSource';
-import { SourceTypes } from '../../common/enums/sourceTypes';
 import { FSSource } from '../../common/cacheProviders/fsSource';
+import { SourceTypes } from '../../common/enums';
 
 @injectable()
 class LayersManager {
@@ -48,7 +48,7 @@ class LayersManager {
         throw new ConflictError(`Layer name '${layerRequest.name}' is already exists`);
       }
 
-      const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath);
+      const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, layerRequest.format);
       const newLayer: IMapProxyLayer = this.getLayerValues(layerRequest.name);
 
       jsonDocument.caches[layerRequest.name] = newCache;
@@ -146,7 +146,7 @@ class LayersManager {
 
   public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<void> {
     this.logger.info(`Update layer: '${layerName}' request`);
-    const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath);
+    const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, layerRequest.format);
     const newLayer: IMapProxyLayer = this.getLayerValues(layerName);
 
     const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
@@ -169,18 +169,17 @@ class LayersManager {
     this.logger.info(`Successfully updated layer '${layerName}'`);
   }
 
-  public getCacheValues(cacheSource: string, sourcePath: string): IMapProxyCache {
+  public getCacheValues(cacheSource: string, sourcePath: string, format: string): IMapProxyCache {
     const grids = this.mapproxyConfig.cache.grids.split(',');
-    const requestFormat = this.mapproxyConfig.cache.requestFormat;
     const upscaleTiles = this.mapproxyConfig.cache.upscaleTiles;
     const cacheType = this.getCacheType(cacheSource, sourcePath);
 
     const cache: IMapProxyCache = {
       sources: [],
       grids: grids,
-      request_format: requestFormat,
       upscale_tiles: upscaleTiles,
       cache: cacheType,
+      format: format,
     };
 
     return cache;
