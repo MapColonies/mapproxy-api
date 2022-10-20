@@ -10,7 +10,7 @@ export enum SourceTypes {
   FS = 'file',
 }
 
-export enum TileFormats {
+export enum TileFormat {
   JPEG = 'image/jpeg',
   PNG = 'image/png',
 }

@@ -1,4 +1,4 @@
-import { TileFormats } from '../../../src/common/enums';
+import { TileFormat } from '../../../src/common/enums';
 import { ILayerPostRequest } from '../../../src/common/interfaces';
 
 //TODO: remove mock data after contollers implementaion
@@ -7,5 +7,5 @@ export const mockLayerNameIsNotExists: ILayerPostRequest = {
   name: 'NameIsNotExists',
   tilesPath: '/path/to/s3/directory/tile',
   cacheType: 's3',
-  format: TileFormats.JPEG,
+  format: TileFormat.JPEG,
 };

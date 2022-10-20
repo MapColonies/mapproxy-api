@@ -10,7 +10,7 @@ import * as utils from '../../../../src/common/utils';
 import { MockConfigProvider, getJsonMock, updateJsonMock, init as initConfigProvider } from '../../mock/mockConfigProvider';
 import { SERVICES } from '../../../../src/common/constants';
 import { registerTestValues } from '../../../integration/testContainerConfig';
-import { TileFormats } from '../../../../src/common/enums';
+import { TileFormat } from '../../../../src/common/enums';
 
 let layersManager: LayersManager;
 let sortArrayByZIndexStub: jest.SpyInstance;
@@ -218,7 +218,7 @@ describe('layersManager', () => {
       name: 'amsterdam_5cm',
       tilesPath: '/path/to/tiles/directory/in/my/bucket/',
       cacheType: 's3',
-      format: TileFormats.JPEG,
+      format: TileFormat.JPEG,
     };
 
     it('should successfully update layer', async () => {

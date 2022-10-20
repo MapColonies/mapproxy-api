@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { PoolClient } from 'pg';
 import { JsonObject } from 'swagger-ui-express';
-import { Providers, TileFormats } from './enums';
+import { Providers, TileFormat } from './enums';
 
 export interface IConfig {
   get: <T>(setting: string) => T;
@@ -42,7 +42,7 @@ export interface IMapProxyConfig {
   configProvider: Providers;
   cache: {
     grids: string;
-    format: TileFormats;
+    format: TileFormat;
     upscaleTiles: number;
     directoryLayout: string;
     gpkgExt: string;
@@ -118,7 +118,7 @@ export interface ILayerPostRequest {
   name: string;
   tilesPath: string;
   cacheType: string;
-  format: TileFormats;
+  format: TileFormat;
 }
 
 export interface ILayerToMosaicRequest {
