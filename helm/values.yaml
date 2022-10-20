@@ -93,7 +93,6 @@ env:
     url: http://localhost:55681/v1/metrics
   mapproxyCache:
     grids: epsg4326grid
-    requestFormat: image/png
     upscaleTiles: 18
     directoryLayout: tms
 

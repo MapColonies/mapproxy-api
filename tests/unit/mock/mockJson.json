@@ -4,7 +4,7 @@
     "amsterdam_5cm": {
       "sources": [],
       "grids": ["epsg4326dir"],
-      "request_format": "image/png",
+      "format": "image/png",
       "upscale_tiles": 18,
       "cache": {
         "type": "s3",
@@ -15,7 +15,7 @@
     "mockLayerNameExists": {
       "sources": [],
       "grids": ["epsg4326dir"],
-      "request_format": "image/png",
+      "format": "image/png",
       "upscale_tiles": 18,
       "cache": {
         "type": "s3",
@@ -30,7 +30,7 @@
     "NameIsAlreadyExists": {
       "sources": [],
       "grids": ["epsg4326dir"],
-      "request_format": "image/png",
+      "format": "image/png",
       "upscale_tiles": 18,
       "cache": {
         "type": "s3",

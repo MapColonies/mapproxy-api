@@ -277,6 +277,7 @@ components:
         - cacheType
         - name
         - tilesPath
+        - format
       properties:
         cacheType:
           type: string
@@ -291,6 +292,11 @@ components:
         tilesPath:
           type: string
           example: /path/to/tiles/directory/in/bucket/
+        format:
+          type: string
+          enum:
+            - image/png
+            - image/jpeg
     getLayerResponse:
       type: object
       required:
@@ -298,7 +304,7 @@ components:
         - grids
         - sources
         - upscale_tiles
-        - request_format
+        - format
       properties:
         cache:
           type: object
@@ -319,8 +325,11 @@ components:
             type: string
         upscale_tiles:
           type: number
-        request_format:
+        format:
           type: string
+          enum:
+            - image/png
+            - image/jpeg
     mosaicLayer:
       type: object
       required:

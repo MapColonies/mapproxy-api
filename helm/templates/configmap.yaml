@@ -21,7 +21,6 @@ data:
   {{ end }}
   MAPPROXY_CONFIG_PROVIDER: {{ quote .Values.rasterCommon.storage.mapproxyConfigProvider }}
   MAPPROXY_CACHE_GRIDS: {{ quote .Values.env.mapproxyCache.grids }}
-  MAPPROXY_CACHE_REQUEST_FORMAT: {{ quote .Values.env.mapproxyCache.requestFormat }}
   MAPPROXY_CACHE_UPSCALE_TILES: {{ quote .Values.env.mapproxyCache.upscaleTiles }}
   MAPPROXY_CACHE_DIRECTORY_LAYOUT: {{ quote .Values.env.mapproxyCache.directoryLayout }}
   S3_ENDPOINT_URL: {{ quote .Values.rasterCommon.storage.s3.endpointUrl }}

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { DependencyContainer } from 'tsyringe';
-import { SourceTypes } from '../enums/sourceTypes';
+import { SourceTypes } from '../enums';
 import { SERVICES } from '../constants';
 import { ICacheProvider, IMapProxyConfig, IS3Source } from '../interfaces';
 import { adjustTilesPath } from '../utils';

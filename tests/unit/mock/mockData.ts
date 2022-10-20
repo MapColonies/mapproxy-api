@@ -8,7 +8,7 @@ export const mockData = (): IMapProxyJsonDocument => {
       amsterdam_5cm: {
         sources: [],
         grids: ['epsg4326dir'],
-        request_format: 'image/png',
+        format: 'image/png',
         upscale_tiles: 18,
         cache: {
           type: 's3',
@@ -19,7 +19,7 @@ export const mockData = (): IMapProxyJsonDocument => {
       mockLayerNameExists: {
         sources: [],
         grids: ['epsg4326dir'],
-        request_format: 'image/png',
+        format: 'image/png',
         upscale_tiles: 18,
         cache: {
           type: 's3',
@@ -31,7 +31,7 @@ export const mockData = (): IMapProxyJsonDocument => {
       NameIsAlreadyExists: {
         sources: [],
         grids: ['epsg4326dir'],
-        request_format: 'image/png',
+        format: 'image/png',
         upscale_tiles: 18,
         cache: {
           type: 's3',

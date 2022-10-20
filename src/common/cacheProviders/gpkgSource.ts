@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { parse } from 'path';
-import { SourceTypes } from '../enums/sourceTypes';
+import { SourceTypes } from '../enums';
 import { ICacheProvider, IGpkgSource } from '../interfaces';
 
 class GpkgSource implements ICacheProvider {

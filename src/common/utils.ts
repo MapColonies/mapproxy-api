@@ -4,7 +4,7 @@ import { safeLoad, safeDump, YAMLException } from 'js-yaml';
 import { container } from 'tsyringe';
 import { SERVICES } from '../common/constants';
 import { IFSConfig, IMapProxyJsonDocument, IMosaicLayerObject } from './interfaces';
-import { SourceTypes } from './enums/sourceTypes';
+import { SourceTypes } from './enums';
 
 // read mapproxy yaml config file and convert it into a json object
 export function convertYamlToJson(yamlContent: string): IMapProxyJsonDocument {

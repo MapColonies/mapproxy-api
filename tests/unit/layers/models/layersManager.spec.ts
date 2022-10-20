@@ -10,6 +10,7 @@ import * as utils from '../../../../src/common/utils';
 import { MockConfigProvider, getJsonMock, updateJsonMock, init as initConfigProvider } from '../../mock/mockConfigProvider';
 import { SERVICES } from '../../../../src/common/constants';
 import { registerTestValues } from '../../../integration/testContainerConfig';
+import { TileFormat } from '../../../../src/common/enums';
 
 let layersManager: LayersManager;
 let sortArrayByZIndexStub: jest.SpyInstance;
@@ -39,7 +40,7 @@ describe('layersManager', () => {
       expect(getJsonMock).toHaveBeenCalledTimes(1);
       expect(resource.sources).toEqual([]);
       expect(resource.upscale_tiles).toBe(18);
-      expect(resource.request_format).toBe('image/png');
+      expect(resource.format).toBe('image/png');
       expect(resource.grids).toEqual(['epsg4326dir']);
       // eslint-disable-next-line @typescript-eslint/naming-convention
       expect(resource.cache).toEqual({ directory: '/path/to/s3/directory/tile', directory_layout: 'tms', type: 's3' });
@@ -217,6 +218,7 @@ describe('layersManager', () => {
       name: 'amsterdam_5cm',
       tilesPath: '/path/to/tiles/directory/in/my/bucket/',
       cacheType: 's3',
+      format: TileFormat.JPEG,
     };
 
     it('should successfully update layer', async () => {
