@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { PoolClient } from 'pg';
 import { JsonObject } from 'swagger-ui-express';
+import { TileOutputFormat } from '@map-colonies/mc-model-types';
 import { Providers, TileFormat } from './enums';
 
 export interface IConfig {
@@ -119,7 +120,7 @@ export interface ILayerPostRequest {
   name: string;
   tilesPath: string;
   cacheType: string;
-  format: TileFormat;
+  format: TileOutputFormat;
 }
 
 export interface ILayerToMosaicRequest {

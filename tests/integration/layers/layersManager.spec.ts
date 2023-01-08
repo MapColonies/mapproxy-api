@@ -3,6 +3,7 @@ import jsLogger from '@map-colonies/js-logger';
 import { trace } from '@opentelemetry/api';
 import config from 'config';
 import { container } from 'tsyringe';
+import { TileOutputFormat } from '@map-colonies/mc-model-types';
 import {
   IFSConfig,
   ILayerPostRequest,
@@ -20,7 +21,6 @@ import { getApp } from '../../../src/app';
 import { SERVICES } from '../../../src/common/constants';
 import { layersRouterFactory, LAYERS_ROUTER_SYMBOL } from '../../../src/layers/routes/layersRouterFactory';
 import { LayersRequestSender } from '../layers/helpers/requestSender';
-import { TileFormat } from '../../../src/common/enums';
 
 let requestSender: LayersRequestSender;
 describe('layerManager', () => {
@@ -121,7 +121,7 @@ describe('layerManager', () => {
       name: 'amsterdam_5cm',
       tilesPath: '/path/to/tiles/directory/in/my/bucket/',
       cacheType: 's3',
-      format: TileFormat.JPEG,
+      format: TileOutputFormat.JPEG,
     };
 
     it('Happy Path - should return status 202', async () => {
