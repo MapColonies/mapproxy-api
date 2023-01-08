@@ -2,6 +2,7 @@
 import { container, inject, injectable } from 'tsyringe';
 import { Logger } from '@map-colonies/js-logger';
 import { ConflictError, NotFoundError } from '@map-colonies/error-types';
+import { TileOutputFormat } from '@map-colonies/mc-model-types';
 import { SERVICES } from '../../common/constants';
 import {
   ILayerPostRequest,
@@ -20,7 +21,7 @@ import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
 import { S3Source } from '../../common/cacheProviders/S3Source';
 import { GpkgSource } from '../../common/cacheProviders/gpkgSource';
 import { FSSource } from '../../common/cacheProviders/fsSource';
-import { SourceTypes } from '../../common/enums';
+import { SourceTypes, TileFormat } from '../../common/enums';
 
 @injectable()
 class LayersManager {
@@ -48,9 +49,8 @@ class LayersManager {
         throw new ConflictError(`Layer name '${layerRequest.name}' is already exists`);
       }
 
-      const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, layerRequest.format);
+      const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, this.mapToTileFormat(layerRequest.format));
       const newLayer: IMapProxyLayer = this.getLayerValues(layerRequest.name);
-
       jsonDocument.caches[layerRequest.name] = newCache;
       jsonDocument.layers.push(newLayer);
       return jsonDocument;
@@ -146,7 +146,7 @@ class LayersManager {
 
   public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<void> {
     this.logger.info(`Update layer: '${layerName}' request`);
-    const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, layerRequest.format);
+    const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, this.mapToTileFormat(layerRequest.format));
     const newLayer: IMapProxyLayer = this.getLayerValues(layerName);
 
     const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
@@ -214,6 +214,14 @@ class LayersManager {
     }
 
     return sourceProvider.getCacheSource(sourcePath);
+  }
+
+  private mapToTileFormat(tileOutputFormat: TileOutputFormat): TileFormat {
+    if (tileOutputFormat === TileOutputFormat.JPEG) {
+      return TileFormat.JPEG;
+    } else {
+      return TileFormat.PNG;
+    }
   }
 }
 

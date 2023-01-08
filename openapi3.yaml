@@ -295,8 +295,8 @@ components:
         format:
           type: string
           enum:
-            - image/png
-            - image/jpeg
+            - PNG
+            - JPEG
     getLayerResponse:
       type: object
       required:

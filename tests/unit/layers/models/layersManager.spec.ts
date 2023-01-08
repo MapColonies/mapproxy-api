@@ -2,6 +2,7 @@ import { normalize } from 'path';
 import { container } from 'tsyringe';
 import jsLogger from '@map-colonies/js-logger';
 import { ConflictError, NotFoundError } from '@map-colonies/error-types';
+import { TileOutputFormat } from '@map-colonies/mc-model-types';
 import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IMapProxyConfig, IUpdateMosaicRequest } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExists';
@@ -10,7 +11,6 @@ import * as utils from '../../../../src/common/utils';
 import { MockConfigProvider, getJsonMock, updateJsonMock, init as initConfigProvider } from '../../mock/mockConfigProvider';
 import { SERVICES } from '../../../../src/common/constants';
 import { registerTestValues } from '../../../integration/testContainerConfig';
-import { TileFormat } from '../../../../src/common/enums';
 
 let layersManager: LayersManager;
 let sortArrayByZIndexStub: jest.SpyInstance;
@@ -218,7 +218,7 @@ describe('layersManager', () => {
       name: 'amsterdam_5cm',
       tilesPath: '/path/to/tiles/directory/in/my/bucket/',
       cacheType: 's3',
-      format: TileFormat.JPEG,
+      format: TileOutputFormat.JPEG,
     };
 
     it('should successfully update layer', async () => {
