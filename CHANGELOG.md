@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/MapColonies/mapproxy-api/compare/v1.4.11...v1.5.0) (2023-01-08)
+
+
+### Features
+
+* adding layer cache param of "minimize_meta_request=true" ([#99](https://github.com/MapColonies/mapproxy-api/issues/99)) ([c66ed60](https://github.com/MapColonies/mapproxy-api/commit/c66ed6018ee2fab26a4943bbeb2decd29d4086fb))
+
 ### [1.4.11](https://github.com/MapColonies/mapproxy-api/compare/v1.4.10...v1.4.11) (2022-12-27)
 
 ### [1.4.10](https://github.com/MapColonies/mapproxy-api/compare/v1.4.9...v1.4.10) (2022-09-08)
