@@ -105,6 +105,7 @@ export interface IMapProxyCache {
   format: string;
   upscale_tiles: number;
   cache: ICacheSource;
+  minimize_meta_request: boolean;
 }
 
 export interface IMapProxyLayer {

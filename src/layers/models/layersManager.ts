@@ -180,6 +180,7 @@ class LayersManager {
       upscale_tiles: upscaleTiles,
       cache: cacheType,
       format: format,
+      minimize_meta_request: true,
     };
 
     return cache;
