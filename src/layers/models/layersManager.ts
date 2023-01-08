@@ -48,8 +48,8 @@ class LayersManager {
       if (isLayerNameExists(jsonDocument, layerRequest.name)) {
         throw new ConflictError(`Layer name '${layerRequest.name}' is already exists`);
       }
-
-      const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, this.mapToTileFormat(layerRequest.format));
+      const tileFormat = this.mapToTileFormat(layerRequest.format);
+      const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
       const newLayer: IMapProxyLayer = this.getLayerValues(layerRequest.name);
       jsonDocument.caches[layerRequest.name] = newCache;
       jsonDocument.layers.push(newLayer);
@@ -146,7 +146,8 @@ class LayersManager {
 
   public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<void> {
     this.logger.info(`Update layer: '${layerName}' request`);
-    const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, this.mapToTileFormat(layerRequest.format));
+    const tileFormat = this.mapToTileFormat(layerRequest.format);
+    const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
     const newLayer: IMapProxyLayer = this.getLayerValues(layerName);
 
     const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
