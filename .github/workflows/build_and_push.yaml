@@ -1,19 +1,20 @@
-
-name: Build-and-push
 on:
   push:
     tags:
       - 'v*'
 
 jobs:
-
-  build_and_test:
+  build_and_push:
     runs-on: ubuntu-latest
-
+    env:
+      Docker_Repository: ${{ secrets.ACR_URL }}/${{ github.event.repository.name }}:${{ github.ref_name }}
     steps:
-        - name: Azure Pipelines Action
-          uses: Azure/pipelines@v1
-          with:
-            azure-devops-project-url: https://dev.azure.com/Libot-Mipui-Org/mapproxy-api
-            azure-pipeline-name: 'build-and-push-to-ACR'
-            azure-devops-token: ${{ secrets.AZURE_TOKEN_NEW }}
+      - uses: actions/checkout@v2
+      - uses: azure/docker-login@v1
+        with:
+          login-server: ${{ secrets.ACR_URL }}
+          username: ${{ secrets.ACR_PUSH_USER }}
+          password: ${{ secrets.ACR_PUSH_TOKEN }}
+      - run: docker build . -t ${{ env.Docker_Repository }}
+      - run: docker push ${{ env.Docker_Repository }}
+      
