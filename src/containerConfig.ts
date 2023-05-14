@@ -1,5 +1,5 @@
 import config from 'config';
-import { logMethod } from '@map-colonies/telemetry';
+import { getOtelMixin } from '@map-colonies/telemetry';
 import { trace } from '@opentelemetry/api';
 import { DependencyContainer } from 'tsyringe/dist/typings/types';
 import jsLogger, { LoggerOptions } from '@map-colonies/js-logger';
@@ -21,11 +21,8 @@ export const registerExternalValues = (options?: RegisterOptions): DependencyCon
   const fsConfig = config.get<IFSConfig>('FS');
   const s3Config = config.get<IS3Config>('S3');
   const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
-  // @ts-expect-error the signature is wrong
-  const logger = jsLogger({ ...loggerConfig, prettyPrint: loggerConfig.prettyPrint, hooks: { logMethod } });
-
-  const metrics = new Metrics(SERVICE_NAME);
-  const meter = metrics.start();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+  const logger = jsLogger({ ...loggerConfig, prettyPrint: loggerConfig.prettyPrint, mixin: getOtelMixin() });
 
   tracing.start();
   const tracer = trace.getTracer(SERVICE_NAME);
@@ -33,7 +30,6 @@ export const registerExternalValues = (options?: RegisterOptions): DependencyCon
     { token: SERVICES.CONFIG, provider: { useValue: config } },
     { token: SERVICES.LOGGER, provider: { useValue: logger } },
     { token: SERVICES.TRACER, provider: { useValue: tracer } },
-    { token: SERVICES.METER, provider: { useValue: meter } },
     { token: LAYERS_ROUTER_SYMBOL, provider: { useFactory: layersRouterFactory } },
     { token: SERVICES.MAPPROXY, provider: { useValue: mapproxyConfig } },
     { token: SERVICES.FS, provider: { useValue: fsConfig } },
@@ -51,7 +47,7 @@ export const registerExternalValues = (options?: RegisterOptions): DependencyCon
       provider: {
         useValue: {
           useValue: async (): Promise<void> => {
-            await Promise.all([tracing.stop(), metrics.stop()]);
+            await Promise.all([tracing.stop()]);
           },
         },
       },
