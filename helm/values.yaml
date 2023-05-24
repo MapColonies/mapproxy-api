@@ -92,7 +92,7 @@ env:
     enabled: false
     url: http://localhost:55681/v1/metrics
   mapproxyCache:
-    grids: epsg4326grid
+    grids: worldCRS84,worldCRS84_1X1
     upscaleTiles: 18
     directoryLayout: tms
 

@@ -15,6 +15,7 @@ import {
   IConfigProvider,
   ICacheProvider,
   ICacheSource,
+  IMapProxyProjectionCache,
 } from '../../common/interfaces';
 import { sortArrayByZIndex } from '../../common/utils';
 import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
@@ -50,8 +51,11 @@ class LayersManager {
       }
       const tileFormat = this.mapToTileFormat(layerRequest.format);
       const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
+      const newProjCache: IMapProxyProjectionCache = this.getProjectionCacheValues(layerRequest.name, tileFormat);
+      const projCacheName = `${layerRequest.name}_proj`;
       const newLayer: IMapProxyLayer = this.getLayerValues(layerRequest.name);
       jsonDocument.caches[layerRequest.name] = newCache;
+      jsonDocument.caches[projCacheName] = newProjCache;
       jsonDocument.layers.push(newLayer);
       return jsonDocument;
     };
@@ -185,6 +189,18 @@ class LayersManager {
     };
 
     return cache;
+  }
+
+  public getProjectionCacheValues(resourceName: string, tileFormat: string): IMapProxyProjectionCache {
+    const grids = this.mapproxyConfig.cache.grids.split(',');
+
+    const projCache: IMapProxyProjectionCache = {
+      disable_storage: true,
+      grids: grids,
+      format: tileFormat,
+      sources: [resourceName],
+    };
+    return projCache;
   }
 
   public getLayerValues(layerName: string): IMapProxyLayer {
