@@ -9,8 +9,3 @@ export enum SourceTypes {
   S3 = 's3',
   FS = 'file',
 }
-
-export enum TileFormat {
-  JPEG = 'image/jpeg',
-  PNG = 'image/png',
-}

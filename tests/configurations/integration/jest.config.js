@@ -1,11 +1,6 @@
 module.exports = {
   transform: {
-    '^.+\\.ts$': 'ts-jest',
-  },
-  globals: {
-    'ts-jest': {
-      tsconfig: 'tsconfig.test.json',
-    },
+    '^.+\\.ts$': ['ts-jest', { tsconfig: 'tsconfig.test.json' }],
   },
   coverageReporters: ['text', 'html'],
   collectCoverage: true,
