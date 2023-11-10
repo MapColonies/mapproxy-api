@@ -66,5 +66,11 @@
       "key": "",
       "cert": ""
     }
+  },
+  "redis": {
+    "host": "raster-mapproxy-redis-master",
+    "port": "6379",
+    "type": "redis",
+    "default_ttl": "86400"
   }
 }

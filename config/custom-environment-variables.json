@@ -81,6 +81,18 @@
       "ca": "DB_SSL_CA",
       "key": "DB_SSL_KEY",
       "cert": "DB_SSL_CERT"
+    },
+    "redis": {
+      "host": "REDIS_HOST",
+      "port": {
+        "__name": "REDIS_PORT",
+        "__format": "number"
+      },
+      "type": "REDIS_TYPE",
+      "default_ttl": {
+        "__name": "REDIS_DEFAULT_TTL",
+        "__format": "number"
+      }
     }
   }
 }
