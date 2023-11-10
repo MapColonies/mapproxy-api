@@ -91,6 +91,10 @@ export interface IS3Source extends ICacheSource {
   directory_layout: string;
 }
 
+export interface IRedisSource extends ICacheSource {
+  sources: string[];
+}
+
 export interface IGpkgSource extends ICacheSource {
   filename: string;
   table_name: string;
