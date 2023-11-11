@@ -3,7 +3,7 @@ import { DependencyContainer } from 'tsyringe';
 import { SourceTypes } from '../enums';
 import { SERVICES } from '../constants';
 import { ICacheProvider, IMapProxyConfig, IRedisSource } from '../interfaces';
-import { adjustTilesPath } from '../utils';
+import { parse } from 'path';
 
 class RedisSource implements ICacheProvider {
   private readonly mapproxyConfig: IMapProxyConfig;
@@ -14,10 +14,10 @@ class RedisSource implements ICacheProvider {
 
   public getCacheSource(sourcePath: string): IRedisSource {
     const sourceCacheType = SourceTypes.REDIS;
+    const default_ttl = parse(sourcePath).default_ttl;
     const redisSource: IRedisSource = {
       type: sourceCacheType,
-      directory: adjustTilesPath(sourcePath, sourceCacheType),
-      directory_layout: this.mapproxyConfig.cache.directoryLayout,
+      default_ttl: default_ttl,
     };
 
     return redisSource;

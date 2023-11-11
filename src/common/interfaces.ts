@@ -92,7 +92,7 @@ export interface IS3Source extends ICacheSource {
 }
 
 export interface IRedisSource extends ICacheSource {
-  sources: string[];
+  default_ttl: number;
 }
 
 export interface IGpkgSource extends ICacheSource {

@@ -22,6 +22,7 @@ import { S3Source } from '../../common/cacheProviders/S3Source';
 import { GpkgSource } from '../../common/cacheProviders/gpkgSource';
 import { FSSource } from '../../common/cacheProviders/fsSource';
 import { SourceTypes, TileFormat } from '../../common/enums';
+import { RedisSource } from '../../common/cacheProviders/redisSource';
 
 @injectable()
 class LayersManager {
@@ -49,9 +50,27 @@ class LayersManager {
         throw new ConflictError(`Layer name '${layerRequest.name}' is already exists`);
       }
       const tileFormat = this.mapToTileFormat(layerRequest.format);
-      const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
+      switch (
+        true //redis enabled //consider a trenry expresssion
+      ) {
+        case true: {
+          //create redis and source caches;
+          const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
+          jsonDocument.caches[layerRequest.name] = newCache;
+          break;
+        }
+        case false: {
+          const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
+          jsonDocument.caches[layerRequest.name] = newCache;
+          //create only base "source" cache;
+          break;
+        }
+        default: {
+          //statements;
+          break;
+        }
+      }
       const newLayer: IMapProxyLayer = this.getLayerValues(layerRequest.name);
-      jsonDocument.caches[layerRequest.name] = newCache;
       jsonDocument.layers.push(newLayer);
       return jsonDocument;
     };
@@ -210,8 +229,11 @@ class LayersManager {
       case SourceTypes.FS:
         sourceProvider = new FSSource(container);
         break;
+      case SourceTypes.REDIS:
+        sourceProvider = new RedisSource(container);
+        break;
       default:
-        throw new Error(`Invalid cache source: ${cacheSource} has been provided , available values: "geopackage", "s3", "file"`);
+        throw new Error(`Invalid cache source: ${cacheSource} has been provided , available values: "geopackage", "s3", "file", "redis"`);
     }
 
     return sourceProvider.getCacheSource(sourcePath);
