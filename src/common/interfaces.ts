@@ -47,6 +47,8 @@ export interface IMapProxyConfig {
     upscaleTiles: number;
     directoryLayout: string;
     gpkgExt: string;
+    default_ttl: number;
+    sources: string[];
   };
 }
 
@@ -150,7 +152,7 @@ export interface IConfigProvider {
 }
 
 export interface ICacheProvider {
-  getCacheSource: (sourcePath: string, tableName?: string) => IS3Source | IGpkgSource;
+  getCacheSource: (sourcePath: string, tableName?: string) => IS3Source | IGpkgSource | IRedisSource;
 }
 
 export interface IPGClient {

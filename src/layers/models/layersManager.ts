@@ -56,7 +56,7 @@ class LayersManager {
         case true: {
           //create redis and source caches;
           const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
-          jsonDocument.caches[layerRequest.name] = newCache;
+          jsonDocument.caches[`${layerRequest.name}-source`] = newCache;
           break;
         }
         case false: {

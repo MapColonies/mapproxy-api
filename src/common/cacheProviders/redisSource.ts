@@ -14,10 +14,9 @@ class RedisSource implements ICacheProvider {
 
   public getCacheSource(sourcePath: string): IRedisSource {
     const sourceCacheType = SourceTypes.REDIS;
-    const default_ttl = parse(sourcePath).default_ttl;
     const redisSource: IRedisSource = {
       type: sourceCacheType,
-      default_ttl: default_ttl,
+      default_ttl: this.mapproxyConfig.cache.default_ttl,
     };
 
     return redisSource;
