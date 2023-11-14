@@ -28,7 +28,7 @@
   "mapproxy": {
     "configProvider": "fs",
     "cache": {
-      "grids": "epsg4326ul",
+      "grids": ["epsg4326ul"],
       "upscaleTiles": 18,
       "directoryLayout": "tms",
       "gpkgExt": ".gpkg"

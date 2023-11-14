@@ -171,7 +171,7 @@ class LayersManager {
   }
 
   public getCacheValues(cacheSource: string, sourcePath: string, format: string): IMapProxyCache {
-    const grids = this.mapproxyConfig.cache.grids.split(',');
+    const grids = this.mapproxyConfig.cache.grids;
     const upscaleTiles = this.mapproxyConfig.cache.upscaleTiles;
     const cacheType = this.getCacheType(cacheSource, sourcePath);
 

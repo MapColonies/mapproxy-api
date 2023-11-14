@@ -42,7 +42,7 @@ export interface IDBColumns {
 export interface IMapProxyConfig {
   configProvider: Providers;
   cache: {
-    grids: string;
+    grids: string[];
     format: TileFormat;
     upscaleTiles: number;
     directoryLayout: string;
