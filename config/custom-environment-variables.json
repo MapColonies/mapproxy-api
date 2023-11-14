@@ -42,10 +42,7 @@
   "mapproxy": {
     "configProvider": "MAPPROXY_CONFIG_PROVIDER",
     "cache": {
-      "grids": {
-        "__name": "MAPPROXY_CACHE_GRIDS",
-        "__format": "json"
-      },
+      "grids": "MAPPROXY_CACHE_GRIDS",
       "upscaleTiles": {
         "__name": "MAPPROXY_CACHE_UPSCALE_TILES",
         "__format": "number"
