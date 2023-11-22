@@ -110,7 +110,6 @@ redis:
   enabled: false
   host: "raster-mapproxy-redis-master"
   port: "6379"
-  type: "redis"
   default_ttl: '86400' # one day
 
 route:

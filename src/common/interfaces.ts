@@ -94,6 +94,9 @@ export interface IS3Source extends ICacheSource {
 }
 
 export interface IRedisSource extends ICacheSource {
+  host: string;
+  port: number;
+  type: string;
   default_ttl: number;
 }
 
@@ -112,7 +115,7 @@ export interface IMapProxyCache {
   format: string;
   upscale_tiles: number;
   cache: ICacheSource;
-  minimize_meta_request: boolean;
+  minimize_meta_requests: boolean;
 }
 
 export interface IMapProxyLayer {

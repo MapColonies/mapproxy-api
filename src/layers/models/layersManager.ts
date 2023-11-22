@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { container, inject, injectable } from 'tsyringe';
+import config from 'config';
 import { Logger } from '@map-colonies/js-logger';
 import { ConflictError, NotFoundError } from '@map-colonies/error-types';
 import { TileOutputFormat } from '@map-colonies/mc-model-types';
@@ -23,6 +24,7 @@ import { GpkgSource } from '../../common/cacheProviders/gpkgSource';
 import { FSSource } from '../../common/cacheProviders/fsSource';
 import { SourceTypes, TileFormat } from '../../common/enums';
 import { RedisSource } from '../../common/cacheProviders/redisSource';
+import { RedisLayersManager } from './redisLayerManager';
 
 @injectable()
 class LayersManager {
@@ -43,40 +45,47 @@ class LayersManager {
   }
 
   public async addLayer(layerRequest: ILayerPostRequest): Promise<void> {
-    this.logger.info(`Add layer request: ${layerRequest.name}`);
+    const sourceLayerName = `${layerRequest.name}-source`;
+
+    this.logger.info(`Add layer request: ${sourceLayerName}`);
 
     const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
-      if (isLayerNameExists(jsonDocument, layerRequest.name)) {
-        throw new ConflictError(`Layer name '${layerRequest.name}' is already exists`);
+      if (isLayerNameExists(jsonDocument, sourceLayerName)) {
+        throw new ConflictError(`Layer name '${sourceLayerName}' is already exists`);
       }
       const tileFormat = this.mapToTileFormat(layerRequest.format);
-      switch (
-        true //redis enabled //consider a trenry expresssion
-      ) {
+      const isRedis = config.get<boolean>('redis.enabled');
+      console.log(isRedis);
+      switch (isRedis) {
         case true: {
-          //create redis and source caches;
-          const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
-          jsonDocument.caches[`${layerRequest.name}-source`] = newCache;
+          //create redis source+layer and source cache;
+          const redisLayerName = layerRequest.name;
+          const baseCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
+          jsonDocument.caches[`${sourceLayerName}`] = baseCache;
+          const redisCache: IMapProxyCache = RedisLayersManager.createRedisCache(redisLayerName, tileFormat);
+          jsonDocument.caches[`${redisLayerName}`] = redisCache;
+          const redisLayer = RedisLayersManager.createRedisLayer(redisLayerName, sourceLayerName);
+          jsonDocument.layers.push(redisLayer);
           break;
         }
         case false: {
+          //create cache and layer
           const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
-          jsonDocument.caches[layerRequest.name] = newCache;
-          //create only base "source" cache;
+          jsonDocument.caches[sourceLayerName] = newCache;
+          const newLayer: IMapProxyLayer = this.getLayerValues(sourceLayerName);
+          jsonDocument.layers.push(newLayer);
           break;
         }
         default: {
-          //statements;
           break;
         }
       }
-      const newLayer: IMapProxyLayer = this.getLayerValues(layerRequest.name);
-      jsonDocument.layers.push(newLayer);
+
       return jsonDocument;
     };
 
     await this.configProvider.updateJson(editJson);
-    this.logger.info(`Successfully added layer: ${layerRequest.name}`);
+    this.logger.info(`Successfully added layer: ${sourceLayerName}`);
   }
 
   public async addLayerToMosaic(mosaicName: string, layerToMosaicRequest: ILayerToMosaicRequest): Promise<void> {
@@ -200,7 +209,7 @@ class LayersManager {
       upscale_tiles: upscaleTiles,
       cache: cacheType,
       format: format,
-      minimize_meta_request: true,
+      minimize_meta_requests: true,
     };
 
     return cache;
