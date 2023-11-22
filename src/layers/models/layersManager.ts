@@ -38,7 +38,7 @@ class LayersManager {
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
 
     if (!isLayerNameExists(jsonDocument, layerName)) {
-      throw new NotFoundError(`Layer name '${layerName}' is not exists`);
+      throw new NotFoundError(`Layer name '${layerName}' does not exists`);
     }
     const requestedLayer: IMapProxyCache = jsonDocument.caches[layerName] as IMapProxyCache;
     return requestedLayer;
@@ -51,7 +51,7 @@ class LayersManager {
 
     const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
       if (isLayerNameExists(jsonDocument, sourceLayerName)) {
-        throw new ConflictError(`Layer name '${sourceLayerName}' is already exists`);
+        throw new ConflictError(`Layer name '${sourceLayerName}' already exists`);
       }
       const tileFormat = this.mapToTileFormat(layerRequest.format);
       const isRedis = config.get<boolean>('redis.enabled');
