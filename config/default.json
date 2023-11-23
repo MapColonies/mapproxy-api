@@ -71,6 +71,9 @@
     "enabled": true,
     "host": "raster-mapproxy-redis-master",
     "port": "6379",
+    "enableRedisUser": false,
+    "username": "mapcolonies",
+    "password": "mapcolonies",
     "type": "redis",
     "default_ttl": "86400"
   }

@@ -37,6 +37,11 @@ data:
   REDIS_ENABLED: 'true'
   REDIS_HOST: {{ .Values.redis.host }}
   REDIS_PORT: {{ .Values.redis.port }}
+  {{ if .Values.redis.enableRedisUser }}
+  REDIS_USER_ENABLED: 'true'
+  REDIS_USERNAME: {{ .Values.redis.username }}
+  REDIS_PASSWORD: {{ .Values.redis.password }}
+  {{ end }}
   REDIS_TYPE: {{ .Values.redis.type }}
   REDIS_DEFAULT_TTL: {{ .Values.redis.default_ttl }}
   {{ end }}

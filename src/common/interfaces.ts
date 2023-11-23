@@ -96,6 +96,8 @@ export interface IS3Source extends ICacheSource {
 export interface IRedisSource extends ICacheSource {
   host: string;
   port: number;
+  username?: string;
+  password?: string;
   type: string;
   default_ttl: number;
 }

@@ -88,6 +88,8 @@
         "__name": "REDIS_PORT",
         "__format": "number"
       },
+      "username": "REDIS_USERNAME",
+      "password": "REDIS_PASSWORD",
       "type": "REDIS_TYPE",
       "default_ttl": {
         "__name": "REDIS_DEFAULT_TTL",
