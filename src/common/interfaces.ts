@@ -47,8 +47,6 @@ export interface IMapProxyConfig {
     upscaleTiles: number;
     directoryLayout: string;
     gpkgExt: string;
-    default_ttl: number;
-    sources: string[];
   };
 }
 
