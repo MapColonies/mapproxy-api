@@ -1,37 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { container, inject, injectable } from 'tsyringe';
-import config from 'config';
-import { Logger } from '@map-colonies/js-logger';
-import { ConflictError, NotFoundError } from '@map-colonies/error-types';
-import { TileOutputFormat } from '@map-colonies/mc-model-types';
-import { SERVICES } from '../../common/constants';
-import {
-  ILayerPostRequest,
-  IMapProxyCache,
-  IMapProxyJsonDocument,
-  IMapProxyLayer,
-  IMapProxyConfig,
-  IUpdateMosaicRequest,
-  ILayerToMosaicRequest,
-  IConfigProvider,
-  ICacheProvider,
-  ICacheSource,
-} from '../../common/interfaces';
-import { sortArrayByZIndex } from '../../common/utils';
-import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
-import { S3Source } from '../../common/cacheProviders/S3Source';
-import { GpkgSource } from '../../common/cacheProviders/gpkgSource';
-import { FSSource } from '../../common/cacheProviders/fsSource';
-import { SourceTypes, TileFormat } from '../../common/enums';
+import { IMapProxyCache, IMapProxyLayer, IMapProxyConfig, IConfigProvider } from '../../common/interfaces';
 import { RedisSource } from '../../common/cacheProviders/redisSource';
 
 @injectable()
 export class RedisLayersManager {
-  public constructor(
-    @inject(SERVICES.LOGGER) private readonly logger: Logger,
-    @inject(SERVICES.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig,
-    @inject(SERVICES.CONFIGPROVIDER) private readonly configProvider: IConfigProvider
-  ) {}
   public static createRedisLayer(redisLayerName: string, sourceLayerName: string): IMapProxyLayer {
     const layer: IMapProxyLayer = {
       name: redisLayerName,
@@ -41,10 +14,10 @@ export class RedisLayersManager {
     return layer;
   }
 
-  public static createRedisCache(sourceLayerName: string, format: string): IMapProxyCache {
+  public static createRedisCache(sourceLayerName: string, format: string, mapproxyConfig: IMapProxyConfig): IMapProxyCache {
     const sourceProvider = new RedisSource(container);
-    const grids = this.mapproxyConfig.cache.grids.split(',');
-    const upscaleTiles = this.mapproxyConfig.cache.upscaleTiles;
+    const grids = mapproxyConfig.cache.grids.split(',');
+    const upscaleTiles = mapproxyConfig.cache.upscaleTiles;
     const cacheType = sourceProvider.getCacheSource();
 
     const cache: IMapProxyCache = {

@@ -55,14 +55,13 @@ class LayersManager {
       }
       const tileFormat = this.mapToTileFormat(layerRequest.format);
       const isRedis = config.get<boolean>('redis.enabled');
-      console.log(isRedis);
       switch (isRedis) {
         case true: {
           //create redis source+layer and source cache;
           const redisLayerName = layerRequest.name;
           const baseCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
           jsonDocument.caches[`${sourceLayerName}`] = baseCache;
-          const redisCache: IMapProxyCache = RedisLayersManager.createRedisCache(redisLayerName, tileFormat);
+          const redisCache: IMapProxyCache = RedisLayersManager.createRedisCache(redisLayerName, tileFormat, this.mapproxyConfig);
           jsonDocument.caches[`${redisLayerName}`] = redisCache;
           const redisLayer = RedisLayersManager.createRedisLayer(redisLayerName, sourceLayerName);
           jsonDocument.layers.push(redisLayer);

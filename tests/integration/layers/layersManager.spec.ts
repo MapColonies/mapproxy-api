@@ -63,7 +63,7 @@ describe('layerManager', () => {
 
   describe('#getLayer', () => {
     it('Happy Path - should return status 200 and the layer', async () => {
-      const response = await requestSender.getLayer('mockLayerNameExists');
+      const response = await requestSender.getLayer('mockLayerNameExists-source');
 
       expect(response.status).toBe(httpStatusCodes.OK);
 
@@ -118,7 +118,7 @@ describe('layerManager', () => {
 
   describe('#updateLayer', () => {
     const mockUpdateLayerRequest: ILayerPostRequest = {
-      name: 'amsterdam_5cm',
+      name: 'amsterdam_5cm-source',
       tilesPath: '/path/to/tiles/directory/in/my/bucket/',
       cacheType: 's3',
       format: TileOutputFormat.JPEG,
@@ -134,7 +134,7 @@ describe('layerManager', () => {
     it('Bad Path - should fail with response status 400 Bad Request', async () => {
       const mockBadRequest = {
         // mocking bad request with invalid field 'mockName' to test BadRequest status
-        mockName: 'amsterdam_5cm',
+        mockName: 'amsterdam_5cm-source',
         tilesPath: '/path/to/tiles/directory/in/my/bucket/',
       } as unknown as ILayerPostRequest;
 
@@ -156,7 +156,7 @@ describe('layerManager', () => {
 
   describe('#removeLayer', () => {
     it('Happy Path - should return status 200', async () => {
-      const mockLayerNames = ['mockLayerNameExists', 'NameIsAlreadyExists'];
+      const mockLayerNames = ['mockLayerNameExists-source', 'NameIsAlreadyExists-source'];
       const response = await requestSender.removeLayer(mockLayerNames);
 
       expect(response).toSatisfyApiSpec();
@@ -167,7 +167,7 @@ describe('layerManager', () => {
   describe('#addLayerToMosaic', () => {
     const mockMosaicName = 'existsMosaicName';
     const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
-      layerName: 'mockLayerNameExists',
+      layerName: 'mockLayerNameExists-source',
     };
 
     it('Happy Path - should return status 201', async () => {
@@ -207,7 +207,7 @@ describe('layerManager', () => {
     it('Sad Path - should fail with response status 404 Not Found and mosaic name is not exists', async () => {
       const mockMosaicName = 'mosaicMockNameIsNotExists';
       const mockMosaicNotExistsRequest: ILayerToMosaicRequest = {
-        layerName: 'mockLayerNameExists',
+        layerName: 'mockLayerNameExists-source',
       };
 
       const response = await requestSender.addLayerToMosaic(mockMosaicName, mockMosaicNotExistsRequest);
@@ -224,8 +224,8 @@ describe('layerManager', () => {
     const mockMosaicName = 'existsMosaicName';
     const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
       layers: [
-        { layerName: 'amsterdam_5cm', zIndex: 1 },
-        { layerName: 'NameIsAlreadyExists', zIndex: 0 },
+        { layerName: 'amsterdam_5cm-source', zIndex: 1 },
+        { layerName: 'NameIsAlreadyExists-source', zIndex: 0 },
       ],
     };
 
@@ -241,7 +241,7 @@ describe('layerManager', () => {
       const mockBadRequest = {
         // mocking bad request with invalid field 'mockName' to test BadRequest status
         layers: [
-          { mockName: 'amsterdam_5cm', zIndex: 1 },
+          { mockName: 'amsterdam_5cm-source', zIndex: 1 },
           { mockName: 'LayerNameIsNotExists', zIndex: 0 },
         ],
       } as unknown as IUpdateMosaicRequest;
@@ -255,7 +255,7 @@ describe('layerManager', () => {
       const mockMosaicName = 'existsMosaicName';
       const mockLayerNotExistsRequest: IUpdateMosaicRequest = {
         layers: [
-          { layerName: 'amsterdam_5cm', zIndex: 1 },
+          { layerName: 'amsterdam_5cm-source', zIndex: 1 },
           { layerName: 'LayerNameIsNotExists', zIndex: 0 },
         ],
       };
@@ -273,8 +273,8 @@ describe('layerManager', () => {
       const mockMosaicName = 'NotExistsMosaicName';
       const mockMosaicNotExistsRequest: IUpdateMosaicRequest = {
         layers: [
-          { layerName: 'amsterdam_5cm', zIndex: 1 },
-          { layerName: 'NameIsAlreadyExists', zIndex: 0 },
+          { layerName: 'amsterdam_5cm-source', zIndex: 1 },
+          { layerName: 'NameIsAlreadyExists-source', zIndex: 0 },
         ],
       };
 

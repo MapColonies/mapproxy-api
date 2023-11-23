@@ -5,7 +5,7 @@ export const mockData = (): IMapProxyJsonDocument => {
   const data = {
     caches: {
       mock: 'some content for unit-test',
-      amsterdam_5cm: {
+      'amsterdam_5cm-source': {
         sources: [],
         grids: ['epsg4326dir'],
         format: 'image/png',
@@ -16,7 +16,7 @@ export const mockData = (): IMapProxyJsonDocument => {
           directory_layout: 'tms',
         },
       },
-      mockLayerNameExists: {
+      'mockLayerNameExists-source': {
         sources: [],
         grids: ['epsg4326dir'],
         format: 'image/png',
@@ -28,7 +28,7 @@ export const mockData = (): IMapProxyJsonDocument => {
         },
       },
       combined_layers: { sources: ['mock'], grids: ['epsg4326dir'] },
-      NameIsAlreadyExists: {
+      'NameIsAlreadyExists-source': {
         sources: [],
         grids: ['epsg4326dir'],
         format: 'image/png',
@@ -46,21 +46,21 @@ export const mockData = (): IMapProxyJsonDocument => {
     },
     layers: [
       {
-        name: 'NameIsAlreadyExists',
+        name: 'NameIsAlreadyExists-source',
         title: 'title',
-        sources: ['NameIsAlreadyExists'],
+        sources: ['NameIsAlreadyExists-source'],
       },
       {
-        name: 'mockLayerNameExists',
+        name: 'mockLayerNameExists-source',
         title: 'title',
-        sources: ['mockLayerNameExists'],
+        sources: ['mockLayerNameExists-source'],
       },
       { name: 'mock', title: 'title', sources: ['source'] },
       { name: 'mock2', title: 'title', sources: ['source'] },
       {
-        name: 'amsterdam_5cm',
+        name: 'amsterdam_5cm-source',
         title: 'amsterdam 5m layer discription',
-        sources: ['amsterdam_5cm'],
+        sources: ['amsterdam_5cm-source'],
       },
     ],
   };

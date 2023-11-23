@@ -35,7 +35,7 @@ describe('layersManager', () => {
   describe('#getLayer', () => {
     it('should successfully return the requested layer', async () => {
       // action
-      const resource: IMapProxyCache = await layersManager.getLayer('mockLayerNameExists');
+      const resource: IMapProxyCache = await layersManager.getLayer('mockLayerNameExists-source');
       // expectation;
       expect(getJsonMock).toHaveBeenCalledTimes(1);
       expect(resource.sources).toEqual([]);
@@ -102,7 +102,7 @@ describe('layersManager', () => {
       // mock
       const mockMosaicName = 'mosaicNameIsNotExists';
       const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
-        layerName: 'mockLayerNameExists',
+        layerName: 'mockLayerNameExists-source',
       };
       // action
       const action = async () => {
@@ -117,7 +117,7 @@ describe('layersManager', () => {
       // mock
       const mockMosaicName = 'existsMosaicName';
       const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
-        layerName: 'mockLayerNameExists',
+        layerName: 'mockLayerNameExists-source',
       };
       // action
       const action = async () => {
@@ -135,8 +135,8 @@ describe('layersManager', () => {
       const mockMosaicName = 'existsMosaicName';
       const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
         layers: [
-          { layerName: 'amsterdam_5cm', zIndex: 1 },
-          { layerName: 'NameIsAlreadyExists', zIndex: 0 },
+          { layerName: 'amsterdam_5cm-source', zIndex: 1 },
+          { layerName: 'NameIsAlreadyExists-source', zIndex: 0 },
         ],
       };
       // action
@@ -154,7 +154,7 @@ describe('layersManager', () => {
       const mockMosaicName = 'existsMosaicName';
       const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
         layers: [
-          { layerName: 'amsterdam_5cm', zIndex: 1 },
+          { layerName: 'amsterdam_5cm-source', zIndex: 1 },
           { layerName: 'LayerNameIsNotExists', zIndex: 0 },
         ],
       };
@@ -173,8 +173,8 @@ describe('layersManager', () => {
       const mockMosaicName = 'NotExistsMosaicName';
       const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
         layers: [
-          { layerName: 'amsterdam_5cm', zIndex: 1 },
-          { layerName: 'NameIsAlreadyExists', zIndex: 0 },
+          { layerName: 'amsterdam_5cm-source', zIndex: 1 },
+          { layerName: 'NameIsAlreadyExists-source', zIndex: 0 },
         ],
       };
       // action
@@ -191,7 +191,7 @@ describe('layersManager', () => {
   describe('#removeLayer', () => {
     it('should successfully remove layer', async () => {
       // mock
-      const mockLayerNames = ['mockLayerNameExists', 'NameIsAlreadyExists'];
+      const mockLayerNames = ['mockLayerNameExists-source', 'NameIsAlreadyExists-source'];
       // action
       const action = async () => {
         await layersManager.removeLayer(mockLayerNames);
@@ -215,7 +215,7 @@ describe('layersManager', () => {
 
   describe('#updateLayer', () => {
     const mockUpdateLayerRequest: ILayerPostRequest = {
-      name: 'amsterdam_5cm',
+      name: 'amsterdam_5cm-source',
       tilesPath: '/path/to/tiles/directory/in/my/bucket/',
       cacheType: 's3',
       format: TileOutputFormat.JPEG,
@@ -223,7 +223,7 @@ describe('layersManager', () => {
 
     it('should successfully update layer', async () => {
       // mock
-      const mockLayerName = 'mockLayerNameExists';
+      const mockLayerName = 'mockLayerNameExists-source';
       // action
       const action = async () => {
         await layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);

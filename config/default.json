@@ -68,6 +68,7 @@
     }
   },
   "redis": {
+    "enabled": true,
     "host": "raster-mapproxy-redis-master",
     "port": "6379",
     "type": "redis",
