@@ -203,7 +203,7 @@ describe('layersManager', () => {
 
     it('should return not found layers array and not to throw', async () => {
       // mock
-      const mockNotExistsLayerNames = ['mockLayerNameIsNotExists', 'anotherMockLayerNameNotExists'];
+      const mockNotExistsLayerNames = ['mockLayerNameIsNotExists-source', 'anotherMockLayerNameNotExists-source'];
       // action
       const result = await layersManager.removeLayer(mockNotExistsLayerNames);
       // expectation

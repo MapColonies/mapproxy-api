@@ -133,26 +133,59 @@ class LayersManager {
     this.logger.info(`Successfully updated mosaic: '${mosaicName}'`);
   }
 
+
+  public getAllLinkedCaches(baseCacheNames: string[]): string[] {
+    let allCachesNames: string[] = [];
+    const duplicatedArray: string[] = [...baseCacheNames];
+
+    function removeCachesFromBaseCaches(...caches: string[]): void {
+      const negativeResult = -1;
+
+      caches.forEach((cache) => {
+      const index: number = duplicatedArray.findIndex((arrayCache) => arrayCache === cache);
+
+      if (index !== negativeResult) {
+        allCachesNames.splice(index, 1);
+      }})
+    } 
+
+    duplicatedArray.forEach((cacheName) => {
+      if (cacheName.endsWith('-source')) {
+        const redisCacheName: string = cacheName.slice(-7);
+        allCachesNames.push(redisCacheName, cacheName);
+        removeCachesFromBaseCaches(redisCacheName, cacheName);
+      } else {
+        const redisCacheName = cacheName;
+        const sourceCacheName = `${cacheName}-source`;
+        allCachesNames.push(redisCacheName, sourceCacheName);
+        removeCachesFromBaseCaches(redisCacheName, sourceCacheName);
+
+      }
+    });
+    return allCachesNames;
+  }
+
   public async removeLayer(layersName: string[]): Promise<string[] | void> {
     this.logger.info(`Remove layers request for: [${layersName.join(',')}]`);
     const failedLayers: string[] = [];
     const errorMessage = 'no valid layers to delete';
+    const allLinkedCaches = this.getAllLinkedCaches(layersName);
 
     const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
       let updateCounter = 0;
-      layersName.forEach((layerName) => {
+      allLinkedCaches.forEach((layerName) => {
         // remove requested layer cache source from cache list
         delete jsonDocument.caches[layerName];
         // remove requested layer from layers array
-        const requestedLayerIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === layerName);
+        const requestedLayerIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === layerName && !layerName.endsWith('-source'));
         const negativeResult = -1;
         if (requestedLayerIndex !== negativeResult) {
           jsonDocument.layers.splice(requestedLayerIndex, 1);
           updateCounter++;
-          this.logger.info(`Successfully removed layers '${layerName}'`);
+          this.logger.info(`Successfully removed layer '${layerName}'`);
         } else {
           failedLayers.push(layerName);
-          this.logger.info(`Layer: ['${layerName}'] is not exists`);
+          this.logger.info(`Layer: ['${layerName}'] does not exist`);
         }
       });
       if (updateCounter === 0) {
