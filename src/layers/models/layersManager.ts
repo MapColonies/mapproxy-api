@@ -61,7 +61,7 @@ class LayersManager {
           const redisLayerName = layerRequest.name;
           const baseCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
           jsonDocument.caches[`${sourceLayerName}`] = baseCache;
-          const redisCache: IMapProxyCache = RedisLayersManager.createRedisCache(redisLayerName, tileFormat, this.mapproxyConfig);
+          const redisCache: IMapProxyCache = RedisLayersManager.createRedisCache(sourceLayerName, tileFormat, this.mapproxyConfig);
           jsonDocument.caches[`${redisLayerName}`] = redisCache;
           const redisLayer = RedisLayersManager.createRedisLayer(redisLayerName, sourceLayerName);
           jsonDocument.layers.push(redisLayer);
@@ -133,7 +133,6 @@ class LayersManager {
     this.logger.info(`Successfully updated mosaic: '${mosaicName}'`);
   }
 
-
   public getAllLinkedCaches(baseCacheNames: string[]): string[] {
     let allCachesNames: string[] = [];
     const duplicatedArray: string[] = [...baseCacheNames];
@@ -142,12 +141,13 @@ class LayersManager {
       const negativeResult = -1;
 
       caches.forEach((cache) => {
-      const index: number = duplicatedArray.findIndex((arrayCache) => arrayCache === cache);
+        const index: number = duplicatedArray.findIndex((arrayCache) => arrayCache === cache);
 
-      if (index !== negativeResult) {
-        allCachesNames.splice(index, 1);
-      }})
-    } 
+        if (index !== negativeResult) {
+          allCachesNames.splice(index, 1);
+        }
+      });
+    }
 
     duplicatedArray.forEach((cacheName) => {
       if (cacheName.endsWith('-source')) {
@@ -159,7 +159,6 @@ class LayersManager {
         const sourceCacheName = `${cacheName}-source`;
         allCachesNames.push(redisCacheName, sourceCacheName);
         removeCachesFromBaseCaches(redisCacheName, sourceCacheName);
-
       }
     });
     return allCachesNames;
