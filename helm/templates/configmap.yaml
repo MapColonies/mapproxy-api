@@ -34,7 +34,7 @@ data:
   DB_SSL_ENABLE: {{ quote .Values.rasterCommon.db.sslEnabled }}
   DB_SSL_REJECT_UNAUTHORIZED: {{ .Values.env.dbRejectUnauthorized | quote }}
   {{ if .Values.redis.enabled }}
-  REDIS_ENABLED: 'true'
+  REDIS_ENABLED: true
   REDIS_HOST: {{ .Values.redis.host }}
   REDIS_PORT: {{ .Values.redis.port }}
   {{ if .Values.redis.enableRedisUser }}
