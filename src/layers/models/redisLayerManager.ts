@@ -17,16 +17,13 @@ export class RedisLayersManager {
   public static createRedisCache(sourceLayerName: string, format: string, mapproxyConfig: IMapProxyConfig): IMapProxyCache {
     const sourceProvider = new RedisSource(container);
     const grids = mapproxyConfig.cache.grids.split(',');
-    const upscaleTiles = mapproxyConfig.cache.upscaleTiles;
     const cacheType = sourceProvider.getCacheSource();
 
     const cache: IMapProxyCache = {
       sources: [sourceLayerName],
       grids: grids,
-      upscale_tiles: upscaleTiles,
       cache: cacheType,
       format: format,
-      minimize_meta_requests: true,
     };
 
     return cache;

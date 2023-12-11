@@ -113,9 +113,9 @@ export interface IMapProxyCache {
   sources: string[];
   grids: string[];
   format: string;
-  upscale_tiles: number;
+  upscale_tiles?: number;
   cache: ICacheSource;
-  minimize_meta_requests: boolean;
+  minimize_meta_requests?: boolean;
 }
 
 export interface IMapProxyLayer {
