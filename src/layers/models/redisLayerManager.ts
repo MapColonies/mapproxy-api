@@ -5,11 +5,11 @@ import { RedisSource } from '../../common/cacheProviders/redisSource';
 
 @injectable()
 export class RedisLayersManager {
-  public static createRedisLayer(redisLayerName: string, sourceLayerName: string): IMapProxyLayer {
+  public static createRedisLayer(redisLayerName: string): IMapProxyLayer {
     const layer: IMapProxyLayer = {
       name: redisLayerName,
       title: redisLayerName,
-      sources: [sourceLayerName],
+      sources: [redisLayerName],
     };
     return layer;
   }
