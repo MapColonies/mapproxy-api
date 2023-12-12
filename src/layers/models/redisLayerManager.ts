@@ -14,10 +14,18 @@ export class RedisLayersManager {
     return layer;
   }
 
-  public static createRedisCache(sourceLayerName: string, format: string, mapproxyConfig: IMapProxyConfig): IMapProxyCache {
+  public static createRedisCache(
+    originalLayerName: string,
+    sourceLayerName: string,
+    format: string,
+    mapproxyConfig: IMapProxyConfig
+  ): IMapProxyCache {
     const sourceProvider = new RedisSource(container);
     const grids = mapproxyConfig.cache.grids.split(',');
     const cacheType = sourceProvider.getCacheSource();
+    if (cacheType.prefix) {
+      cacheType.prefix = `${cacheType.prefix}${originalLayerName}`;
+    }
 
     const cache: IMapProxyCache = {
       sources: [sourceLayerName],

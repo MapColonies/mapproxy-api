@@ -90,6 +90,7 @@
       },
       "username": "REDIS_USERNAME",
       "password": "REDIS_PASSWORD",
+      "prefix": "REDIS_PREFIX",
       "type": "REDIS_TYPE",
       "default_ttl": {
         "__name": "REDIS_DEFAULT_TTL",

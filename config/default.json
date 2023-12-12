@@ -74,6 +74,8 @@
     "enableRedisUser": false,
     "username": "mapcolonies",
     "password": "mapcolonies",
+    "enablePrefix": false,
+    "prefix": "mcrl",
     "type": "redis",
     "default_ttl": 86400
   }

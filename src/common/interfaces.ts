@@ -97,6 +97,7 @@ export interface IRedisSource extends ICacheSource {
   username?: string;
   password?: string;
   type: string;
+  prefix?: string;
   default_ttl: number;
 }
 

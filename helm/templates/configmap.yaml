@@ -41,6 +41,9 @@ data:
   REDIS_USER_ENABLED: "true"
   REDIS_USERNAME: {{ quote .Values.redis.username }}
   REDIS_PASSWORD: {{ quote .Values.redis.password }}
+  {{ if .Values.redis.enablePrefix }}
+  REDIS_PREFIX_ENABLED: "true"
+  REDIS_PREFIX: {{ quote .Values.redis.prefix }}
   {{ end }}
   REDIS_TYPE: {{ quote .Values.redis.type }}
   REDIS_DEFAULT_TTL: {{ quote .Values.redis.default_ttl }}

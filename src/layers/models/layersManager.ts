@@ -61,7 +61,7 @@ class LayersManager {
           const redisLayerName = layerRequest.name;
           const baseCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
           jsonDocument.caches[`${sourceLayerName}`] = baseCache;
-          const redisCache: IMapProxyCache = RedisLayersManager.createRedisCache(sourceLayerName, tileFormat, this.mapproxyConfig);
+          const redisCache: IMapProxyCache = RedisLayersManager.createRedisCache(layerRequest.name,sourceLayerName, tileFormat, this.mapproxyConfig);
           jsonDocument.caches[`${redisLayerName}`] = redisCache;
           const redisLayer = RedisLayersManager.createRedisLayer(redisLayerName);
           jsonDocument.layers.push(redisLayer);
