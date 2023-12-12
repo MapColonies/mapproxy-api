@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { DependencyContainer } from 'tsyringe';
-import { SourceTypes } from '../enums';
+import config from 'config';  
 import { SERVICES } from '../constants';
 import { ICacheProvider, IMapProxyConfig, IRedisSource } from '../interfaces';
-import config from 'config';
-import { bool } from 'aws-sdk/clients/signer';
 import { NotFoundError } from '@map-colonies/error-types';
+import { SourceTypes } from '../enums';
 
 class RedisSource implements ICacheProvider {
   private readonly mapproxyConfig: IMapProxyConfig;
