@@ -24,7 +24,6 @@ import { GpkgSource } from '../../common/cacheProviders/gpkgSource';
 import { FSSource } from '../../common/cacheProviders/fsSource';
 import { SourceTypes, TileFormat } from '../../common/enums';
 import { RedisSource } from '../../common/cacheProviders/redisSource';
-import { RedisLayersManager } from './redisLayerManager';
 
 @injectable()
 class LayersManager {
