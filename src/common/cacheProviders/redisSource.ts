@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { DependencyContainer } from 'tsyringe';
 import config from 'config';
+import { NotFoundError } from '@map-colonies/error-types';
 import { SERVICES } from '../constants';
 import { ICacheProvider, IMapProxyConfig, IRedisSource } from '../interfaces';
-import { NotFoundError } from '@map-colonies/error-types';
 import { SourceTypes } from '../enums';
 
 class RedisSource implements ICacheProvider {
@@ -20,7 +20,7 @@ class RedisSource implements ICacheProvider {
       const redisPort = config.get<number>('redis.port');
       const redisDefaultTtl = config.get<number>('redis.default_ttl');
       const isRedisUser = config.get<boolean>('redis.enableRedisUser');
-      const isPrefix = config.get<boolean>('redis.enablePrefix');
+      const hasPrefix = config.get<boolean>('redis.enablePrefix');
 
       const baseRedisCache: IRedisSource = {
         host: redisHost,
@@ -37,7 +37,7 @@ class RedisSource implements ICacheProvider {
 
         redisSource = { ...baseRedisCache, username: username, password: password };
       }
-      if (isPrefix) {
+      if (hasPrefix) {
         const prefix = config.get<string>('redis.prefix');
 
         redisSource = { ...baseRedisCache, prefix: prefix };

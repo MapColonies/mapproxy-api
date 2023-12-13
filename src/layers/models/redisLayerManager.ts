@@ -1,19 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { container, inject, injectable } from 'tsyringe';
-import { IMapProxyCache, IMapProxyLayer, IMapProxyConfig, IConfigProvider } from '../../common/interfaces';
+import { container, injectable } from 'tsyringe';
+import { IMapProxyCache, IMapProxyLayer, IMapProxyConfig } from '../../common/interfaces';
 import { RedisSource } from '../../common/cacheProviders/redisSource';
 
 @injectable()
 export class RedisLayersManager {
-  public static createRedisLayer(redisLayerName: string): IMapProxyLayer {
-    const layer: IMapProxyLayer = {
-      name: redisLayerName,
-      title: redisLayerName,
-      sources: [redisLayerName],
-    };
-    return layer;
-  }
-
   public static createRedisCache(
     originalLayerName: string,
     sourceLayerName: string,
@@ -23,8 +14,8 @@ export class RedisLayersManager {
     const sourceProvider = new RedisSource(container);
     const grids = mapproxyConfig.cache.grids.split(',');
     const cacheType = sourceProvider.getCacheSource();
-    if (cacheType.prefix) {
-      cacheType.prefix = `${cacheType.prefix}${originalLayerName}`;
+    if (cacheType.prefix != null) {
+      cacheType.prefix = `${cacheType.prefix}${originalLayerName}_${grids[0]}`;
     }
 
     const cache: IMapProxyCache = {

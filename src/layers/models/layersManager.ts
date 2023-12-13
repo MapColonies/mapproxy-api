@@ -55,29 +55,21 @@ class LayersManager {
       }
       const tileFormat = this.mapToTileFormat(layerRequest.format);
       const isRedis = config.get<boolean>('redis.enabled');
-      switch (isRedis) {
-        case true: {
-          //create redis source+layer and source cache;
-          const redisLayerName = layerRequest.name;
-          const baseCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
-          jsonDocument.caches[`${sourceLayerName}`] = baseCache;
-          const redisCache: IMapProxyCache = RedisLayersManager.createRedisCache(layerRequest.name,sourceLayerName, tileFormat, this.mapproxyConfig);
-          jsonDocument.caches[`${redisLayerName}`] = redisCache;
-          const redisLayer = RedisLayersManager.createRedisLayer(redisLayerName);
-          jsonDocument.layers.push(redisLayer);
-          break;
-        }
-        case false: {
-          //create cache and layer
-          const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
-          jsonDocument.caches[sourceLayerName] = newCache;
-          const newLayer: IMapProxyLayer = this.getLayerValues(sourceLayerName);
-          jsonDocument.layers.push(newLayer);
-          break;
-        }
-        default: {
-          break;
-        }
+      if (isRedis) {
+        //create redis source+layer and source cache;
+        const redisLayerName = layerRequest.name;
+        const baseCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
+        jsonDocument.caches[`${sourceLayerName}`] = baseCache;
+        const redisCache: IMapProxyCache = RedisLayersManager.createRedisCache(redisLayerName, sourceLayerName, tileFormat, this.mapproxyConfig);
+        jsonDocument.caches[`${redisLayerName}`] = redisCache;
+        const redisLayer = this.getLayerValues(redisLayerName);
+        jsonDocument.layers.push(redisLayer);
+      } else {
+        //create cache and layer
+        const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
+        jsonDocument.caches[sourceLayerName] = newCache;
+        const newLayer: IMapProxyLayer = this.getLayerValues(sourceLayerName);
+        jsonDocument.layers.push(newLayer);
       }
 
       return jsonDocument;
@@ -134,7 +126,7 @@ class LayersManager {
   }
 
   public getAllLinkedCaches(baseCacheNames: string[]): string[] {
-    let allCachesNames: string[] = [];
+    const allCachesNames: string[] = [];
     const duplicatedArray: string[] = [...baseCacheNames];
 
     function removeCachesFromBaseCaches(...caches: string[]): void {
@@ -150,16 +142,18 @@ class LayersManager {
     }
 
     duplicatedArray.forEach((cacheName) => {
+      const endfixCharAmount = 7;
+      const cacheNames: string[] = [];
       if (cacheName.endsWith('-source')) {
-        const redisCacheName: string = cacheName.slice(-7);
-        allCachesNames.push(redisCacheName, cacheName);
-        removeCachesFromBaseCaches(redisCacheName, cacheName);
+        const redisCacheName: string = cacheName.slice(-endfixCharAmount);
+        cacheNames.push(redisCacheName, cacheName);
       } else {
         const redisCacheName = cacheName;
         const sourceCacheName = `${cacheName}-source`;
-        allCachesNames.push(redisCacheName, sourceCacheName);
-        removeCachesFromBaseCaches(redisCacheName, sourceCacheName);
+        cacheNames.push(redisCacheName, sourceCacheName);
       }
+      allCachesNames.push(...cacheNames);
+      removeCachesFromBaseCaches(...cacheName);
     });
     return allCachesNames;
   }
