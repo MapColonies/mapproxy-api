@@ -60,7 +60,7 @@ class LayersManager {
         const redisLayerName = layerRequest.name;
         const baseCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
         jsonDocument.caches[`${sourceLayerName}`] = baseCache;
-        const redisCache: IMapProxyCache = RedisLayersManager.createRedisCache(redisLayerName, sourceLayerName, tileFormat, this.mapproxyConfig);
+        const redisCache: IMapProxyCache = this.createRedisCache(redisLayerName, sourceLayerName, tileFormat, this.mapproxyConfig);
         jsonDocument.caches[`${redisLayerName}`] = redisCache;
         const redisLayer = this.getLayerValues(redisLayerName);
         jsonDocument.layers.push(redisLayer);
@@ -273,6 +273,30 @@ class LayersManager {
     return sourceProvider.getCacheSource(sourcePath);
   }
 
+  private createRedisCache(
+    originalLayerName: string,
+    sourceLayerName: string,
+    format: string,
+    mapproxyConfig: IMapProxyConfig
+  ): IMapProxyCache {
+    const firstGridIndex = 0;
+    const sourceProvider = new RedisSource(container);
+    const grids = mapproxyConfig.cache.grids.split(',');
+    const cacheType = sourceProvider.getCacheSource();
+    if (cacheType.prefix != null) {
+      cacheType.prefix = `${cacheType.prefix}${originalLayerName}_${grids[firstGridIndex]}`;
+    }
+
+    const cache: IMapProxyCache = {
+      sources: [sourceLayerName],
+      grids: grids,
+      cache: cacheType,
+      format: format,
+    };
+
+    return cache;
+  }
+
   private mapToTileFormat(tileOutputFormat: TileOutputFormat): TileFormat {
     if (tileOutputFormat === TileOutputFormat.JPEG) {
       return TileFormat.JPEG;
@@ -281,5 +305,7 @@ class LayersManager {
     }
   }
 }
+
+
 
 export { LayersManager };
