@@ -141,10 +141,10 @@ class LayersManager {
     }
 
     duplicatedArray.forEach((cacheName) => {
-      const endfixCharAmount = 7;
+      const suffixLength = 7;
       const cacheNames: string[] = [];
       if (cacheName.endsWith('-source')) {
-        const redisCacheName: string = cacheName.slice(-endfixCharAmount);
+        const redisCacheName: string = cacheName.slice(-suffixLength);
         cacheNames.push(redisCacheName, cacheName);
       } else {
         const redisCacheName = cacheName;
@@ -211,8 +211,7 @@ class LayersManager {
       jsonDocument.caches[layerName] = newCache;
       // update existing layer values with the new requested layer values
       const requestedLayerIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === layerName);
-      const negativeResult = -1;
-      if (requestedLayerIndex !== negativeResult) {
+      if (requestedLayerIndex !== -1) {
         jsonDocument.layers[requestedLayerIndex] = newLayer;
       }
       return jsonDocument;
@@ -272,12 +271,7 @@ class LayersManager {
     return sourceProvider.getCacheSource(sourcePath);
   }
 
-  private createRedisCache(
-    originalLayerName: string,
-    sourceLayerName: string,
-    format: string,
-    mapproxyConfig: IMapProxyConfig
-  ): IMapProxyCache {
+  private createRedisCache(originalLayerName: string, sourceLayerName: string, format: string, mapproxyConfig: IMapProxyConfig): IMapProxyCache {
     const firstGridIndex = 0;
     const sourceProvider = new RedisSource(container);
     const grids = mapproxyConfig.cache.grids.split(',');
@@ -304,7 +298,5 @@ class LayersManager {
     }
   }
 }
-
-
 
 export { LayersManager };
