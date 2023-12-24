@@ -124,62 +124,48 @@ class LayersManager {
     this.logger.info(`Successfully updated mosaic: '${mosaicName}'`);
   }
 
-  public getAllLinkedCaches(baseCacheNames: string[]): string[] {
-    const allCachesNames: string[] = [];
-    const duplicatedArray: string[] = [...baseCacheNames];
-
-    function removeCachesFromBaseCaches(...caches: string[]): void {
-      const negativeResult = -1;
-
-      caches.forEach((cache) => {
-        const index: number = duplicatedArray.findIndex((arrayCache) => arrayCache === cache);
-
-        if (index !== negativeResult) {
-          allCachesNames.splice(index, 1);
+  public getAllLinkedCaches(baseCacheNames: string[], mapproxyConfiguration: IMapProxyJsonDocument): string[] {
+    const linkedCaches: string[] = [];
+    const baseCacheNamesDuplicate: string[] = [...baseCacheNames];
+    baseCacheNamesDuplicate.forEach((currentCache) => {
+      if (mapproxyConfiguration.caches[currentCache]) {
+        if (currentCache.endsWith('-source')) {
+          if (linkedCaches.indexOf(currentCache) == -1) {
+            linkedCaches.push(currentCache);
+          }
+        } else {
+          linkedCaches.push(currentCache);
+          if (linkedCaches.indexOf(`${currentCache}-source`) == -1) {
+            linkedCaches.push(`${currentCache}-source`);
+          }
         }
-      });
-    }
-
-    duplicatedArray.forEach((cacheName) => {
-      const suffixLength = 7;
-      const cacheNames: string[] = [];
-      if (cacheName.endsWith('-source')) {
-        const redisCacheName: string = cacheName.slice(0, -suffixLength);
-        cacheNames.push(redisCacheName, cacheName);
-      } else {
-        const redisCacheName = cacheName;
-        const sourceCacheName = `${cacheName}-source`;
-        cacheNames.push(redisCacheName, sourceCacheName);
       }
-      allCachesNames.push(...cacheNames);
-      removeCachesFromBaseCaches(...cacheName);
     });
-    return allCachesNames;
+    return linkedCaches;
   }
 
   public async removeLayer(layersName: string[]): Promise<string[] | void> {
     this.logger.info(`Remove layers request for: [${layersName.join(',')}]`);
-    const failedLayers: string[] = [];
     const errorMessage = 'no valid layers to delete';
-    const allLinkedCaches = this.getAllLinkedCaches(layersName);
+    let failedLayers;
 
     const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
       let updateCounter = 0;
-      allLinkedCaches.forEach((layerName) => {
+      const allLinkedCaches = this.getAllLinkedCaches(layersName, jsonDocument);
+      allLinkedCaches.forEach((cacheName) => {
         // remove requested layer cache source from cache list
-        delete jsonDocument.caches[layerName];
+        delete jsonDocument.caches[cacheName];
         // remove requested layer from layers array
-        const requestedLayerIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === layerName && !layerName.endsWith('-source'));
-        const negativeResult = -1;
-        if (requestedLayerIndex !== negativeResult) {
+        const requestedLayerIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === cacheName && !cacheName.endsWith('-source'));
+        if (requestedLayerIndex !== -1) {
           jsonDocument.layers.splice(requestedLayerIndex, 1);
           updateCounter++;
-          this.logger.info(`Successfully removed layer '${layerName}'`);
-        } else {
-          failedLayers.push(layerName);
-          this.logger.info(`Layer: ['${layerName}'] does not exist`);
+          this.logger.info(`Successfully removed layer '${cacheName}'`);
         }
       });
+      failedLayers = layersName.filter(x => !allLinkedCaches.includes(x));
+      this.logger.info(`Layers: ['${failedLayers.join(',')}'] do not exist`);
+
       if (updateCounter === 0) {
         throw new Error(errorMessage);
       }
