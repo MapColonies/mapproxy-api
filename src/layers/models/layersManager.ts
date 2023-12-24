@@ -53,8 +53,8 @@ class LayersManager {
         throw new ConflictError(`Layer name '${sourceLayerName}' already exists`);
       }
       const tileFormat = this.mapToTileFormat(layerRequest.format);
-      const isRedis = config.get<boolean>('redis.enabled');
-      if (isRedis) {
+      const isRedisEnabled = config.get<boolean>('redis.enabled');
+      if (isRedisEnabled) {
         //create redis source+layer and source cache;
         const redisLayerName = layerRequest.name;
         const baseCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
@@ -144,7 +144,7 @@ class LayersManager {
       const suffixLength = 7;
       const cacheNames: string[] = [];
       if (cacheName.endsWith('-source')) {
-        const redisCacheName: string = cacheName.slice(-suffixLength);
+        const redisCacheName: string = cacheName.slice(0, -suffixLength);
         cacheNames.push(redisCacheName, cacheName);
       } else {
         const redisCacheName = cacheName;
