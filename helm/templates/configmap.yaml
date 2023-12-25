@@ -33,5 +33,6 @@ data:
   DB_SCHEMA: {{ quote .Values.mapproxy.db.schema }}
   DB_SSL_ENABLE: {{ quote .Values.rasterCommon.db.sslEnabled }}
   DB_SSL_REJECT_UNAUTHORIZED: {{ .Values.env.dbRejectUnauthorized | quote }}
+  PGAPPNAME: {{ $chartName }}
   {{- end }}
 {{- end }}
