@@ -95,6 +95,14 @@
       "default_ttl": {
         "__name": "REDIS_DEFAULT_TTL",
         "__format": "number"
+      },
+      "enablePrefix": {
+        "__name": "REDIS_PREFIX_ENABLED",
+        "__format": "boolean"
+      },
+      "enableRedisUser": {
+        "__name": "REDIS_USER_ENABLED",
+        "__format": "boolean"
       }
     }
   }

@@ -114,7 +114,7 @@ redis:
   username: "mapcolonies"
   password: "mapcolonies"
   enablePrefix: false
-  prefix: "mcrl:"
+  prefix: "temp-prefix:"
   default_ttl: '86400' # one day
 
 route:
