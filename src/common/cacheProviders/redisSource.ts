@@ -21,7 +21,7 @@ class RedisSource implements ICacheProvider {
   prefix!: string;
   redisSource!: IRedisSource;
 
-  public constructor(container: DependencyContainer) {
+  public constructor(container: DependencyContainer, grid?: string, cacheName?: string) {
     this.logger = container.resolve(SERVICES.LOGGER);
     this.mapproxyConfig = container.resolve(SERVICES.MAPPROXY);
     this.sourceCacheType = SourceTypes.REDIS;
@@ -38,18 +38,20 @@ class RedisSource implements ICacheProvider {
         type: this.sourceCacheType,
         default_ttl: this.redisDefaultTtl,
       };
-
+      this.redisSource = baseRedisCache;
       if (this.isRedisUserPassowrdEnabled) {
         const username = config.get<string>('redis.username');
         const password = config.get<string>('redis.password');
-        this.redisSource = { ...baseRedisCache, username: username, password: password };
+        this.redisSource = { ...this.redisSource, username: username, password: password };
       }
       if (this.hasPrefix) {
         const prefix = config.get<string>('redis.prefix');
-        this.redisSource = { ...baseRedisCache, prefix: prefix };
+        cacheName != undefined && grid != undefined
+          ? (this.redisSource = { ...this.redisSource, prefix: `${prefix}${cacheName}_${grid}` })
+          : (this.redisSource = { ...this.redisSource, prefix: prefix });
       }
     } catch {
-      this.logger.error('configuration is missing redis parameters')
+      this.logger.error('configuration is missing redis parameters');
       throw new NotFoundError('configuration is missing redis parameters');
     }
   }

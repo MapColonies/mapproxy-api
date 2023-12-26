@@ -54,8 +54,6 @@ class LayersManager {
   }
 
   private addNewCache(jsonDocument: IMapProxyJsonDocument, layerRequest: ILayerPostRequest) {
-    const sourceLayerName = `${layerRequest.name}-source`;
-
     const isRedisEnabled = config.get<boolean>('redis.enabled');
     if (isRedisEnabled) {
       this.addNewRedisLayerToConfig(layerRequest, jsonDocument);
@@ -281,13 +279,9 @@ class LayersManager {
 
   private createRedisCache(originalLayerName: string, sourceLayerName: string, format: string, mapproxyConfig: IMapProxyConfig): IMapProxyCache {
     const firstGridIndex = 0;
-    const sourceProvider = new RedisSource(container);
     const grids = mapproxyConfig.cache.grids.split(',');
+    const sourceProvider = new RedisSource(container, grids[firstGridIndex], originalLayerName);
     const cacheType = sourceProvider.getCacheSource();
-    if (sourceProvider.hasPrefix) {
-      sourceProvider.prefix = `${sourceProvider.prefix}${originalLayerName}_${grids[firstGridIndex]}`;
-    }
-
     const cache: IMapProxyCache = {
       sources: [sourceLayerName],
       grids: grids,
