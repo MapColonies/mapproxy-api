@@ -48,5 +48,6 @@ data:
   REDIS_TYPE: {{ quote .Values.redis.type }}
   REDIS_DEFAULT_TTL: {{ quote .Values.redis.default_ttl }}
   {{ end }}
+  PGAPPNAME: {{ $chartName }}
   {{- end }}
 {{- end }}
