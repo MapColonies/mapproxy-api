@@ -80,7 +80,7 @@ describe('layerManager', () => {
     it('Sad Path - should fail with response status 404 Not Found and layer name is not exists', async () => {
       const mockLayerName = 'mockLayerNameIsNotExists';
       const response = await requestSender.getLayer(mockLayerName);
-      const notFoundErrorMessage = `Layer name '${mockLayerName}' is not exists`;
+      const notFoundErrorMessage = `Layer name '${mockLayerName}' does not exist`;
 
       expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
@@ -108,7 +108,7 @@ describe('layerManager', () => {
 
     it('Sad Path - should fail with response status 409 and layer name is already exists', async () => {
       const response = await requestSender.addLayer(mockLayerNameAlreadyExists);
-      const conflictErrorMessage = `Layer name '${mockLayerNameAlreadyExists.name}' is already exists`;
+      const conflictErrorMessage = `Layer name '${mockLayerNameAlreadyExists.name}-source' already exists`;
 
       expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.CONFLICT);
@@ -125,7 +125,7 @@ describe('layerManager', () => {
     };
 
     it('Happy Path - should return status 202', async () => {
-      const response = await requestSender.updateLayer(mockLayerNameAlreadyExists.name, mockUpdateLayerRequest);
+      const response = await requestSender.updateLayer(`${mockLayerNameAlreadyExists.name}-source`, mockUpdateLayerRequest);
 
       expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.ACCEPTED);

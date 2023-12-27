@@ -37,7 +37,7 @@ class LayersManager {
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
 
     if (!isLayerNameExists(jsonDocument, layerName)) {
-      throw new NotFoundError(`Layer name '${layerName}' does not exists`);
+      throw new NotFoundError(`Layer name '${layerName}' does not exist`);
     }
     const requestedLayer: IMapProxyCache = jsonDocument.caches[layerName] as IMapProxyCache;
     return requestedLayer;
@@ -176,7 +176,7 @@ class LayersManager {
         // remove requested layer cache source from cache list
         delete jsonDocument.caches[cacheName];
         // remove requested layer from layers array
-        const requestedLayerIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === cacheName && !cacheName.endsWith('-source'));
+        const requestedLayerIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === cacheName);
         if (requestedLayerIndex !== -1) {
           jsonDocument.layers.splice(requestedLayerIndex, 1);
           updateCounter++;
@@ -184,8 +184,9 @@ class LayersManager {
         }
       });
       failedLayers = layersName.filter((x) => !allLinkedCaches.includes(x));
-      this.logger.info(`Layers: ['${failedLayers.join(',')}'] do not exist`);
-
+      if (failedLayers.length !== 0) {
+        this.logger.warn(`Layers: ['${failedLayers.join(',')}'] does not exist`);
+      }
       if (updateCounter === 0) {
         throw new Error(errorMessage);
       }
