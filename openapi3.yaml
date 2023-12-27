@@ -363,4 +363,4 @@ components:
         type: string
       example:
         - amsterdam_5cm-source
-        - amsterdam_5cm-source-ortho
+        - amsterdam_5cm-ortho-source
