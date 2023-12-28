@@ -27,6 +27,7 @@ import { RedisSource } from '../../common/cacheProviders/redisSource';
 
 @injectable()
 class LayersManager {
+  [x: string]: any;
   isRedisEnabled = config.get<boolean>('redis.enabled');
   public constructor(
     @inject(SERVICES.LOGGER) private readonly logger: Logger,
