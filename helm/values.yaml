@@ -110,11 +110,13 @@ redis:
   enabled: false
   host: "raster-mapproxy-redis-master"
   port: "6379"
-  enableRedisUser: false
-  username: "mapcolonies"
-  password: "mapcolonies"
-  enablePrefix: false
-  prefix: "temp-prefix:"
+  auth:
+    enableRedisUser: false
+    username: "mapcolonies"
+    password: "mapcolonies"
+  prefix:
+    enablePrefix: false
+    prefix: "temp-prefix:"
   default_ttl: '86400' # one day
 
 route:

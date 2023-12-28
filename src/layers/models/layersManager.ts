@@ -27,6 +27,7 @@ import { RedisSource } from '../../common/cacheProviders/redisSource';
 
 @injectable()
 class LayersManager {
+  isRedisEnabled = config.get<boolean>('redis.enabled');
   public constructor(
     @inject(SERVICES.LOGGER) private readonly logger: Logger,
     @inject(SERVICES.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig,
@@ -54,8 +55,7 @@ class LayersManager {
   }
 
   private addNewCache(jsonDocument: IMapProxyJsonDocument, layerRequest: ILayerPostRequest) {
-    const isRedisEnabled = config.get<boolean>('redis.enabled');
-    if (isRedisEnabled) {
+    if (this.isRedisEnabled) {
       this.addNewRedisLayerToConfig(layerRequest, jsonDocument);
     } else {
       this.addNewSourceLayerToConfig(layerRequest, jsonDocument);
@@ -150,12 +150,12 @@ class LayersManager {
     baseCacheNamesDuplicate.forEach((currentCache) => {
       if (mapproxyConfiguration.caches[currentCache]) {
         if (currentCache.endsWith('-source')) {
-          if (linkedCaches.indexOf(currentCache) == -1) {
+          if (linkedCaches.includes(currentCache)) {
             linkedCaches.push(currentCache);
           }
         } else {
           linkedCaches.push(currentCache);
-          if (linkedCaches.indexOf(`${currentCache}-source`) == -1) {
+          if (linkedCaches.includes(`${currentCache}-source`)) {
             linkedCaches.push(`${currentCache}-source`);
           }
         }
