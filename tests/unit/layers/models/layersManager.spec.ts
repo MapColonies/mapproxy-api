@@ -47,6 +47,27 @@ describe('layersManager', () => {
       expect(resource.cache).toEqual({ directory: '/path/to/s3/directory/tile', directory_layout: 'tms', type: 's3' });
     });
 
+    it('should successfully return the requested redis layer', async () => {
+      // action
+      const resource: IMapProxyCache = await layersManager.getLayer('RedisExists');
+      // expectation;
+      expect(getJsonMock).toHaveBeenCalledTimes(1);
+      expect(resource.sources).toEqual(['RedisExists-source']);
+      expect(resource.upscale_tiles).toBe(18);
+      expect(resource.format).toBe('image/png');
+      expect(resource.grids).toEqual(['epsg4326dir']);
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      expect(resource.cache).toEqual({
+        host: 'raster-mapproxy-redis-master',
+        port: 6379,
+        username: 'mapcolonies',
+        password: 'mapcolonies',
+        prefix: 'mcrl:',
+        type: 'redis',
+        default_ttl: 86400,
+      });
+    });
+
     it('should reject with not found error', async () => {
       // action
       const action = async () => {
@@ -212,6 +233,19 @@ describe('layersManager', () => {
       // expectation
       await expect(action()).resolves.not.toThrow();
       expect(updateJsonMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('should successfully remove layer + redis attributes', async () => {
+      // mock
+      const sliceMock = jest.spyOn(Array.prototype, 'findIndex');
+      const mockLayerNames = ['RedisExists'];
+      // action
+      const action = async () => {
+        await layersManager.removeLayer(mockLayerNames);
+      };
+      // expectation
+      await expect(action()).resolves.not.toThrow();
+      expect(sliceMock).toHaveBeenCalledTimes(2);
     });
 
     it('should return not found layers array and not to throw', async () => {

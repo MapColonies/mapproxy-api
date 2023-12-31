@@ -38,6 +38,32 @@
         "directory_layout": "tms"
       }
     },
+    "RedisExists": {
+      "sources": ["RedisExists-source"],
+      "grids": ["epsg4326dir"],
+      "format": "image/png",
+      "upscale_tiles": 18,
+      "cache": {
+        "host": "raster-mapproxy-redis-master",
+        "port": 6379,
+        "username": "mapcolonies",
+        "password": "mapcolonies",
+        "prefix": "mcrl:",
+        "type": "redis",
+        "default_ttl": 86400
+      }
+    },
+    "RedisExists-source": {
+      "sources": [],
+      "grids": ["epsg4326dir"],
+      "format": "image/png",
+      "upscale_tiles": 18,
+      "cache": {
+        "type": "s3",
+        "directory": "/path/to/s3/directory/tile",
+        "directory_layout": "tms"
+      }
+    },
     "existsMosaicName": {
       "sources": ["bluemar", "planet", "artzi"],
       "grids": ["epsg4326"]
@@ -63,6 +89,11 @@
       "name": "mock2",
       "title": "title",
       "sources": ["source"]
+    },
+    {
+      "name": "RedisExists",
+      "title": "RedisExists",
+      "sources": ["RedisExists"]
     },
     {
       "name": "amsterdam_5cm-source",

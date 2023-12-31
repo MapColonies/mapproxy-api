@@ -151,12 +151,12 @@ class LayersManager {
     baseCacheNamesDuplicate.forEach((currentCache) => {
       if (mapproxyConfiguration.caches[currentCache]) {
         if (currentCache.endsWith('-source')) {
-          if (linkedCaches.includes(currentCache)) {
+          if (!linkedCaches.includes(currentCache)) {
             linkedCaches.push(currentCache);
           }
         } else {
           linkedCaches.push(currentCache);
-          if (linkedCaches.includes(`${currentCache}-source`)) {
+          if (!linkedCaches.includes(`${currentCache}-source`)) {
             linkedCaches.push(`${currentCache}-source`);
           }
         }
