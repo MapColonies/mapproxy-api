@@ -2,7 +2,8 @@
 {{- $tracingUrl := include "mapproxy-api.tracingUrl" . -}}
 {{- $metricsUrl := include "mapproxy-api.metricsUrl" . -}}
 {{- $defaults := .Files.Get "defaults.yaml" | fromYaml }}
-{{- $mapproxyConfigProvider := coalesce .Values.storage.mapproxyConfigProvider .Values.global.storage.mapproxyConfigProvider $defaults.storage.mapproxyConfigProvider }}
+{{- $storage := (include "common.storage.merged" .) | fromYaml }}
+
 {{- if .Values.enabled -}}
 apiVersion: v1
 kind: ConfigMap
@@ -21,22 +22,24 @@ data:
   TELEMETRY_METRICS_ENABLED: 'true'
   TELEMETRY_METRICS_URL: {{ $metricsUrl }}
   {{ end }}
-  MAPPROXY_CONFIG_PROVIDER: {{ $mapproxyConfigProvider }}
+  MAPPROXY_CONFIG_PROVIDER: {{ $storage.mapproxyConfigProvider }}
   MAPPROXY_CACHE_GRIDS: {{ quote .Values.env.mapproxyCache.grids }}
   MAPPROXY_CACHE_UPSCALE_TILES: {{ quote .Values.env.mapproxyCache.upscaleTiles }}
   MAPPROXY_CACHE_DIRECTORY_LAYOUT: {{ quote .Values.env.mapproxyCache.directoryLayout }}
-  {{- if eq (upper $mapproxyConfigProvider) "S3" }}
-  S3_ENDPOINT_URL: {{ coalesce .Values.storage.s3.endpointUrl .Values.global.storage.s3.endpointUrl $defaults.storage.s3.endpointUrl }}
-  S3_BUCKET:  {{ coalesce .Values.storage.s3.tilesBucket .Values.global.storage.s3.tilesBucket $defaults.storage.s3.tilesBucket }}
-  S3_SSL_ENABLED: {{ coalesce .Values.storage.s3.sslEnabled .Values.global.storage.s3.sslEnabled  $defaults.storage.s3.sslEnabled }}
+  {{- if eq (upper $storage.mapproxyConfigProvider) "S3" }}
+  {{- $s3 := (include "common.s3.merged" .) | fromYaml }}
+  S3_ENDPOINT_URL: {{ $s3.endpointUrl }}
+  S3_BUCKET:  {{ $s3.tilesBucket }}
+  S3_SSL_ENABLED: {{ $s3.sslEnabled  }}
   {{- end }}
-  {{- if eq (upper $mapproxyConfigProvider) "DB" }}
-  DB_HOST: {{ coalesce .Values.db.host .Values.global.db.host $defaults.db.host }}
-  DB_NAME: {{ coalesce .Values.db.name .Values.global.db.name $defaults.db.name }}
-  DB_PORT: {{ coalesce .Values.db.port .Values.global.db.port $defaults.db.port }}
-  DB_SCHEMA: {{ coalesce .Values.db.schema .Values.global.db.scehma $defaults.db.schema }}
-  DB_SSL_ENABLE: {{ coalesce .Values.db.sslEnabled .Values.global.db.sslEnabled $defaults.db.sslEnabled }}
-  DB_SSL_REJECT_UNAUTHORIZED: {{ coalesce .Values.db.dbRejectUnauthorized .Values.global.db.dbRejectUnauthorized $defaults.db.sslEnabled }}
+  {{- if eq (upper $storage.mapproxyConfigProvider) "DB" }}
+  {{- $db := (include "common.db.merged" .) | fromYaml }}
+  DB_HOST: {{ $db.host }}
+  DB_NAME: {{ $db.name }}
+  DB_PORT: {{ $db.port }}
+  DB_SSL_ENABLE: {{ $db.sslEnabled }}
+  DB_SCHEMA: {{ $db.schema }}
+  DB_SSL_REJECT_UNAUTHORIZED: {{ $db.dbRejectUnauthorized }}
   PGAPPNAME: {{ $chartName }}
   {{- end }}
 {{- end }}

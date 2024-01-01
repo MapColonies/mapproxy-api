@@ -4,11 +4,11 @@ global:
   metrics: {}
   environment: {}
   storage:
-    mapproxyConfigProvider: {}
+    mapproxyConfigProvider: ""
     s3:
-      endpointUrl: ""
-      tilesBucket: ""
-      sslEnabled: false
+      endpointUrl: "GLOBAL"
+      tilesBucket: "GLOBAL BUCKET"
+      sslEnabled: true
       secretName: ""
     fs:
       internalPvc:
@@ -16,8 +16,7 @@ global:
         tilesSubPath: ""
         configSubPath: ""
   db:
-    host: ""
-    nameOverride: ""
+    host: "GLOBAL"
     name: ""
     port: 5432
     sslEnabled: false
@@ -48,30 +47,29 @@ image:
   repository: mapproxy-api
   tag: 'latest'
 
-storage:
+storage: 
   mapproxyConfigProvider: S3
   s3:
-    endpointUrl: "localhost:9000"
-    tilesBucket: "raster-tiles"
+    endpointUrl: "PRIVATE"
+    tilesBucket: "PRIVATE BUCKET"
     sslEnabled: false
-    secretName: "s3-secret"
+    secretName: ""
   fs:
     internalPvc:
-      name: "internal-pvc"
-      tilesSubPath: tiles
-      configSubPath: config
-
+      name: ""
+      tilesSubPath: ""
+      configSubPath: ""
 db:
-  host: "localhost"
-  nameOverride:
-  name: "mapproxy-config"
+  host: ""
+  name: "PRIVATE"
   port: 5432
   sslEnabled: false
-  schema: MapproxyConfig
-  dbRejectUnauthorized: false
+  schema: ""
+  dbRejectUnauthorized: true
   secrets:
     useExternal: false
     externalSecretName: ''
+
 
 local: # for local stand alone deployment, external pvc and secrets should be used for full deployment  
   fs:
