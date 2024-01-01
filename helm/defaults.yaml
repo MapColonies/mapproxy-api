@@ -1,0 +1,28 @@
+storage:
+  mapproxyConfigProvider: FS
+  s3:
+    endpointUrl: "localhost:9000"
+    tilesBucket: "raster-tiles"
+    sslEnabled: false
+    secretName: "s3-secret"
+  fs:
+    internalPvc:
+      name: "internal-pvc"
+      tilesSubPath: tiles
+      configSubPath: config
+      
+ca:
+  secretName: ''
+  path: '/usr/local/share/ca-certificates'
+  key: 'ca.crt'
+db:
+  host: "localhost"
+  name: "mapproxy-config"
+  port: 5432
+  sslEnabled: false
+  dbRejectUnauthorized: false
+  nameOverride: ""
+  schema: MapproxyConfig
+  secrets:
+    useExternal: false
+    externalSecretName: ''

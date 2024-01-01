@@ -3,6 +3,34 @@ global:
   tracing: {}
   metrics: {}
   environment: {}
+  storage:
+    mapproxyConfigProvider: {}
+    s3:
+      endpointUrl: ""
+      tilesBucket: ""
+      sslEnabled: false
+      secretName: ""
+    fs:
+      internalPvc:
+        name: ""
+        tilesSubPath: ""
+        configSubPath: ""
+  db:
+    host: ""
+    nameOverride: ""
+    name: ""
+    port: 5432
+    sslEnabled: false
+    schema: ""
+    dbRejectUnauthorized: false
+    secrets:
+      useExternal: false
+      externalSecretName: ''
+  ca:
+    secretName: ''
+    path: '/usr/local/share/ca-certificates'
+    key: 'ca.crt'
+
 
 enabled: true
 environment: development
@@ -16,45 +44,34 @@ cloudProvider:
   imagePullSecretName: 'my-registry-secret'
   flavor: openshift
 
-caSecretName: ''
-caPath: '/usr/local/share/ca-certificates'
-caKey: 'ca.crt'
-
 image:
   repository: mapproxy-api
   tag: 'latest'
 
-rasterCommon:
-  storage:
-    mapproxyConfigProvider: 'DB'
-    fs:
-      internalPvc:
-        name: "internal-pvc"
-        tilesSubPath: tiles
-        configSubPath: config
-    s3:
-      endpointUrl: "localhost:9000"
-      tilesBucket: "raster-tiles"
-      sslEnabled: false
-      secretName: "s3-secret"
-  ca:
-    secretName: ''
-    path: '/usr/local/share/ca-certificates'
-    key: 'ca.crt'
-  db:
-    host: "localhost"
-    name: "mapproxy-config"
-    port: 5432
+storage:
+  mapproxyConfigProvider: S3
+  s3:
+    endpointUrl: "localhost:9000"
+    tilesBucket: "raster-tiles"
     sslEnabled: false
-    
-    secrets:
-      useExternal: false
-      externalSecretName: ''
+    secretName: "s3-secret"
+  fs:
+    internalPvc:
+      name: "internal-pvc"
+      tilesSubPath: tiles
+      configSubPath: config
 
-mapproxy:
-    db:
-      nameOverride:
-      schema: MapproxyConfig
+db:
+  host: "localhost"
+  nameOverride:
+  name: "mapproxy-config"
+  port: 5432
+  sslEnabled: false
+  schema: MapproxyConfig
+  dbRejectUnauthorized: false
+  secrets:
+    useExternal: false
+    externalSecretName: ''
 
 local: # for local stand alone deployment, external pvc and secrets should be used for full deployment  
   fs:
@@ -67,6 +84,7 @@ local: # for local stand alone deployment, external pvc and secrets should be us
     createSecret: false
     userName: postgres
     password: postgres
+    dbRejectUnauthorized: true
     certs:
       ca: certs/ca.pem
       key: certs/key.pem
@@ -81,7 +99,6 @@ env:
   targetPort: 8080
   protocol: TCP
   logLevel: warn
-  dbRejectUnauthorized: true
   logPrettyPrintEnabled: false
   responseCompressionEnabled: true
   requestPayloadLimit: 1mb
