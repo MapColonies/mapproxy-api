@@ -37,13 +37,13 @@ data:
   REDIS_ENABLED: {{ quote .Values.redis.enabled }}
   REDIS_HOST: {{ quote .Values.redis.host }}
   REDIS_PORT: {{ quote .Values.redis.port }}
-  {{ if .Values.redis.enableRedisUser }}
-  REDIS_USER_ENABLED: {{ quote .Values.redis.enableRedisUser }}
-  REDIS_USERNAME: {{ quote .Values.redis.username }}
-  REDIS_PASSWORD: {{ quote .Values.redis.password }}
-  {{ if .Values.redis.enablePrefix }}
-  REDIS_PREFIX_ENABLED: {{ quote .Values.redis.enablePrefix }}
-  REDIS_PREFIX: {{ quote .Values.redis.prefix }}
+  {{ if .Values.redis.auth.enableRedisUser }}
+  REDIS_USER_ENABLED: {{ quote .Values.redis.auth.enableRedisUser }}
+  REDIS_USERNAME: {{ quote .Values.redis.auth.username }}
+  REDIS_PASSWORD: {{ quote .Values.redis.auth.password }}
+  {{ if .Values.redis.prefix.enablePrefix }}
+  REDIS_PREFIX_ENABLED: {{ quote .Values.redis.prefix.enablePrefix }}
+  REDIS_PREFIX: {{ quote .Values.redis.prefix.prefix }}
   {{ end }}
   REDIS_TYPE: {{ quote .Values.redis.type }}
   REDIS_DEFAULT_TTL: {{ quote .Values.redis.default_ttl }}

@@ -68,14 +68,18 @@
     }
   },
   "redis": {
-    "enabled": true,
+    "enabled": false,
     "host": "raster-mapproxy-redis-master",
     "port": 6379,
-    "enableRedisUser": false,
-    "username": "mapcolonies",
-    "password": "mapcolonies",
-    "enablePrefix": false,
-    "prefix": "mcrl",
+    "auth": {
+      "enableRedisUser": true,
+      "username": "mapcolonies",
+      "password": "mapcolonies"
+    },
+    "prefix": {
+      "enablePrefix": true,
+      "prefix": "mcrl:"
+    },
     "type": "redis",
     "default_ttl": 86400
   }

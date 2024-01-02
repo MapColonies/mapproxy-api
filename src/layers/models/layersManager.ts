@@ -28,12 +28,14 @@ import { RedisSource } from '../../common/cacheProviders/redisSource';
 @injectable()
 class LayersManager {
   [x: string]: any;
-  isRedisEnabled = config.get<boolean>('redis.enabled');
+  isRedisEnabled: boolean;
   public constructor(
     @inject(SERVICES.LOGGER) private readonly logger: Logger,
     @inject(SERVICES.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig,
     @inject(SERVICES.CONFIGPROVIDER) private readonly configProvider: IConfigProvider
-  ) {}
+  ) {
+    this.isRedisEnabled = config.get<boolean>('redis.enabled');
+  }
 
   public async getLayer(layerName: string): Promise<IMapProxyCache> {
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
@@ -65,6 +67,7 @@ class LayersManager {
 
   private addNewSourceLayerToConfig(layerRequest: ILayerPostRequest, jsonDocument: IMapProxyJsonDocument) {
     //creates source cache, and a source layer
+    this.logger.info(`adding ${layerRequest.name} as source layer`);
     const sourceCacheTitle = `${layerRequest.name}-source`;
     if (isLayerNameExists(jsonDocument, sourceCacheTitle)) {
       throw new ConflictError(`Layer name '${sourceCacheTitle}' already exists`);
@@ -83,6 +86,7 @@ class LayersManager {
   }
 
   private addNewRedisLayerToConfig(layerRequest: ILayerPostRequest, jsonDocument: IMapProxyJsonDocument) {
+    this.logger.info(`adding ${layerRequest.name} as redis layer`);
     //creates source cache+redis cache, and a redis layer
     const sourceCacheTitle = `${layerRequest.name}-source`;
     const redisCacheTitle = layerRequest.name;

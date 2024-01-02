@@ -1,7 +1,6 @@
 import { normalize } from 'path';
 import { container } from 'tsyringe';
 import jsLogger from '@map-colonies/js-logger';
-import { configWrapper } from '../../../configurations/IConfigWrapper';
 import { ConflictError, NotFoundError } from '@map-colonies/error-types';
 import { TileOutputFormat } from '@map-colonies/mc-model-types';
 import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IMapProxyConfig, IUpdateMosaicRequest } from '../../../../src/common/interfaces';

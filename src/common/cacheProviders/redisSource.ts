@@ -29,8 +29,8 @@ class RedisSource implements ICacheProvider {
       this.redisHost = config.get<string>('redis.host');
       this.redisPort = config.get<number>('redis.port');
       this.redisDefaultTtl = config.get<number>('redis.default_ttl');
-      this.isRedisUserPassowrdEnabled = config.get<boolean>('redis.enableRedisUser');
-      this.hasPrefix = config.get<boolean>('redis.enablePrefix');
+      this.isRedisUserPassowrdEnabled = config.get<boolean>('redis.auth.enableRedisUser');
+      this.hasPrefix = config.get<boolean>('redis.prefix.enablePrefix');
 
       const baseRedisCache: IRedisSource = {
         host: this.redisHost,
@@ -40,12 +40,12 @@ class RedisSource implements ICacheProvider {
       };
       this.redisSource = baseRedisCache;
       if (this.isRedisUserPassowrdEnabled) {
-        const username = config.get<string>('redis.username');
-        const password = config.get<string>('redis.password');
+        const username = config.get<string>('redis.auth.username');
+        const password = config.get<string>('redis.auth.password');
         this.redisSource = { ...this.redisSource, username: username, password: password };
       }
       if (this.hasPrefix) {
-        const prefix = config.get<string>('redis.prefix');
+        const prefix = config.get<string>('redis.prefix.prefix');
         cacheName != undefined && grid != undefined
           ? (this.redisSource = { ...this.redisSource, prefix: `${prefix}${cacheName}_${grid}` })
           : (this.redisSource = { ...this.redisSource, prefix: prefix });
