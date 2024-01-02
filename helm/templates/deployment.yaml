@@ -1,5 +1,7 @@
 {{- $releaseName := .Release.Name -}}
 {{- $chartName := include "mapproxy-api.name" . -}}
+{{- $configmapName := include "configmap.fullname" . }}
+{{- $deploymentName := include "deployment.fullname" . }}
 {{- $cloudProviderFlavor := include "mapproxy-api.cloudProviderFlavor" . -}}
 {{- $cloudProviderDockerRegistryUrl := include "mapproxy-api.cloudProviderDockerRegistryUrl" . -}}
 {{- $cloudProviderImagePullSecretName := include "mapproxy-api.cloudProviderImagePullSecretName" . -}}
@@ -18,7 +20,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{- include "deployment.fullname" . }}
+  name: {{ $deploymentName }}
   labels:
     app: {{ $chartName }}
     component: {{ $chartName }}
@@ -127,7 +129,7 @@ spec:
             {{- end }}
           envFrom:
             - configMapRef:
-                name: {{- include "configmap.fullname" . }}
+                name: {{ $configmapName }}
           ports:
             - name: http
               containerPort: {{ .Values.env.targetPort }}

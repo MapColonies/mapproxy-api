@@ -1,11 +1,12 @@
 {{- $releaseName := .Release.Name -}}
 {{- $chartName := include "mapproxy-api.name" . -}}
+{{- $ingressName := include "ingress.fullname" . }}
 {{- $serviceName := include "service.fullname" . -}}
 {{- if and (.Values.enabled) (.Values.ingress.enabled) -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{- include "ingress.fullname" . }}
+  name: {{ $ingressName }}
   annotations:
     kubernetes.io/ingress.class: "nginx"
     {{- if eq .Values.ingress.type "nginx-org" }}
