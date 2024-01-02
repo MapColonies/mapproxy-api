@@ -35,7 +35,7 @@ data:
   {{- $db := (include "common.db.merged" .) | fromYaml }}
   DB_HOST: {{ $db.host }}
   DB_NAME: {{ $db.name }}
-  DB_PORT: {{ $db.port | quote}}
+  DB_PORT: {{ $db.port | quote }}
   DB_SSL_ENABLE: {{ $db.sslEnabled | quote }}
   DB_SCHEMA: {{ $db.schema }}
   DB_SSL_REJECT_UNAUTHORIZED: {{ $db.dbRejectUnauthorized | quote  }}

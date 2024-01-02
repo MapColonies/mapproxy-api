@@ -69,28 +69,6 @@ db:
   secrets:
     useExternal: false
     externalSecretName: ''
-
-
-local: # for local stand alone deployment, external pvc and secrets should be used for full deployment  
-  fs:
-    createComponents: false
-    storageClass: hostPath
-    capacity: 5Gi
-    accessMode: ReadWriteOnce
-    hostPath: /hostDir
-  db:
-    createSecret: false
-    userName: postgres
-    password: postgres
-    dbRejectUnauthorized: true
-    certs:
-      ca: certs/ca.pem
-      key: certs/key.pem
-      cert: certs/cert.pem
-  s3:
-    createSecret: false
-    secretAccessKey: minioadmin
-    accessKeyId: minioadmin
     
 env:
   port: 80
@@ -136,3 +114,24 @@ ingress:
   cors:
     enabled: true
     origin: '*'
+
+local: # for local stand alone deployment, external pvc and secrets should be used for full deployment
+  fs:
+    createComponents: false
+    storageClass: hostPath
+    capacity: 5Gi
+    accessMode: ReadWriteOnce
+    hostPath: /hostDir
+  db:
+    createSecret: false
+    userName: postgres
+    password: postgres
+    dbRejectUnauthorized: true
+    certs:
+      ca: certs/ca.pem
+      key: certs/key.pem
+      cert: certs/cert.pem
+  s3:
+    createSecret: false
+    secretAccessKey: minioadmin
+    accessKeyId: minioadmin
