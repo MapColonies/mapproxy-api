@@ -48,3 +48,7 @@ Usage:
 {{- define "common.s3.merged" -}}
 {{- include "common.tplvalues.merge" ( dict "values" ( list .Values.global.storage.s3 .Values.storage.s3 ) "context" . ) }}
 {{- end -}}
+
+{{- define "common.fs.merged" -}}
+{{- include "common.tplvalues.merge" ( dict "values" ( list .Values.global.storage.fs .Values.storage.fs ) "context" . ) }}
+{{- end -}}

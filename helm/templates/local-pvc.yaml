@@ -2,10 +2,11 @@
 {{- $chartName := include "mapproxy-api.name" . -}}
 
 {{- if .Values.local.fs.createComponents -}}
+{{- $fs := (include "common.fs.merged" .) | fromYaml }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Values.rasterCommon.storage.fs.internalPvc.name }}
+  name: {{ $fs.internalPvc.name }}
   labels:
     app: {{ $chartName }}
     component: {{ $chartName }}

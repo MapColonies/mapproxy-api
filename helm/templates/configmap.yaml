@@ -1,7 +1,6 @@
 {{- $chartName := include "mapproxy-api.name" . -}}
 {{- $tracingUrl := include "mapproxy-api.tracingUrl" . -}}
 {{- $metricsUrl := include "mapproxy-api.metricsUrl" . -}}
-{{- $defaults := .Files.Get "defaults.yaml" | fromYaml }}
 {{- $storage := (include "common.storage.merged" .) | fromYaml }}
 
 {{- if .Values.enabled -}}

@@ -5,15 +5,13 @@
 {{- $cloudProviderImagePullSecretName := include "mapproxy-api.cloudProviderImagePullSecretName" . -}}
 {{- $imageTag := include "mapproxy-api.tag" . -}}
 
-{{- $defaults := .Files.Get "defaults.yaml" | fromYaml }}
-{{- $s3SecretName := coalesce .Values.storage.s3.secretName .Values.global.storage.s3.secretName $defaults.storage.s3.secretName }}
-{{- $postgresSecretName := coalesce .Values.db.secrets.externalSecretName .Values.global.db.secrets.externalSecretName $defaults.db.secrets.externalSecretName }}
-{{- $mapproxyConfigProvider := coalesce .Values.storage.mapproxyConfigProvider .Values.global.storage.mapproxyConfigProvider $defaults.storage.mapproxyConfigProvider }}
-{{- $dbSslEnabled := coalesce .Values.storage.s3.sslEnabled .Values.global.storage.s3.sslEnabled  $defaults.storage.s3.sslEnabled }}
-{{- $internalPvcName := coalesce .Values.storage.fs.internalPvc.name .Values.global.storage.fs.internalPvc.name $defaults.storage.fs.internalPvc.name }}
-{{- $internalPvcConfigSubPath := coalesce .Values.storage.fs.internalPvc.configSubPath .Values.global.storage.fs.internalPvc.configSubPath $defaults.storage.fs.internalPvc.configSubPath }}
-{{- $internalPvcTilesSubPath := coalesce .Values.storage.fs.internalPvc.tilesSubPath .Values.global.storage.fs.internalPvc.tilesSubPath $defaults.storage.fs.internalPvc.tilesSubPath }}
+{{- $db := (include "common.db.merged" .) | fromYaml }}
+{{- $s3 := (include "common.s3.merged" .) | fromYaml }}
+{{- $fs := (include "common.fs.merged" .) | fromYaml }}
+{{- $storage := (include "common.storage.merged" .) | fromYaml }}
 
+{{- $postgresSecretName := ternary $db.secrets.externalSecretName (printf "%s%s" .Release.Name "-postgres-secret") $db.secrets.useExternal -}}
+{{- $s3SecretName := ternary $s3.secretName (printf "%s%s" .Release.Name  "-s3-secret") (ne $s3.secretName "") -}}
 
 {{- if .Values.enabled -}}
 
@@ -62,7 +60,7 @@ spec:
               name: root-ca
               subPath: {{ quote .Values.global.ca.key }}
             {{- end }}
-            {{- if and $dbSslEnabled (eq (upper $mapproxyConfigProvider) "DB") }}
+            {{- if and $db.sslEnabled (eq (upper $storage.mapproxyConfigProvider) "DB") }}
             - name: ca-file
               mountPath: "/opt/certs/ca/ca.pem"
               subPath: ca.pem
@@ -73,10 +71,10 @@ spec:
               mountPath: "/opt/certs/cert/cert.pem"
               subPath: cert.pem
             {{- end }}
-            {{- if  eq (upper $mapproxyConfigProvider) "FS" }}
+            {{- if  eq (upper $storage.mapproxyConfigProvider) "FS" }}
             - mountPath: /configSource
               name: sources-storage
-              subPath: {{ $internalPvcConfigSubPath }}
+              subPath: {{ $fs.internalPvc.configSubPath }}
             {{- end }}
           env:
             - name: SERVER_PORT
@@ -87,7 +85,7 @@ spec:
             - name: NODE_EXTRA_CA_CERTS
               value: {{ printf "%s/%s" .Values.global.ca.path .Values.global.ca.key | quote }}
             {{- end }}
-            {{- if eq (upper $mapproxyConfigProvider) "S3" }}                                    
+            {{- if eq (upper $storage.mapproxyConfigProvider) "S3" }}                                    
             - name: S3_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
@@ -99,15 +97,15 @@ spec:
                   name: {{ $s3SecretName }}
                   key: secretAccessKey
             {{- end }}
-            {{- if eq (upper $mapproxyConfigProvider) "FS" }}
+            {{- if eq (upper $storage.mapproxyConfigProvider) "FS" }}
             - name: MAPPROXY_YAML_FILE_PATH  
               value: /configSource/mapproxy.yaml
             {{- end }} 
             - name: INTERNAL_MOUNT_DIR
               value: /layerSources
             - name: ROOT_TILES_PATH
-              value: {{ $internalPvcTilesSubPath}}
-            {{- if eq (upper $mapproxyConfigProvider) "DB" }}
+              value: {{ $fs.internalPvc.tilesSubPath }}
+            {{- if eq (upper $storage.mapproxyConfigProvider) "DB" }}
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
@@ -118,7 +116,7 @@ spec:
                 secretKeyRef:
                   name: {{ $postgresSecretName }}
                   key: password
-            {{- if $dbSslEnabled }}
+            {{- if $db.sslEnabled }}
             - name: DB_SSL_CA
               value: "/opt/certs/ca/ca.pem"
             - name: DB_SSL_KEY
@@ -149,12 +147,12 @@ spec:
           secret:
             secretName: {{ .Values.global.ca.secretName }}
         {{- end }}
-        {{- if  eq (upper $mapproxyConfigProvider) "FS" }}
+        {{- if  eq (upper $storage.mapproxyConfigProvider) "FS" }}
         - name: sources-storage
           persistentVolumeClaim:
-            claimName: {{ $internalPvcName }}
+            claimName: {{ $fs.internalPvc.name }}
         {{- end }}
-        {{- if $dbSslEnabled }}
+        {{- if $db.sslEnabled }}
         - name: ca-file
           secret:
             secretName: {{ $postgresSecretName }}

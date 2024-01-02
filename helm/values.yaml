@@ -6,8 +6,8 @@ global:
   storage:
     mapproxyConfigProvider: ""
     s3:
-      endpointUrl: "GLOBAL"
-      tilesBucket: "GLOBAL BUCKET"
+      endpointUrl: ""
+      tilesBucket: ""
       sslEnabled: true
       secretName: ""
     fs:
@@ -16,7 +16,7 @@ global:
         tilesSubPath: ""
         configSubPath: ""
   db:
-    host: "GLOBAL"
+    host: ""
     name: ""
     port: 5432
     sslEnabled: false
@@ -50,8 +50,8 @@ image:
 storage: 
   mapproxyConfigProvider: S3
   s3:
-    endpointUrl: "PRIVATE"
-    tilesBucket: "PRIVATE BUCKET"
+    endpointUrl: ""
+    tilesBucket: ""
     sslEnabled: false
     secretName: ""
   fs:
