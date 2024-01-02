@@ -18,7 +18,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ $releaseName }}-deployment
+  name: {{- include "deployment.fullname" . }}
   labels:
     app: {{ $chartName }}
     component: {{ $chartName }}
@@ -50,7 +50,7 @@ spec:
         - name: {{ $cloudProviderImagePullSecretName | quote }}
     {{- end }}
       containers:
-        - name: {{ $releaseName }}
+        - name: {{ $chartName }}
           {{- with .Values.image }}
           image: {{ $cloudProviderDockerRegistryUrl }}{{ .repository }}:{{ $imageTag }}
           {{- end }}
@@ -127,7 +127,7 @@ spec:
             {{- end }}
           envFrom:
             - configMapRef:
-                name: {{ $releaseName }}-configmap
+                name: {{- include "configmap.fullname" . }}
           ports:
             - name: http
               containerPort: {{ .Values.env.targetPort }}

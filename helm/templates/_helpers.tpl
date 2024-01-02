@@ -34,6 +34,20 @@ Create service name as used by the service name label.
 {{- end }}
 
 {{/*
+Create configmap name as used by the service name label.
+*/}}
+{{- define "configmap.fullname" -}}
+{{- printf "%s-%s-%s" .Release.Name .Chart.Name "configmap" | indent 1 }}
+{{- end }}
+
+{{/*
+Create configmap name as used by the service name label.
+*/}}
+{{- define "deployment.fullname" -}}
+{{- printf "%s-%s-%s" .Release.Name .Chart.Name "deployment" | indent 1 }}
+{{- end }}
+
+{{/*
 Common labels
 */}}
 {{- define "mapproxy-api.labels" -}}

@@ -7,7 +7,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-configmap
+  name: {{- include "configmap.fullname" . }}
 data:
   REQUEST_PAYLOAD_LIMIT: {{ .Values.env.requestPayloadLimit | quote }}
   RESPONSE_COMPRESSION_ENABLED: {{ .Values.env.responseCompressionEnabled | quote }}
@@ -35,10 +35,10 @@ data:
   {{- $db := (include "common.db.merged" .) | fromYaml }}
   DB_HOST: {{ $db.host }}
   DB_NAME: {{ $db.name }}
-  DB_PORT: {{ $db.port }}
-  DB_SSL_ENABLE: {{ $db.sslEnabled }}
+  DB_PORT: {{ $db.port | quote}}
+  DB_SSL_ENABLE: {{ $db.sslEnabled | quote }}
   DB_SCHEMA: {{ $db.schema }}
-  DB_SSL_REJECT_UNAUTHORIZED: {{ $db.dbRejectUnauthorized }}
+  DB_SSL_REJECT_UNAUTHORIZED: {{ $db.dbRejectUnauthorized | quote  }}
   PGAPPNAME: {{ $chartName }}
   {{- end }}
 {{- end }}

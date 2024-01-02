@@ -4,7 +4,7 @@ global:
   metrics: {}
   environment: {}
   storage:
-    mapproxyConfigProvider: ""
+    mapproxyConfigProvider: "" #  -> 'DB' | 'FS' | 'S3'
     s3:
       endpointUrl: ""
       tilesBucket: ""
@@ -21,7 +21,7 @@ global:
     port: 5432
     sslEnabled: false
     schema: ""
-    dbRejectUnauthorized: false
+    dbRejectUnauthorized: true
     secrets:
       useExternal: false
       externalSecretName: ''
@@ -48,7 +48,7 @@ image:
   tag: 'latest'
 
 storage: 
-  mapproxyConfigProvider: S3
+  mapproxyConfigProvider: "" #  -> 'DB' | 'FS' | 'S3'
   s3:
     endpointUrl: ""
     tilesBucket: ""
@@ -61,7 +61,7 @@ storage:
       configSubPath: ""
 db:
   host: ""
-  name: "PRIVATE"
+  name: ""
   port: 5432
   sslEnabled: false
   schema: ""
