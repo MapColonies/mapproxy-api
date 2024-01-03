@@ -3,7 +3,7 @@ import { container } from 'tsyringe';
 import jsLogger from '@map-colonies/js-logger';
 import { ConflictError, NotFoundError } from '@map-colonies/error-types';
 import { TileOutputFormat } from '@map-colonies/mc-model-types';
-import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IMapProxyConfig, IUpdateMosaicRequest } from '../../../../src/common/interfaces';
+import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IMapProxyConfig, IRedisConfig, IUpdateMosaicRequest } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExists';
 import { mockLayerNameIsNotExists } from '../../mock/mockLayerNameIsNotExists';
@@ -11,6 +11,7 @@ import * as utils from '../../../../src/common/utils';
 import { MockConfigProvider, getJsonMock, updateJsonMock, init as initConfigProvider } from '../../mock/mockConfigProvider';
 import { SERVICES } from '../../../../src/common/constants';
 import { registerTestValues } from '../../../integration/testContainerConfig';
+import { configMock, init as initConfig, setValue as setConfigValue, clear as clearConfig } from '../../../configurations/config';
 
 let layersManager: LayersManager;
 let sortArrayByZIndexStub: jest.SpyInstance;
@@ -19,14 +20,17 @@ const logger = jsLogger({ enabled: false });
 describe('layersManager', () => {
   beforeEach(() => {
     // stub util functions
+    initConfig();
     registerTestValues();
     initConfigProvider();
+    const redisConfig = container.resolve<IRedisConfig>(SERVICES.REDISCONFIG);
     const mapproxyConfig = container.resolve<IMapProxyConfig>(SERVICES.MAPPROXY);
-    layersManager = new LayersManager(logger, mapproxyConfig, MockConfigProvider);
+    layersManager = new LayersManager(logger, mapproxyConfig, redisConfig, MockConfigProvider);
     sortArrayByZIndexStub = jest.spyOn(utils, 'sortArrayByZIndex').mockReturnValueOnce(['mockLayer1', 'mockLayer2', 'mockLayer3']);
   });
 
   afterEach(() => {
+    clearConfig();
     container.reset();
     container.clearInstances();
     jest.clearAllMocks();
@@ -102,8 +106,9 @@ describe('layersManager', () => {
       expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
 
-    it('should successfully add layer + redis cache', async () => {
+    it.only('should successfully add layer + redis cache', async () => {
       // action
+      setConfigValue('enabled', false);
       const myAddNewRedisLayerToConfig = jest.spyOn(layersManager, 'addNewRedisLayerToConfig');
       const action = async () => {
         await layersManager.addLayer(mockLayerNameIsNotExists);

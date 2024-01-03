@@ -13,6 +13,7 @@ export const SERVICES: Record<string, symbol> = {
   TRACER: Symbol('Tracer'),
   METER: Symbol('Meter'),
   MAPPROXY: Symbol('MapProxyConfig'),
+  REDISCONFIG: Symbol('RedisConfig'),
   CONFIGPROVIDER: Symbol('ConfigProvider'),
   FS: Symbol('FS'),
   S3: Symbol('S3'),

@@ -28,6 +28,7 @@ describe('layerManager', () => {
     const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
     const fsConfig = config.get<IFSConfig>('FS');
     const s3Config = config.get<IS3Config>('S3');
+    const redisConfig = config.get<IMapProxyConfig>('redis');
     configProviderInit();
     /* eslint-disable-next-line @typescript-eslint/naming-convention*/
     const app = getApp({
@@ -39,6 +40,7 @@ describe('layerManager', () => {
         { token: LAYERS_ROUTER_SYMBOL, provider: { useFactory: layersRouterFactory } },
         { token: SERVICES.FS, provider: { useValue: fsConfig } },
         { token: SERVICES.S3, provider: { useValue: s3Config } },
+        { token: SERVICES.REDISCONFIG, provider: { useValue: redisConfig } },
         {
           token: SERVICES.CONFIGPROVIDER,
           provider: {
@@ -146,7 +148,7 @@ describe('layerManager', () => {
 
     it('Sad Path - should fail with response status 404 Not Found and layer name is not exists', async () => {
       const response = await requestSender.updateLayer(mockLayerNameIsNotExists.name, mockUpdateLayerRequest);
-      const notFoundErrorMessage = `Layer name '${mockLayerNameIsNotExists.name}' is not exists`;
+      const notFoundErrorMessage = `Cache name '${mockLayerNameIsNotExists.name}' does not exists`;
 
       expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.NOT_FOUND);

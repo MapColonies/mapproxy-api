@@ -16,6 +16,7 @@ import {
   IConfigProvider,
   ICacheProvider,
   ICacheSource,
+  IRedisConfig,
 } from '../../common/interfaces';
 import { sortArrayByZIndex } from '../../common/utils';
 import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
@@ -28,14 +29,12 @@ import { RedisSource } from '../../common/cacheProviders/redisSource';
 @injectable()
 class LayersManager {
   [x: string]: any;
-  isRedisEnabled: boolean;
   public constructor(
     @inject(SERVICES.LOGGER) private readonly logger: Logger,
     @inject(SERVICES.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig,
+    @inject(SERVICES.REDISCONFIG) private readonly redisConfig: IRedisConfig,
     @inject(SERVICES.CONFIGPROVIDER) private readonly configProvider: IConfigProvider
-  ) {
-    this.isRedisEnabled = config.get<boolean>('redis.enabled');
-  }
+  ) {}
 
   public async getLayer(layerName: string): Promise<IMapProxyCache> {
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
@@ -58,7 +57,7 @@ class LayersManager {
   }
 
   private addNewCache(jsonDocument: IMapProxyJsonDocument, layerRequest: ILayerPostRequest) {
-    if (this.isRedisEnabled) {
+    if (this.redisConfig.enabled) {
       this.addNewRedisLayerToConfig(layerRequest, jsonDocument);
     } else {
       this.addNewSourceLayerToConfig(layerRequest, jsonDocument);
@@ -219,7 +218,7 @@ class LayersManager {
       let sourceLayerName: string = `${layerName}-source`;
       let redisLayerName: string = layerName;
 
-      if (!isLayerNameExists(jsonDocument,layerName)) {
+      if (!isLayerNameExists(jsonDocument, layerName)) {
         throw new NotFoundError(`Cache name '${layerName}' does not exists`);
       }
 

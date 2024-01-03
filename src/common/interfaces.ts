@@ -64,6 +64,22 @@ export interface IS3Config {
   objectKey: string;
   sslEnabled: boolean;
 }
+export interface IRedisConfig {
+  enabled: boolean,
+    host: string,
+    port: number,
+    auth: {
+      enableRedisUser: boolean,
+      username: string,
+      password: string
+    },
+    prefix: {
+      enablePrefix: boolean,
+      prefix: string
+    },
+    type: string,
+    default_ttl: number
+}
 
 export interface IMapProxyJsonDocument {
   services: JsonObject;
