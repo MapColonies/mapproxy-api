@@ -211,21 +211,40 @@ class LayersManager {
   public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<void> {
     this.logger.info(`Update layer: '${layerName}' request`);
     const tileFormat = this.mapToTileFormat(layerRequest.format);
-    const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
-    const newLayer: IMapProxyLayer = this.getLayerValues(layerName);
+    const isRedisCache: boolean = !layerName.endsWith('-source');
+    let doesHaveRedisCache: boolean = false;
 
     const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
-      if (!isLayerNameExists(jsonDocument, layerName)) {
-        throw new NotFoundError(`Layer name '${layerName}' is not exists`);
+      let newLayer: IMapProxyLayer;
+      let sourceLayerName: string = `${layerName}-source`;
+      let redisLayerName: string = layerName;
+
+      if (!isLayerNameExists(jsonDocument,layerName)) {
+        throw new NotFoundError(`Cache name '${layerName}' does not exists`);
       }
 
-      // update existing layer cache values with the new requested layer cache values
-      jsonDocument.caches[layerName] = newCache;
-      // update existing layer values with the new requested layer values
-      const requestedLayerIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === layerName);
-      if (requestedLayerIndex !== -1) {
-        jsonDocument.layers[requestedLayerIndex] = newLayer;
+      if (!isRedisCache) {
+        redisLayerName = layerName.replace('-source', '');
+        doesHaveRedisCache = jsonDocument.caches[redisLayerName] != undefined;
+        sourceLayerName = `${layerName}`;
       }
+
+      if (isRedisCache || doesHaveRedisCache) {
+        // update existing layer cache values with the new requested layer cache values
+        const newRedisCache: IMapProxyCache = this.createRedisCache(redisLayerName, sourceLayerName, tileFormat, this.mapproxyConfig);
+        jsonDocument.caches[redisLayerName] = newRedisCache;
+        // update existing layer values with the new requested layer values
+        newLayer = this.getLayerValues(redisLayerName);
+        const redisLayerIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === redisLayerName);
+        jsonDocument.layers[redisLayerIndex] = newLayer;
+      } else {
+        newLayer = this.getLayerValues(sourceLayerName);
+        const sourceLayerNameIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === sourceLayerName);
+        jsonDocument.layers[sourceLayerNameIndex] = newLayer;
+      }
+      const newSourceCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
+      jsonDocument.caches[sourceLayerName] = newSourceCache;
+
       return jsonDocument;
     };
 
