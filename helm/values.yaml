@@ -2,13 +2,13 @@ global:
   cloudProvider: {}
   tracing: {}
   metrics: {}
-  environment: {}
+  environment: ""
   storage:
     mapproxyConfigProvider: "" #  -> 'DB' | 'FS' | 'S3'
     s3:
       endpointUrl: ""
       tilesBucket: ""
-      sslEnabled: true
+      sslEnabled: false
       secretName: ""
     fs:
       internalPvc:
@@ -21,12 +21,12 @@ global:
     port: 5432
     sslEnabled: false
     schema: ""
-    dbRejectUnauthorized: true
+    dbRejectUnauthorized: false
     secrets:
       useExternal: false
-      externalSecretName: ''
+      externalSecretName: ""
   ca:
-    secretName: ''
+    secretName: ""
     path: '/usr/local/share/ca-certificates'
     key: 'ca.crt'
 
@@ -65,10 +65,10 @@ db:
   port: 5432
   sslEnabled: false
   schema: ""
-  dbRejectUnauthorized: true
+  dbRejectUnauthorized: false
   secrets:
     useExternal: false
-    externalSecretName: ''
+    externalSecretName: ""
 
 # add pod annotations
 # example:
