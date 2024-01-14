@@ -7,6 +7,38 @@ info:
     name: MIT
     url: https://opensource.org/licenses/MIT
 paths:
+  /config:
+    get:
+      operationId: getConfig
+      tags:
+        - Config
+      summary: get current mapproxy config
+      responses:
+        '200':
+          description: OK
+          content:
+            application/yaml:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/getConfigResponse'
+                  - $ref: '#/components/schemas/getConfigYamlResponse'
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/getConfigResponse'
+                  - $ref: '#/components/schemas/getConfigYamlResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        '500':
+          description: Ineternal Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
   /layer:
     post:
       operationId: addLayer
@@ -330,6 +362,85 @@ components:
           enum:
             - image/png
             - image/jpeg
+    getConfigResponse:
+      type: object
+      properties:
+        grids:
+          type: object
+          properties:
+            grid:
+              type: object
+              properties:
+                name:
+                  type: string
+                srs:
+                  type: string
+                origin:
+                  type: string
+                min_res:
+                  type: number
+                num_levels:
+                  type: number
+                bbox:
+                  type: array
+                  items:
+                    type: number
+        caches:
+          type: object
+          properties:
+            cache:
+              type: object
+              properties:
+                type:
+                  type: string
+                directory:
+                  type: string
+                directory_layout:
+                  type: string
+                grids:
+                  type: array
+                  items:
+                    type: string
+                format:
+                  type: string
+                  enum:
+                    - image/png
+                    - image/jpeg
+                sources:
+                  type: array
+                  items:
+                    type: string
+                upscale_tiles:
+                  type: number
+                minimize_meta_request:
+                  type: boolean
+        layers:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              title:
+                type: string
+              sources:
+                type: array
+                items:
+                  type: string
+        globals:
+          type: object
+          properties:
+            cache:
+              type: object
+            image:
+              type: object
+        sources:
+          type: object
+        services:
+          type: object
+    getConfigYamlResponse:
+      type: string
+
     mosaicLayer:
       type: object
       required:

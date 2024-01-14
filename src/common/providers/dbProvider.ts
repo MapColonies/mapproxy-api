@@ -72,7 +72,7 @@ export class DBProvider implements IConfigProvider {
       return jsonContent;
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      throw new Error(`Failed to provied json from database: ${error}`);
+      throw new Error(`Failed to provide json from database: ${error}`);
     } finally {
       client.release();
     }

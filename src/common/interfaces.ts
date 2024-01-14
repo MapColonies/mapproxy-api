@@ -152,3 +152,8 @@ export interface ICacheProvider {
 export interface IPGClient {
   getPoolConnection: () => Promise<PoolClient>;
 }
+
+export enum SchemaType {
+  JSON = 'application/json',
+  YAML = 'application/yaml',
+}
