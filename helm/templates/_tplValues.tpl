@@ -37,6 +37,14 @@ Usage:
 {{ $dst | toYaml }}
 {{- end -}}
 
+{{/*
+End of usage example
+*/}}
+
+{{/*
+Custom definitions
+*/}}
+
 {{- define "common.storage.merged" -}}
 {{- include "common.tplvalues.merge" ( dict "values" ( list .Values.global.storage .Values.storage ) "context" . ) }}
 {{- end -}}
