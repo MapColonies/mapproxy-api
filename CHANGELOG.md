@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/MapColonies/mapproxy-api/compare/v1.5.4...v1.6.0) (2024-01-15)
+
+
+### Features
+
+* adding api retrieve current mapproxy yaml configuration ([#111](https://github.com/MapColonies/mapproxy-api/issues/111)) ([fe02193](https://github.com/MapColonies/mapproxy-api/commit/fe021931d8bdba7c08bb29a978310cb4efaad00f))
+
 ### [1.5.4](https://github.com/MapColonies/mapproxy-api/compare/v1.5.3...v1.5.4) (2023-12-26)
 
 ### [1.5.3](https://github.com/MapColonies/mapproxy-api/compare/v1.5.2...v1.5.3) (2023-05-24)
