@@ -31,16 +31,6 @@ class LayersManager {
     @inject(SERVICES.CONFIGPROVIDER) private readonly configProvider: IConfigProvider
   ) {}
 
-  public async getConfig(layerName: string): Promise<IMapProxyCache> {
-    const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
-
-    if (!isLayerNameExists(jsonDocument, layerName)) {
-      throw new NotFoundError(`Layer name '${layerName}' is not exists`);
-    }
-    const requestedLayer: IMapProxyCache = jsonDocument.caches[layerName] as IMapProxyCache;
-    return requestedLayer;
-  }
-
   public async getLayer(layerName: string): Promise<IMapProxyCache> {
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
 

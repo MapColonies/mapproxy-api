@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { readFileSync } from 'node:fs';
 import jsyaml, { YAMLException } from 'js-yaml';
 import * as utils from '../../../../src/common/utils';
 import { IMapProxyJsonDocument, IMapProxyLayer, IMosaicLayerObject } from '../../../../src/common/interfaces';

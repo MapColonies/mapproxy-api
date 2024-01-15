@@ -153,6 +153,7 @@ export interface IPGClient {
   getPoolConnection: () => Promise<PoolClient>;
 }
 
+// TODO: use MIME Types
 export enum SchemaType {
   JSON = 'application/json',
   YAML = 'application/yaml',

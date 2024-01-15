@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { readFileSync } from 'node:fs';
 import { Logger } from '@map-colonies/js-logger';
 import { Pool, PoolClient, PoolConfig } from 'pg';
 import { container } from 'tsyringe';
