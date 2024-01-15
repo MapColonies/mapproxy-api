@@ -2,19 +2,22 @@ module.exports = {
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
-  globals: {
-    'ts-jest': {
-      tsconfig: 'tsconfig.test.json',
-    },
+  transform: {
+    '^.+\\.ts$': ['ts-jest', { tsconfig: 'tsconfig.test.json' }],
   },
+  setupFiles: ['<rootDir>/tests/configurations/jest.setup.ts'],
   coverageReporters: ['text', 'html'],
   collectCoverage: true,
-  collectCoverageFrom: ['<rootDir>/src/**/*.ts', '!*/node_modules/', '!/vendor/**', '!*/common/**', '!**/models/**', '!<rootDir>/src/*'],
+  collectCoverageFrom: [
+    '<rootDir>/src/**/*.ts',
+    '!*/node_modules/',
+    '!/vendor/**',
+    '!*/common/**',
+    '!**/models/**',
+    '!<rootDir>/src/*',
+    '!<rootDir>/src/DAL/**',
+  ],
   coverageDirectory: '<rootDir>/coverage',
-  rootDir: '../../../.',
-  testMatch: ['<rootDir>/tests/integration/**/*.spec.ts'],
-  setupFiles: ['<rootDir>/tests/configurations/jest.setup.ts'],
-  setupFilesAfterEnv: ['jest-openapi', '<rootDir>/tests/configurations/initJestOpenapi.setup.ts'],
   reporters: [
     'default',
     [
@@ -22,17 +25,18 @@ module.exports = {
       { multipleReportsUnitePath: './reports', pageTitle: 'integration', publicPath: './reports', filename: 'integration.html' },
     ],
   ],
-  collectCoverage: true,
-  moduleDirectories: ['node_modules', 'src'],
-  collectCoverageFrom: ['<rootDir>/src/**/*.{ts}', '!**/node_modules/**', '!**/vendor/**', '!<rootDir>/src/DAL/**'],
+  rootDir: '../../../.',
+  setupFilesAfterEnv: ['jest-openapi', '<rootDir>/tests/configurations/initJestOpenapi.setup.ts'],
   preset: 'ts-jest',
+  testMatch: ['<rootDir>/tests/integration/**/*.spec.ts'],
   testEnvironment: 'node',
+  moduleDirectories: ['node_modules', 'src'],
   coverageThreshold: {
     global: {
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: -10,
+      branches: 100,
+      functions: 100,
+      lines: 100,
+      statements: 100,
     },
   },
 };

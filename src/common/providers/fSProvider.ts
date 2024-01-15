@@ -31,7 +31,7 @@ export class FSProvider implements IConfigProvider {
       const jsonContent = convertYamlToJson(yamlContent) as unknown as IMapProxyJsonDocument;
       return jsonContent;
     } catch (error) {
-      this.logger.error(`Failed to provied json from file: ${(error as Error).message}`);
+      this.logger.error(`Failed to provide json from file: ${(error as Error).message}`);
       throw error;
     }
   }

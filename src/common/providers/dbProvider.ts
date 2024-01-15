@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { readFileSync } from 'node:fs';
 import { Logger } from '@map-colonies/js-logger';
 import { Pool, PoolClient, PoolConfig } from 'pg';
 import { container } from 'tsyringe';
@@ -72,7 +72,7 @@ export class DBProvider implements IConfigProvider {
       return jsonContent;
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      throw new Error(`Failed to provied json from database: ${error}`);
+      throw new Error(`Failed to provide json from database: ${error}`);
     } finally {
       client.release();
     }
