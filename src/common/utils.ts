@@ -1,5 +1,5 @@
-import { extname, sep, join } from 'path';
-import { promises as fsp } from 'fs';
+import { extname, sep, join } from 'node:path';
+import { promises as fsp } from 'node:fs';
 import { safeLoad, safeDump, YAMLException } from 'js-yaml';
 import { container } from 'tsyringe';
 import { SERVICES } from '../common/constants';

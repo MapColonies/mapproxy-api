@@ -7,6 +7,7 @@ import { SERVICES, SERVICE_NAME } from './common/constants';
 import { tracing } from './common/tracing';
 import { InjectionObject, registerDependencies } from './common/dependencyRegistration';
 import { layersRouterFactory, LAYERS_ROUTER_SYMBOL } from './layers/routes/layersRouterFactory';
+import { configsRouterFactory, CONFIGS_ROUTER_SYMBOL } from './configs/routes/configsRouterFactory';
 import { IConfigProvider, IFSConfig, IMapProxyConfig, IS3Config } from './common/interfaces';
 import { getProvider } from './getProvider';
 
@@ -30,6 +31,7 @@ export const registerExternalValues = (options?: RegisterOptions): DependencyCon
     { token: SERVICES.LOGGER, provider: { useValue: logger } },
     { token: SERVICES.TRACER, provider: { useValue: tracer } },
     { token: LAYERS_ROUTER_SYMBOL, provider: { useFactory: layersRouterFactory } },
+    { token: CONFIGS_ROUTER_SYMBOL, provider: { useFactory: configsRouterFactory } },
     { token: SERVICES.MAPPROXY, provider: { useValue: mapproxyConfig } },
     { token: SERVICES.FS, provider: { useValue: fsConfig } },
     { token: SERVICES.S3, provider: { useValue: s3Config } },
