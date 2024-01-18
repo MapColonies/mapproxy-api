@@ -1,18 +1,26 @@
 {{- $releaseName := .Release.Name -}}
 {{- $chartName := include "mapproxy-api.name" . -}}
+{{- $configmapName := include "configmap.fullname" . }}
+{{- $deploymentName := include "deployment.fullname" . }}
 {{- $cloudProviderFlavor := include "mapproxy-api.cloudProviderFlavor" . -}}
 {{- $cloudProviderDockerRegistryUrl := include "mapproxy-api.cloudProviderDockerRegistryUrl" . -}}
 {{- $cloudProviderImagePullSecretName := include "mapproxy-api.cloudProviderImagePullSecretName" . -}}
 {{- $imageTag := include "mapproxy-api.tag" . -}}
-{{- $postgresSecretName := ternary .Values.rasterCommon.db.secrets.externalSecretName (printf "%s%s" .Release.Name "-postgres-secret") .Values.rasterCommon.db.secrets.useExternal -}}
-{{- $s3SecretName := ternary .Values.rasterCommon.storage.s3.secretName (printf "%s%s" .Release.Name  "-s3-secret") (ne .Values.rasterCommon.storage.s3.secretName "") -}}
+
+{{- $db := (include "common.db.merged" .) | fromYaml }}
+{{- $s3 := (include "common.s3.merged" .) | fromYaml }}
+{{- $fs := (include "common.fs.merged" .) | fromYaml }}
+{{- $storage := (include "common.storage.merged" .) | fromYaml }}
+
+{{- $postgresSecretName := ternary $db.secrets.externalSecretName (printf "%s%s" .Release.Name "-postgres-secret") $db.secrets.useExternal -}}
+{{- $s3SecretName := ternary $s3.secretName (printf "%s%s" .Release.Name  "-s3-secret") (ne $s3.secretName "") -}}
 
 {{- if .Values.enabled -}}
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ $releaseName }}-deployment
+  name: {{ $deploymentName }}
   labels:
     app: {{ $chartName }}
     component: {{ $chartName }}
@@ -34,9 +42,12 @@ spec:
         release: {{ $releaseName }}
         run: {{ $releaseName }}-{{ $chartName }}
         {{- include "mapproxy-api.selectorLabels" . | nindent 8 }}
-      {{- if .Values.resetOnConfigChange }}
       annotations:
+      {{- if .Values.resetOnConfigChange }}
         checksum/configmap: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+      {{- end }}
+      {{- if .Values.podAnnotations }}
+      {{- toYaml .Values.podAnnotations | nindent 8 }}
       {{- end }}
     spec:
     {{- if $cloudProviderImagePullSecretName }}
@@ -44,17 +55,17 @@ spec:
         - name: {{ $cloudProviderImagePullSecretName | quote }}
     {{- end }}
       containers:
-        - name: {{ $releaseName }}
+        - name: {{ $chartName }}
           {{- with .Values.image }}
           image: {{ $cloudProviderDockerRegistryUrl }}{{ .repository }}:{{ $imageTag }}
           {{- end }}
           volumeMounts:
-            {{- if .Values.rasterCommon.ca.secretName }}
-            - mountPath: {{ printf "%s/%s" .Values.rasterCommon.ca.path .Values.rasterCommon.ca.key | quote }}
+            {{- if .Values.global.ca.secretName }}
+            - mountPath: {{ printf "%s/%s" .Values.global.ca.path .Values.global.ca.key | quote }}
               name: root-ca
-              subPath: {{ quote .Values.rasterCommon.ca.key }}
+              subPath: {{ quote .Values.global.ca.key }}
             {{- end }}
-            {{- if and .Values.rasterCommon.db.sslEnabled (eq (upper .Values.rasterCommon.storage.mapproxyConfigProvider) "DB") }}
+            {{- if and $db.sslEnabled (eq (upper $storage.mapproxyConfigProvider) "DB") }}
             - name: ca-file
               mountPath: "/opt/certs/ca/ca.pem"
               subPath: ca.pem
@@ -65,21 +76,21 @@ spec:
               mountPath: "/opt/certs/cert/cert.pem"
               subPath: cert.pem
             {{- end }}
-            {{- if  eq (upper .Values.rasterCommon.storage.mapproxyConfigProvider) "FS" }}
+            {{- if  eq (upper $storage.mapproxyConfigProvider) "FS" }}
             - mountPath: /configSource
               name: sources-storage
-              subPath: {{ .Values.rasterCommon.storage.fs.internalPvc.configSubPath }}
+              subPath: {{ $fs.internalPvc.configSubPath }}
             {{- end }}
           env:
             - name: SERVER_PORT
               value: {{ .Values.env.targetPort | quote }}
-            {{- if .Values.rasterCommon.ca.secretName }}
+            {{- if .Values.global.ca.secretName }}
             - name: REQUESTS_CA_BUNDLE
-              value: {{ printf "%s/%s" .Values.rasterCommon.ca.path .Values.rasterCommon.ca.key | quote }}
+              value: {{ printf "%s/%s" .Values.global.ca.path .Values.global.ca.key | quote }}
             - name: NODE_EXTRA_CA_CERTS
-              value: {{ printf "%s/%s" .Values.rasterCommon.ca.path .Values.rasterCommon.ca.key | quote }}
+              value: {{ printf "%s/%s" .Values.global.ca.path .Values.global.ca.key | quote }}
             {{- end }}
-            {{- if eq (upper .Values.rasterCommon.storage.mapproxyConfigProvider) "S3" }}                                    
+            {{- if eq (upper $storage.mapproxyConfigProvider) "S3" }}                                    
             - name: S3_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
@@ -91,15 +102,15 @@ spec:
                   name: {{ $s3SecretName }}
                   key: secretAccessKey
             {{- end }}
-            {{- if eq (upper .Values.rasterCommon.storage.mapproxyConfigProvider) "FS" }}
+            {{- if eq (upper $storage.mapproxyConfigProvider) "FS" }}
             - name: MAPPROXY_YAML_FILE_PATH  
               value: /configSource/mapproxy.yaml
-            {{- end }} 
+            - name: SUB_TILES_PATH
+              value: {{ $fs.internalPvc.tilesSubPath }}
             - name: INTERNAL_MOUNT_DIR
               value: /layerSources
-            - name: ROOT_TILES_PATH
-              value: {{ .Values.rasterCommon.storage.fs.internalPvc.tilesSubPath }}
-            {{- if eq (upper .Values.rasterCommon.storage.mapproxyConfigProvider) "DB" }}
+            {{- end }} 
+            {{- if eq (upper $storage.mapproxyConfigProvider) "DB" }}
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
@@ -110,7 +121,7 @@ spec:
                 secretKeyRef:
                   name: {{ $postgresSecretName }}
                   key: password
-            {{- if .Values.rasterCommon.db.sslEnabled }}
+            {{- if $db.sslEnabled }}
             - name: DB_SSL_CA
               value: "/opt/certs/ca/ca.pem"
             - name: DB_SSL_KEY
@@ -121,7 +132,7 @@ spec:
             {{- end }}
           envFrom:
             - configMapRef:
-                name: {{ $releaseName }}-configmap
+                name: {{ $configmapName }}
           ports:
             - name: http
               containerPort: {{ .Values.env.targetPort }}
@@ -136,17 +147,17 @@ spec:
             {{- toYaml .Values.resources.value | nindent 12 }}
           {{- end }}
       volumes:
-        {{- if .Values.rasterCommon.ca.secretName }}
+        {{- if .Values.global.ca.secretName }}
         - name: root-ca
           secret:
-            secretName: {{ .Values.rasterCommon.ca.secretName }}
+            secretName: {{ .Values.global.ca.secretName }}
         {{- end }}
-        {{- if  eq (upper .Values.rasterCommon.storage.mapproxyConfigProvider) "FS" }}
+        {{- if  eq (upper $storage.mapproxyConfigProvider) "FS" }}
         - name: sources-storage
           persistentVolumeClaim:
-            claimName: {{ .Values.rasterCommon.storage.fs.internalPvc.name }}
+            claimName: {{ $fs.internalPvc.name }}
         {{- end }}
-        {{- if .Values.rasterCommon.db.sslEnabled }}
+        {{- if $db.sslEnabled }}
         - name: ca-file
           secret:
             secretName: {{ $postgresSecretName }}

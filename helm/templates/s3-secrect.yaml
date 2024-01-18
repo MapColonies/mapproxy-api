@@ -1,8 +1,9 @@
 {{- if .Values.local.s3.createSecret -}}
+{{- $s3 := (include "common.s3.merged" .) | fromYaml }}
 apiVersion: v1
 kind: Secret
 metadata:
-  name: {{ .Values.rasterCommon.storage.s3.secretName }}
+  name: {{ $s3.secretName }}
 type: Opaque
 stringData:
   accessKeyId: {{ quote .Values.local.s3.accessKeyId }}
