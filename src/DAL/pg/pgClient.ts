@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { readFileSync } from 'node:fs';
 import { Pool, PoolClient, PoolConfig } from 'pg';
 import { container, injectable } from 'tsyringe';
 import { SERVICES } from '../../common/constants';

@@ -4,6 +4,7 @@ import { trace } from '@opentelemetry/api';
 import config from 'config';
 import { container } from 'tsyringe';
 import { TileOutputFormat } from '@map-colonies/mc-model-types';
+import { NotFoundError } from '@map-colonies/error-types';
 import {
   IFSConfig,
   ILayerPostRequest,
@@ -15,7 +16,7 @@ import {
 } from '../../../src/common/interfaces';
 import { mockLayerNameIsNotExists } from '../../unit/mock/mockLayerNameIsNotExists';
 import { mockLayerNameAlreadyExists } from '../../unit/mock/mockLayerNameAlreadyExists';
-import { MockConfigProvider, init as configProviderInit } from '../../unit/mock/mockConfigProvider';
+import { MockConfigProvider, init as configProviderInit, updateJsonMock } from '../../unit/mock/mockConfigProvider';
 import * as utils from '../../../src/common/utils';
 import { getApp } from '../../../src/app';
 import { SERVICES } from '../../../src/common/constants';
@@ -163,6 +164,17 @@ describe('layerManager', () => {
 
       expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.OK);
+    });
+
+    it('sad Path - should return status 404', async () => {
+      const mockLayerNames = ['mockLayerNameExists', 'NameIsAlreadyExists'];
+      updateJsonMock.mockImplementation(() => {
+        throw new NotFoundError('some problem');
+      });
+      const response = await requestSender.removeLayer(mockLayerNames);
+
+      expect(response).toSatisfyApiSpec();
+      expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
     });
   });
 

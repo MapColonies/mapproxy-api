@@ -2,7 +2,34 @@ global:
   cloudProvider: {}
   tracing: {}
   metrics: {}
-  environment: {}
+  environment: ""
+  storage:
+    mapproxyConfigProvider: "" #  -> 'DB' | 'FS' | 'S3'
+    s3:
+      endpointUrl: ""
+      tilesBucket: ""
+      sslEnabled: false
+      secretName: ""
+    fs:
+      internalPvc:
+        name: ""
+        tilesSubPath: ""
+        configSubPath: ""
+  db:
+    host: ""
+    name: ""
+    port: 5432
+    sslEnabled: false
+    schema: ""
+    dbRejectUnauthorized: false
+    secrets:
+      useExternal: false
+      externalSecretName: ""
+  ca:
+    secretName: ""
+    path: '/usr/local/share/ca-certificates'
+    key: 'ca.crt'
+
 
 enabled: true
 environment: development
@@ -16,72 +43,45 @@ cloudProvider:
   imagePullSecretName: 'my-registry-secret'
   flavor: openshift
 
-caSecretName: ''
-caPath: '/usr/local/share/ca-certificates'
-caKey: 'ca.crt'
-
 image:
   repository: mapproxy-api
   tag: 'latest'
 
-rasterCommon:
-  storage:
-    mapproxyConfigProvider: 'DB'
-    fs:
-      internalPvc:
-        name: "internal-pvc"
-        tilesSubPath: tiles
-        configSubPath: config
-    s3:
-      endpointUrl: "localhost:9000"
-      tilesBucket: "raster-tiles"
-      sslEnabled: false
-      secretName: "s3-secret"
-  ca:
-    secretName: ''
-    path: '/usr/local/share/ca-certificates'
-    key: 'ca.crt'
-  db:
-    host: "localhost"
-    name: "mapproxy-config"
-    port: 5432
-    sslEnabled: false
-    
-    secrets:
-      useExternal: false
-      externalSecretName: ''
-
-mapproxy:
-    db:
-      nameOverride:
-      schema: MapproxyConfig
-
-local: # for local stand alone deployment, external pvc and secrets should be used for full deployment  
-  fs:
-    createComponents: false
-    storageClass: hostPath
-    capacity: 5Gi
-    accessMode: ReadWriteOnce
-    hostPath: /hostDir
-  db:
-    createSecret: false
-    userName: postgres
-    password: postgres
-    certs:
-      ca: certs/ca.pem
-      key: certs/key.pem
-      cert: certs/cert.pem
+storage: 
+  mapproxyConfigProvider: "" #  -> 'DB' | 'FS' | 'S3'
   s3:
-    createSecret: false
-    secretAccessKey: minioadmin
-    accessKeyId: minioadmin
-    
+    endpointUrl: ""
+    tilesBucket: ""
+    sslEnabled: false
+    secretName: ""
+  fs:
+    internalPvc:
+      name: ""
+      tilesSubPath: ""
+      configSubPath: ""
+db:
+  host: ""
+  name: ""
+  port: 5432
+  sslEnabled: false
+  schema: ""
+  dbRejectUnauthorized: false
+  secrets:
+    useExternal: false
+    externalSecretName: ""
+
+# add pod annotations
+# example:
+# podAnnotations:
+  # annotation1: annotation-value-1
+  # annotation2: annotation-value-2
+podAnnotations: {}
+
 env:
   port: 80
   targetPort: 8080
   protocol: TCP
   logLevel: warn
-  dbRejectUnauthorized: true
   logPrettyPrintEnabled: false
   responseCompressionEnabled: true
   requestPayloadLimit: 1mb
@@ -134,3 +134,24 @@ ingress:
   cors:
     enabled: true
     origin: '*'
+
+local: # for local stand alone deployment, external pvc and secrets should be used for full deployment
+  fs:
+    createComponents: false
+    storageClass: hostPath
+    capacity: 5Gi
+    accessMode: ReadWriteOnce
+    hostPath: /hostDir
+  db:
+    createSecret: false
+    userName: postgres
+    password: postgres
+    dbRejectUnauthorized: true
+    certs:
+      ca: certs/ca.pem
+      key: certs/key.pem
+      cert: certs/cert.pem
+  s3:
+    createSecret: false
+    secretAccessKey: minioadmin
+    accessKeyId: minioadmin

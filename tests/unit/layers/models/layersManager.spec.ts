@@ -1,4 +1,4 @@
-import { normalize } from 'path';
+import { normalize } from 'node:path';
 import { container } from 'tsyringe';
 import jsLogger from '@map-colonies/js-logger';
 import { ConflictError, NotFoundError } from '@map-colonies/error-types';
@@ -382,6 +382,15 @@ describe('layersManager', () => {
       const cacheProvider = layersManager.getCacheType(cacheType, mockTilesPath);
       // expectation
       expect(cacheProvider).toEqual(expectedResult);
+    });
+
+    it('should throw exception on illegal value', () => {
+      const cacheType = 'badProvider';
+      // action
+      const action = () => layersManager.getCacheType(cacheType, mockTilesPath);
+      // expectation
+      const msg = `Invalid cache source: ${cacheType} has been provided , available values: "geopackage", "s3", "file"`;
+      expect(action).toThrow(Error(msg));
     });
   });
 });

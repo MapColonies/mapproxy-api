@@ -1,4 +1,4 @@
-import { readFileSync } from 'fs';
+import { readFileSync } from 'node:fs';
 import { IConfigProvider, IMapProxyJsonDocument } from '../../../src/common/interfaces';
 
 const updateJsonMock = jest.fn();
