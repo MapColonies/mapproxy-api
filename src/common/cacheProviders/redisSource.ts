@@ -1,18 +1,17 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { DependencyContainer, inject } from 'tsyringe';
 import { Logger } from '@map-colonies/js-logger';
-import config from 'config';
 import { NotFoundError } from '@map-colonies/error-types';
 import { SERVICES } from '../constants';
 import { ICacheProvider, IMapProxyConfig, IRedisConfig, IRedisSource } from '../interfaces';
 import { SourceTypes } from '../enums';
 
 class RedisSource implements ICacheProvider {
+  private sourceCacheType: SourceTypes;
   private readonly mapproxyConfig: IMapProxyConfig;
   private readonly redisConfig: IRedisConfig;
   private readonly logger: Logger;
-  sourceCacheType: SourceTypes;
-  redisSource!: IRedisSource;
+  private redisSource!: IRedisSource;
 
   public constructor(container: DependencyContainer, grid?: string, cacheName?: string) {
     this.logger = container.resolve(SERVICES.LOGGER);
@@ -30,10 +29,13 @@ class RedisSource implements ICacheProvider {
       if (this.redisConfig.auth.enableRedisUser) {
         this.redisSource = { ...this.redisSource, username: this.redisConfig.auth.username, password: this.redisConfig.auth.password };
       }
+
       if (this.redisConfig.prefix.enablePrefix) {
-        cacheName != undefined && grid != undefined
-          ? (this.redisSource = { ...this.redisSource, prefix: `${this.redisConfig.prefix.prefix}${cacheName}_${grid}` })
-          : (this.redisSource = { ...this.redisSource, prefix: this.redisConfig.prefix.prefix });
+        if (cacheName != undefined && grid != undefined) {
+          this.redisSource = { ...this.redisSource, prefix: `${this.redisConfig.prefix.prefix}${cacheName}_${grid}` };
+        } else {
+          this.redisSource = { ...this.redisSource, prefix: this.redisConfig.prefix.prefix };
+        }
       }
     } catch {
       this.logger.error('configuration is missing redis parameters');
