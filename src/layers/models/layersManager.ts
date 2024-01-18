@@ -210,12 +210,12 @@ class LayersManager {
   public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<void> {
     this.logger.info(`Update layer: '${layerName}' request`);
     const tileFormat = this.mapToTileFormat(layerRequest.format);
-    const isRedisCache: boolean = !layerName.endsWith('-source');
-    let doesHaveRedisCache: boolean = false;
+    const isRedisCache = !layerName.endsWith('-source');
+    let doesHaveRedisCache = false;
 
     const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
       let newLayer: IMapProxyLayer;
-      let sourceLayerName: string = `${layerName}-source`;
+      let sourceLayerName = `${layerName}-source`;
       let redisLayerName: string = layerName;
 
       if (!isLayerNameExists(jsonDocument, layerName)) {

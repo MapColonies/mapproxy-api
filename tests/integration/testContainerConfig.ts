@@ -4,7 +4,6 @@ import { SERVICES } from '../../src/common/constants';
 import { IConfigProvider, IFSConfig, IMapProxyConfig, IRedisConfig } from '../../src/common/interfaces';
 import { MockConfigProvider, init } from '../unit/mock/mockConfigProvider';
 
-
 function registerTestValues(): void {
   const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
   const redisConfig = config.get<IRedisConfig>('redis');

@@ -80,4 +80,4 @@ const registerDefaultConfig = (): void => {
   setConfigValues(config);
 };
 
-export { getMock, hasMock, configMock, setValue, clear, init, setConfigValues, registerDefaultConfig,  };
+export { getMock, hasMock, configMock, setValue, clear, init, setConfigValues, registerDefaultConfig };

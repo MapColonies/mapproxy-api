@@ -3,6 +3,7 @@ import { container } from 'tsyringe';
 import jsLogger from '@map-colonies/js-logger';
 import { ConflictError, NotFoundError } from '@map-colonies/error-types';
 import { TileOutputFormat } from '@map-colonies/mc-model-types';
+import config from 'config';
 import {
   ILayerPostRequest,
   ILayerToMosaicRequest,
@@ -19,7 +20,6 @@ import { MockConfigProvider, getJsonMock, updateJsonMock, init as initConfigProv
 import { SERVICES } from '../../../../src/common/constants';
 import { registerTestValues } from '../../../integration/testContainerConfig';
 import { init as initConfig, clear as clearConfig } from '../../../configurations/config';
-import config from 'config';
 
 let layersManager: LayersManager;
 let sortArrayByZIndexStub: jest.SpyInstance;
