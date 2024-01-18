@@ -1,13 +1,14 @@
 import { container } from 'tsyringe';
 import config from 'config';
 import { SERVICES } from '../../src/common/constants';
-import { IConfigProvider, IFSConfig, IMapProxyConfig } from '../../src/common/interfaces';
+import { IConfigProvider, IFSConfig, IMapProxyConfig, IRedisConfig } from '../../src/common/interfaces';
 import { MockConfigProvider, init } from '../unit/mock/mockConfigProvider';
+
 
 function registerTestValues(): void {
   const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
+  const redisConfig = config.get<IRedisConfig>('redis');
   const fsConfig = config.get<IFSConfig>('FS');
-  const redisConfig = config.get<IFSConfig>('redis');
   init();
 
   container.register(SERVICES.CONFIG, { useValue: config });

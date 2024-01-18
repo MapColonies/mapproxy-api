@@ -38,6 +38,29 @@ export const mockData = (): IMapProxyJsonDocument => {
           directory: '/path/to/s3/directory/tile',
           directory_layout: 'tms',
         },
+      'redisExists-source': {
+        sources: [],
+        grids: ['epsg4326dir'],
+        format: 'image/png',
+        upscale_tiles: 18,
+        cache: {
+          type: 's3',
+          directory: '/path/to/s3/directory/tile',
+          directory_layout: 'tms',
+        }
+      },
+      'redisExists': {
+        sources: ['redisExists-source'],
+        grids: ['epsg4326dir'],
+        format: 'image/png',
+        upscale_tiles: 18,
+        cache: {
+          type: 'redis',
+          host: 'raster-mapproxy-redis-master',
+          port: '6379',
+          prefix: 'temp-prefix:',
+          default_ttl: '86400'
+        },
       },
       existsMosaicName: {
         sources: ['bluemar', 'planet', 'artzi'],
@@ -62,7 +85,12 @@ export const mockData = (): IMapProxyJsonDocument => {
         title: 'amsterdam 5m layer discription',
         sources: ['amsterdam_5cm-source'],
       },
+      {
+        name: 'redisExists',
+        title: 'redisExists',
+        sources: ['redisExists'],
+      }
     ],
-  };
+  }};
   return data as unknown as IMapProxyJsonDocument;
-};
+  };

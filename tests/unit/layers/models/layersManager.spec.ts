@@ -3,7 +3,14 @@ import { container } from 'tsyringe';
 import jsLogger from '@map-colonies/js-logger';
 import { ConflictError, NotFoundError } from '@map-colonies/error-types';
 import { TileOutputFormat } from '@map-colonies/mc-model-types';
-import { ILayerPostRequest, ILayerToMosaicRequest, IMapProxyCache, IMapProxyConfig, IRedisConfig, IUpdateMosaicRequest } from '../../../../src/common/interfaces';
+import {
+  ILayerPostRequest,
+  ILayerToMosaicRequest,
+  IMapProxyCache,
+  IMapProxyConfig,
+  IRedisConfig,
+  IUpdateMosaicRequest,
+} from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExists';
 import { mockLayerNameIsNotExists } from '../../mock/mockLayerNameIsNotExists';
@@ -11,7 +18,8 @@ import * as utils from '../../../../src/common/utils';
 import { MockConfigProvider, getJsonMock, updateJsonMock, init as initConfigProvider } from '../../mock/mockConfigProvider';
 import { SERVICES } from '../../../../src/common/constants';
 import { registerTestValues } from '../../../integration/testContainerConfig';
-import { configMock, init as initConfig, setValue as setConfigValue, clear as clearConfig } from '../../../configurations/config';
+import { init as initConfig, clear as clearConfig } from '../../../configurations/config';
+import config from 'config';
 
 let layersManager: LayersManager;
 let sortArrayByZIndexStub: jest.SpyInstance;
@@ -23,6 +31,7 @@ describe('layersManager', () => {
     initConfig();
     registerTestValues();
     initConfigProvider();
+    //defalut layerManger - redis is enabled
     const redisConfig = container.resolve<IRedisConfig>(SERVICES.REDISCONFIG);
     const mapproxyConfig = container.resolve<IMapProxyConfig>(SERVICES.MAPPROXY);
     layersManager = new LayersManager(logger, mapproxyConfig, redisConfig, MockConfigProvider);
@@ -52,10 +61,10 @@ describe('layersManager', () => {
 
     it('should successfully return the requested redis layer', async () => {
       // action
-      const resource: IMapProxyCache = await layersManager.getLayer('RedisExists');
+      const resource: IMapProxyCache = await layersManager.getLayer('redisExists');
       // expectation;
       expect(getJsonMock).toHaveBeenCalledTimes(1);
-      expect(resource.sources).toEqual(['RedisExists-source']);
+      expect(resource.sources).toEqual(['redisExists-source']);
       expect(resource.upscale_tiles).toBe(18);
       expect(resource.format).toBe('image/png');
       expect(resource.grids).toEqual(['epsg4326dir']);
@@ -106,9 +115,29 @@ describe('layersManager', () => {
       expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
 
-    it.only('should successfully add layer + redis cache', async () => {
+    it('should successfully add layer without redis cache', async () => {
+      //config redis to disable
+      const redisConfigValue = config.get<IRedisConfig>('redisDisabled');
+      container.register(SERVICES.REDISCONFIG, { useValue: redisConfigValue });
+      const redisConfig = container.resolve<IRedisConfig>(SERVICES.REDISCONFIG);
+      const mapproxyConfig = container.resolve<IMapProxyConfig>(SERVICES.MAPPROXY);
+      layersManager = new LayersManager(logger, mapproxyConfig, redisConfig, MockConfigProvider);
+
       // action
-      setConfigValue('enabled', false);
+      const myAddNewRedisLayerToConfig = jest.spyOn(layersManager, 'addNewRedisLayerToConfig');
+      const myAddNewSourceLayerToConfig = jest.spyOn(layersManager, 'addNewSourceLayerToConfig');
+      const action = async () => {
+        await layersManager.addLayer(mockLayerNameIsNotExists);
+      };
+
+      // expectation
+      await expect(action()).resolves.not.toThrow();
+      expect(myAddNewRedisLayerToConfig).toHaveBeenCalledTimes(0);
+      expect(myAddNewSourceLayerToConfig).toHaveBeenCalledTimes(1);
+    });
+
+    it('should successfully add layer + redis cache', async () => {
+      // action
       const myAddNewRedisLayerToConfig = jest.spyOn(layersManager, 'addNewRedisLayerToConfig');
       const action = async () => {
         await layersManager.addLayer(mockLayerNameIsNotExists);
@@ -242,7 +271,7 @@ describe('layersManager', () => {
     it('should successfully remove layer + redis attributes', async () => {
       // mock
       const sliceMock = jest.spyOn(Array.prototype, 'findIndex');
-      const mockLayerNames = ['RedisExists'];
+      const mockLayerNames = ['redisExists'];
       // action
       const action = async () => {
         await layersManager.removeLayer(mockLayerNames);
@@ -282,6 +311,20 @@ describe('layersManager', () => {
       // expectation
       await expect(action()).resolves.not.toThrow();
       expect(updateJsonMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('should successfully update layer + redis attributes', async () => {
+      // mock
+      const mockLayerName = 'redisExists-source';
+      const myCreateRedisCache = jest.spyOn(layersManager, 'createRedisCache');
+      // action
+      const action = async () => {
+        await layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
+      };
+      // expectation
+      await expect(action()).resolves.not.toThrow();
+      expect(updateJsonMock).toHaveBeenCalledTimes(1);
+      expect(myCreateRedisCache).toHaveBeenCalled();
     });
 
     it('should reject with not found error due layer name is not exists', async () => {
