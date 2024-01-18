@@ -389,7 +389,7 @@ describe('layersManager', () => {
       // action
       const action = () => layersManager.getCacheType(cacheType, mockTilesPath);
       // expectation
-      const msg = `Invalid cache source: ${cacheType} has been provided , available values: "geopackage", "s3", "file"`;
+      const msg = `Invalid cache source: ${cacheType} has been provided , available values: "geopackage", "s3", "file", "redis"`;
       expect(action).toThrow(Error(msg));
     });
   });
