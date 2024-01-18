@@ -26,7 +26,7 @@
     }
   },
   "mapproxy": {
-    "configProvider": "db",
+    "configProvider": "fs",
     "cache": {
       "grids": "epsg4326ul",
       "upscaleTiles": 18,
@@ -48,11 +48,11 @@
     "sslEnabled": false
   },
   "DB": {
-    "host": "10.0.4.4",
+    "host": "localhost",
     "user": "postgres",
-    "password": "Libot4allnonprod",
-    "database": "raster-dev",
-    "schema": "MapproxyConfig",
+    "password": "postgres",
+    "database": "",
+    "schema": "public",
     "port": 5432,
     "table": "config",
     "columns": {
@@ -78,7 +78,7 @@
     },
     "prefix": {
       "enablePrefix": true,
-      "prefix": "this is default config:"
+      "prefix": "mcrl:"
     },
     "type": "redis",
     "default_ttl": 86400
