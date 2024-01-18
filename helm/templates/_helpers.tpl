@@ -26,19 +26,6 @@ Create chart name and version as used by the chart label.
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
-{{/*
-Create configmap name as used by the service name label.
-*/}}
-{{- define "configmap.fullname" -}}
-{{- printf "%s-%s-%s" .Release.Name .Chart.Name "configmap" | indent 1 }}
-{{- end }}
-
-{{/*
-Create deployment name as used by the service name label.
-*/}}
-{{- define "deployment.fullname" -}}
-{{- printf "%s-%s-%s" .Release.Name .Chart.Name "deployment" | indent 1 }}
-{{- end }}
 
 {{/*
 Common labels
