@@ -47,6 +47,7 @@ export interface IMapProxyConfig {
     upscaleTiles: number;
     directoryLayout: string;
     gpkgExt: string;
+    preFix: string;
   };
 }
 
@@ -107,6 +108,13 @@ export interface IMapProxyCache {
   upscale_tiles: number;
   cache: ICacheSource;
   minimize_meta_request: boolean;
+}
+
+export interface IMapProxyProjectionCache {
+  disable_storage: boolean;
+  grids: string[];
+  sources: string[];
+  format: string;
 }
 
 export interface IMapProxyLayer {
