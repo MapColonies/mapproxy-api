@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { DependencyContainer, inject } from 'tsyringe';
+import { DependencyContainer } from 'tsyringe';
 import { Logger } from '@map-colonies/js-logger';
 import { NotFoundError } from '@map-colonies/error-types';
 import { SERVICES } from '../constants';
@@ -7,11 +7,11 @@ import { ICacheProvider, IMapProxyConfig, IRedisConfig, IRedisSource } from '../
 import { SourceTypes } from '../enums';
 
 class RedisSource implements ICacheProvider {
-  private sourceCacheType: SourceTypes;
+  private readonly sourceCacheType: SourceTypes;
   private readonly mapproxyConfig: IMapProxyConfig;
   private readonly redisConfig: IRedisConfig;
   private readonly logger: Logger;
-  private redisSource!: IRedisSource;
+  private readonly redisSource!: IRedisSource;
 
   public constructor(container: DependencyContainer, grid?: string, cacheName?: string) {
     this.logger = container.resolve(SERVICES.LOGGER);

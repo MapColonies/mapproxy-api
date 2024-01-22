@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { container, inject, injectable } from 'tsyringe';
-import config from 'config';
 import { Logger } from '@map-colonies/js-logger';
 import { ConflictError, NotFoundError } from '@map-colonies/error-types';
 import { TileOutputFormat } from '@map-colonies/mc-model-types';
@@ -28,7 +27,6 @@ import { RedisSource } from '../../common/cacheProviders/redisSource';
 
 @injectable()
 class LayersManager {
-  [x: string]: any;
   public constructor(
     @inject(SERVICES.LOGGER) private readonly logger: Logger,
     @inject(SERVICES.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig,
@@ -66,7 +64,7 @@ class LayersManager {
 
   private addNewSourceLayerToConfig(layerRequest: ILayerPostRequest, jsonDocument: IMapProxyJsonDocument) {
     //creates source cache, and a source layer
-    this.logger.info(`adding ${layerRequest.name} as source layer`);
+    this.logger.info({msg: `adding ${layerRequest.name} as source layer`, layerRequest});
     const sourceCacheTitle = `${layerRequest.name}-source`;
     if (isLayerNameExists(jsonDocument, sourceCacheTitle)) {
       throw new ConflictError(`Layer name '${sourceCacheTitle}' already exists`);
@@ -86,6 +84,7 @@ class LayersManager {
 
   private addNewRedisLayerToConfig(layerRequest: ILayerPostRequest, jsonDocument: IMapProxyJsonDocument) {
     this.logger.info(`adding ${layerRequest.name} as redis layer`);
+    this.logger.info({msg: `adding ${layerRequest.name} as redis layer`, layerRequest});
     //creates source cache+redis cache, and a redis layer
     const sourceCacheTitle = `${layerRequest.name}-source`;
     const redisCacheTitle = layerRequest.name;
@@ -187,7 +186,7 @@ class LayersManager {
           this.logger.info(`Successfully removed layer '${cacheName}'`);
         }
       });
-      failedLayers = layersName.filter((x) => !allLinkedCaches.includes(x));
+      failedLayers = layersName.filter((layerName) => !allLinkedCaches.includes(layerName));
       if (failedLayers.length !== 0) {
         this.logger.warn(`Layers: ['${failedLayers.join(',')}'] does not exist`);
       }
@@ -208,7 +207,7 @@ class LayersManager {
   }
 
   public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<void> {
-    this.logger.info(`Update layer: '${layerName}' request`);
+    this.logger.info({msg: `Update layer: '${layerName}' request`, layerRequest});
     const tileFormat = this.mapToTileFormat(layerRequest.format);
     const isRedisCache = !layerName.endsWith('-source');
     let doesHaveRedisCache = false;

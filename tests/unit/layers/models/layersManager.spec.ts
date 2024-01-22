@@ -1,3 +1,4 @@
+/// <reference types="jest-extended" />
 import { normalize } from 'node:path';
 import { container } from 'tsyringe';
 import jsLogger from '@map-colonies/js-logger';
@@ -20,6 +21,7 @@ import { MockConfigProvider, getJsonMock, updateJsonMock, init as initConfigProv
 import { SERVICES } from '../../../../src/common/constants';
 import { registerTestValues } from '../../../integration/testContainerConfig';
 import { init as initConfig, clear as clearConfig } from '../../../configurations/config';
+import { TileFormat } from '../../../../src/common/enums';
 
 let layersManager: LayersManager;
 let sortArrayByZIndexStub: jest.SpyInstance;
@@ -59,25 +61,30 @@ describe('layersManager', () => {
       expect(resource.cache).toEqual({ directory: '/path/to/s3/directory/tile', directory_layout: 'tms', type: 's3' });
     });
 
-    it('should successfully return the requested redis layer', async () => {
+    it('should successfully return the requested redis cache', async () => {
+      const expectedCache = {
+        "cache": {
+          "host": 'raster-mapproxy-redis-master',
+          "port": 6379,
+          "username": 'mapcolonies',
+          "password": 'mapcolonies',
+          "prefix": 'mcrl:',
+          "type": 'redis',
+          "default_ttl": 86400
+        },
+        "sources": [ 'redisExists-source' ],
+        "grids": [ 'epsg4326dir' ],
+        "format": 'image/png',
+        "upscale_tiles": 18
+      };
+
       // action
+      expect.assertions(2);
       const resource: IMapProxyCache = await layersManager.getLayer('redisExists');
+      
       // expectation;
       expect(getJsonMock).toHaveBeenCalledTimes(1);
-      expect(resource.sources).toEqual(['redisExists-source']);
-      expect(resource.upscale_tiles).toBe(18);
-      expect(resource.format).toBe('image/png');
-      expect(resource.grids).toEqual(['epsg4326dir']);
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      expect(resource.cache).toEqual({
-        host: 'raster-mapproxy-redis-master',
-        port: 6379,
-        username: 'mapcolonies',
-        password: 'mapcolonies',
-        prefix: 'mcrl:',
-        type: 'redis',
-        default_ttl: 86400,
-      });
+      expect(resource).toStrictEqual(expectedCache);
     });
 
     it('should reject with not found error', async () => {
@@ -104,19 +111,23 @@ describe('layersManager', () => {
       expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
 
-    it('should successfully add layer', async () => {
+    it('should successfully add layer + redis cache', async () => {
       // action
-      const action = async () => {
-        await layersManager.addLayer(mockLayerNameIsNotExists);
-      };
+      expect.assertions(5);
+      const action = layersManager.addLayer(mockLayerNameIsNotExists);
 
       // expectation
-      await expect(action()).resolves.not.toThrow();
+      await expect(action).toResolve();
+
+      const resultJson = await MockConfigProvider.getJson();
+      expect(resultJson.layers).toPartiallyContain({ name: mockLayerNameIsNotExists.name });
+      expect(resultJson.caches).toContainKey(`${mockLayerNameIsNotExists.name}-source`);
+      expect(resultJson.caches).toContainKey(mockLayerNameIsNotExists.name);
       expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
 
     it('should successfully add layer without redis cache', async () => {
-      //config redis to disable
+      //config test
       const redisConfigValue = config.get<IRedisConfig>('redisDisabled');
       container.register(SERVICES.REDISCONFIG, { useValue: redisConfigValue });
       const redisConfig = container.resolve<IRedisConfig>(SERVICES.REDISCONFIG);
@@ -124,28 +135,32 @@ describe('layersManager', () => {
       layersManager = new LayersManager(logger, mapproxyConfig, redisConfig, MockConfigProvider);
 
       // action
-      const myAddNewRedisLayerToConfig = jest.spyOn(layersManager, 'addNewRedisLayerToConfig');
-      const myAddNewSourceLayerToConfig = jest.spyOn(layersManager, 'addNewSourceLayerToConfig');
-      const action = async () => {
-        await layersManager.addLayer(mockLayerNameIsNotExists);
-      };
+      expect.assertions(4);
+      const action = layersManager.addLayer(mockLayerNameIsNotExists);
 
       // expectation
-      await expect(action()).resolves.not.toThrow();
-      expect(myAddNewRedisLayerToConfig).toHaveBeenCalledTimes(0);
-      expect(myAddNewSourceLayerToConfig).toHaveBeenCalledTimes(1);
+      await expect(action).toResolve();
+
+      const resultJson = await MockConfigProvider.getJson();
+      expect(resultJson.layers).toPartiallyContain({ name: `${mockLayerNameIsNotExists.name}-source` });
+      expect(resultJson.caches).not.toContainKey(mockLayerNameIsNotExists.name);
+      expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
 
     it('should successfully add layer + redis cache', async () => {
       // action
-      const myAddNewRedisLayerToConfig = jest.spyOn(layersManager, 'addNewRedisLayerToConfig');
-      const action = async () => {
-        await layersManager.addLayer(mockLayerNameIsNotExists);
-      };
+      expect.assertions(5);
+      const action = layersManager.addLayer(mockLayerNameIsNotExists);
 
       // expectation
-      await expect(action()).resolves.not.toThrow();
-      expect(myAddNewRedisLayerToConfig).toHaveBeenCalled();
+      await expect(action).toResolve();
+
+      const resultJson = await MockConfigProvider.getJson();
+      expect(resultJson.caches).toContainKey(mockLayerNameIsNotExists.name);
+      expect(resultJson.caches).toContainKey(mockLayerNameIsNotExists.name);
+      expect(resultJson.layers).toPartiallyContain({ name: mockLayerNameIsNotExists.name });
+      expect(updateJsonMock).toHaveBeenCalledTimes(1);
+
     });
   });
 
@@ -270,15 +285,19 @@ describe('layersManager', () => {
 
     it('should successfully remove layer + redis attributes', async () => {
       // mock
-      const sliceMock = jest.spyOn(Array.prototype, 'findIndex');
       const mockLayerNames = ['redisExists'];
+
       // action
-      const action = async () => {
-        await layersManager.removeLayer(mockLayerNames);
-      };
+      expect.assertions(4);
+      const action = layersManager.removeLayer(mockLayerNames);
+
       // expectation
-      await expect(action()).resolves.not.toThrow();
-      expect(sliceMock).toHaveBeenCalledTimes(2);
+      await expect(action).toResolve();
+
+      const resultJson = await MockConfigProvider.getJson();
+      expect(resultJson.layers).not.toPartiallyContain({ name: `${mockLayerNameIsNotExists.name}` });
+      expect(resultJson.caches).not.toContainKey(mockLayerNameIsNotExists.name);
+      expect(resultJson.caches).not.toContainKey(`${mockLayerNameIsNotExists.name}-source`);
     });
 
     it('should return not found layers array and not to throw', async () => {
@@ -316,15 +335,18 @@ describe('layersManager', () => {
     it('should successfully update layer + redis attributes', async () => {
       // mock
       const mockLayerName = 'redisExists-source';
-      const myCreateRedisCache = jest.spyOn(layersManager, 'createRedisCache');
+      const mockRedisLayerName = 'redisExists';
+
       // action
-      const action = async () => {
-        await layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
-      };
+      expect.assertions(4);
+      const action= layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
+
       // expectation
-      await expect(action()).resolves.not.toThrow();
+      await expect(action).toResolve();
+      const result = await MockConfigProvider.getJson();
+      expect(result.caches[mockLayerName].format).toBe(TileFormat.JPEG);
+      expect(result.caches[mockRedisLayerName].format).toBe(TileFormat.JPEG);
       expect(updateJsonMock).toHaveBeenCalledTimes(1);
-      expect(myCreateRedisCache).toHaveBeenCalled();
     });
 
     it('should reject with not found error due layer name is not exists', async () => {
