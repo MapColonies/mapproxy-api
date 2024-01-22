@@ -20,6 +20,7 @@ module.exports = {
     'default',
     ['jest-html-reporters', { multipleReportsUnitePath: './reports', pageTitle: 'unit', publicPath: './reports', filename: 'unit.html' }],
   ],
+  setupFilesAfterEnv: ["jest-extended/all"],
   rootDir: '../../../.',
   setupFiles: ['<rootDir>/tests/configurations/jest.setup.ts'],
   preset: 'ts-jest',
