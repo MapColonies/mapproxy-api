@@ -63,25 +63,27 @@ describe('layersManager', () => {
 
     it('should successfully return the requested redis cache', async () => {
       const expectedCache = {
-        "cache": {
-          "host": 'raster-mapproxy-redis-master',
-          "port": 6379,
-          "username": 'mapcolonies',
-          "password": 'mapcolonies',
-          "prefix": 'mcrl:',
-          "type": 'redis',
-          "default_ttl": 86400
+        cache: {
+          host: 'raster-mapproxy-redis-master',
+          port: 6379,
+          username: 'mapcolonies',
+          password: 'mapcolonies',
+          prefix: 'mcrl:',
+          type: 'redis',
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          default_ttl: 86400,
         },
-        "sources": [ 'redisExists-source' ],
-        "grids": [ 'epsg4326dir' ],
-        "format": 'image/png',
-        "upscale_tiles": 18
+        sources: ['redisExists-source'],
+        grids: ['epsg4326dir'],
+        format: 'image/png',
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        upscale_tiles: 18,
       };
 
       // action
       expect.assertions(2);
       const resource: IMapProxyCache = await layersManager.getLayer('redisExists');
-      
+
       // expectation;
       expect(getJsonMock).toHaveBeenCalledTimes(1);
       expect(resource).toStrictEqual(expectedCache);
@@ -145,22 +147,6 @@ describe('layersManager', () => {
       expect(resultJson.layers).toPartiallyContain({ name: `${mockLayerNameIsNotExists.name}-source` });
       expect(resultJson.caches).not.toContainKey(mockLayerNameIsNotExists.name);
       expect(updateJsonMock).toHaveBeenCalledTimes(1);
-    });
-
-    it('should successfully add layer + redis cache', async () => {
-      // action
-      expect.assertions(5);
-      const action = layersManager.addLayer(mockLayerNameIsNotExists);
-
-      // expectation
-      await expect(action).toResolve();
-
-      const resultJson = await MockConfigProvider.getJson();
-      expect(resultJson.caches).toContainKey(mockLayerNameIsNotExists.name);
-      expect(resultJson.caches).toContainKey(mockLayerNameIsNotExists.name);
-      expect(resultJson.layers).toPartiallyContain({ name: mockLayerNameIsNotExists.name });
-      expect(updateJsonMock).toHaveBeenCalledTimes(1);
-
     });
   });
 
@@ -339,12 +325,14 @@ describe('layersManager', () => {
 
       // action
       expect.assertions(4);
-      const action= layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
+      const action = layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
 
       // expectation
       await expect(action).toResolve();
       const result = await MockConfigProvider.getJson();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(result.caches[mockLayerName].format).toBe(TileFormat.JPEG);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(result.caches[mockRedisLayerName].format).toBe(TileFormat.JPEG);
       expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });

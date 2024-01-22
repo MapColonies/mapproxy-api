@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import config from 'config';
 import { get, has } from 'lodash';
 import { IConfig } from '../../src/common/interfaces';
