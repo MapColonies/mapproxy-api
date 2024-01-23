@@ -64,6 +64,7 @@ export interface IS3Config {
   objectKey: string;
   sslEnabled: boolean;
 }
+
 export interface IRedisConfig {
   enabled: boolean;
   host: string;

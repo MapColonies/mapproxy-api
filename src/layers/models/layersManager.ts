@@ -253,6 +253,7 @@ class LayersManager {
 
     return sourceProvider.getCacheSource(sourcePath);
   }
+
   private addNewCache(jsonDocument: IMapProxyJsonDocument, layerRequest: ILayerPostRequest): void {
     if (this.redisConfig.enabled) {
       this.addNewRedisLayerToConfig(layerRequest, jsonDocument);
@@ -282,7 +283,6 @@ class LayersManager {
   }
 
   private addNewRedisLayerToConfig(layerRequest: ILayerPostRequest, jsonDocument: IMapProxyJsonDocument): void {
-    this.logger.info(`adding ${layerRequest.name} as redis layer`);
     this.logger.info({ msg: `adding ${layerRequest.name} as redis layer`, layerRequest });
     //creates source cache+redis cache, and a redis layer
     const sourceCacheTitle = `${layerRequest.name}-source`;

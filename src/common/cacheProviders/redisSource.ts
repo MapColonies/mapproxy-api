@@ -7,7 +7,7 @@ import { ICacheProvider, IMapProxyConfig, IRedisConfig, IRedisSource } from '../
 import { SourceTypes } from '../enums';
 
 class RedisSource implements ICacheProvider {
-  private readonly sourceCacheType: SourceTypes;
+  private readonly redisSourceCacheType: SourceTypes;
   private readonly mapproxyConfig: IMapProxyConfig;
   private readonly redisConfig: IRedisConfig;
   private readonly logger: Logger;
@@ -17,12 +17,12 @@ class RedisSource implements ICacheProvider {
     this.logger = container.resolve(SERVICES.LOGGER);
     this.mapproxyConfig = container.resolve(SERVICES.MAPPROXY);
     this.redisConfig = container.resolve(SERVICES.REDISCONFIG);
-    this.sourceCacheType = SourceTypes.REDIS;
+    this.redisSourceCacheType = SourceTypes.REDIS;
     try {
       const baseRedisCache: IRedisSource = {
         host: this.redisConfig.host,
         port: this.redisConfig.port,
-        type: this.sourceCacheType,
+        type: this.redisSourceCacheType,
         default_ttl: this.redisConfig.default_ttl,
       };
       this.redisSource = baseRedisCache;
@@ -38,7 +38,7 @@ class RedisSource implements ICacheProvider {
         }
       }
     } catch {
-      this.logger.error('configuration is missing redis parameters');
+      this.logger.error({ err: NotFoundError, msg: 'configuration is missing redis parameters' });
       throw new NotFoundError('configuration is missing redis parameters');
     }
   }
