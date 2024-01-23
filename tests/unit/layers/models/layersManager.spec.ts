@@ -352,10 +352,10 @@ describe('layersManager', () => {
       expect(data.caches[mockLayerName].format).toBe(TileFormat.PNG);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(data.caches[mockRedisLayerName].format).toBe(TileFormat.PNG);
-      
+
       // action
       const action = layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
-      
+
       // expectation
       expect.assertions(6);
       await expect(action).toResolve();
