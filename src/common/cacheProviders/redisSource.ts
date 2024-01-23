@@ -37,9 +37,9 @@ class RedisSource implements ICacheProvider {
           this.redisSource = { ...this.redisSource, prefix: this.redisConfig.prefix.prefix };
         }
       }
-    } catch {
-      this.logger.error({ err: NotFoundError, msg: 'configuration is missing redis parameters' });
-      throw new NotFoundError('configuration is missing redis parameters');
+    } catch (err) {
+      this.logger.error({ err: err, msg: 'configuration is missing redis parameters' });
+      throw err;
     }
   }
 

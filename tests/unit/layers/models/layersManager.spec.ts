@@ -49,16 +49,27 @@ describe('layersManager', () => {
 
   describe('#getLayer', () => {
     it('should successfully return the requested layer', async () => {
+      const expectedCache = {
+        sources: [],
+        grids: ['epsg4326dir'],
+        format: 'image/png',
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        upscale_tiles: 18,
+        cache: {
+          type: 's3',
+          directory: '/path/to/s3/directory/tile',
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          directory_layout: 'tms',
+        },
+      };
+
       // action
+      expect.assertions(2);
       const resource: IMapProxyCache = await layersManager.getLayer('mockLayerNameExists-source');
       // expectation;
+
       expect(getJsonMock).toHaveBeenCalledTimes(1);
-      expect(resource.sources).toEqual([]);
-      expect(resource.upscale_tiles).toBe(18);
-      expect(resource.format).toBe('image/png');
-      expect(resource.grids).toEqual(['epsg4326dir']);
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      expect(resource.cache).toEqual({ directory: '/path/to/s3/directory/tile', directory_layout: 'tms', type: 's3' });
+      expect(resource).toStrictEqual(expectedCache);
     });
 
     it('should successfully return the requested redis cache', async () => {
@@ -272,9 +283,14 @@ describe('layersManager', () => {
     it('should successfully remove layer + redis attributes', async () => {
       // mock
       const mockLayerNames = ['redisExists'];
+      const data = await MockConfigProvider.getJson();
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      expect(data.caches[`${mockLayerNames}`]).toBeDefined();
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      expect(data.caches[`${mockLayerNames}-source`]).toBeDefined();
 
       // action
-      expect.assertions(4);
+      expect.assertions(6);
       const action = layersManager.removeLayer(mockLayerNames);
 
       // expectation
@@ -287,10 +303,17 @@ describe('layersManager', () => {
     });
 
     it('should return not found layers array and not to throw', async () => {
+      //check data
+      expect.assertions(5);
+      const data = await MockConfigProvider.getJson();
+      expect(data.caches['mockLayerNameIsNotExists-source']).toBeUndefined();
+      expect(data.caches['anotherMockLayerNameNotExists']).toBeUndefined();
+
       // mock
       const mockNotExistsLayerNames = ['mockLayerNameIsNotExists-source', 'anotherMockLayerNameNotExists'];
       // action
       const result = await layersManager.removeLayer(mockNotExistsLayerNames);
+
       // expectation
       expect(result).toEqual(expect.any(Array));
       expect(result).toEqual(mockNotExistsLayerNames);
@@ -323,11 +346,18 @@ describe('layersManager', () => {
       const mockLayerName = 'redisExists-source';
       const mockRedisLayerName = 'redisExists';
 
+      //check data
+      const data = await MockConfigProvider.getJson();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(data.caches[mockLayerName].format).toBe(TileFormat.PNG);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(data.caches[mockRedisLayerName].format).toBe(TileFormat.PNG);
+      
       // action
-      expect.assertions(4);
       const action = layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
-
+      
       // expectation
+      expect.assertions(6);
       await expect(action).toResolve();
       const result = await MockConfigProvider.getJson();
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
