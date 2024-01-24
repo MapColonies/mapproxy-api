@@ -65,6 +65,23 @@ export interface IS3Config {
   sslEnabled: boolean;
 }
 
+export interface IRedisConfig {
+  enabled: boolean;
+  host: string;
+  port: number;
+  auth: {
+    enableRedisUser: boolean;
+    username: string;
+    password: string;
+  };
+  prefix: {
+    enablePrefix: boolean;
+    prefix: string;
+  };
+  type: string;
+  default_ttl: number;
+}
+
 export interface IMapProxyJsonDocument {
   services: JsonObject;
   layers: IMapProxyLayer[];
@@ -91,6 +108,16 @@ export interface IS3Source extends ICacheSource {
   directory_layout: string;
 }
 
+export interface IRedisSource extends ICacheSource {
+  host: string;
+  port: number;
+  username?: string;
+  password?: string;
+  type: string;
+  prefix?: string;
+  default_ttl: number;
+}
+
 export interface IGpkgSource extends ICacheSource {
   filename: string;
   table_name: string;
@@ -104,9 +131,9 @@ export interface IMapProxyCache {
   sources: string[];
   grids: string[];
   format: string;
-  upscale_tiles: number;
+  upscale_tiles?: number;
   cache: ICacheSource;
-  minimize_meta_request: boolean;
+  minimize_meta_requests?: boolean;
 }
 
 export interface IMapProxyLayer {
@@ -146,7 +173,7 @@ export interface IConfigProvider {
 }
 
 export interface ICacheProvider {
-  getCacheSource: (sourcePath: string, tableName?: string) => IS3Source | IGpkgSource;
+  getCacheSource: (sourcePath: string, tableName?: string) => IS3Source | IGpkgSource | IRedisSource;
 }
 
 export interface IPGClient {

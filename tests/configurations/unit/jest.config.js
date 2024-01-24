@@ -20,16 +20,17 @@ module.exports = {
     'default',
     ['jest-html-reporters', { multipleReportsUnitePath: './reports', pageTitle: 'unit', publicPath: './reports', filename: 'unit.html' }],
   ],
+  setupFilesAfterEnv: ['jest-extended/all'],
   rootDir: '../../../.',
   setupFiles: ['<rootDir>/tests/configurations/jest.setup.ts'],
   preset: 'ts-jest',
   testEnvironment: 'node',
   coverageThreshold: {
     global: {
-      branches: 75,
-      functions: 80,
-      lines: 80,
-      statements: 10,
+      branches: 85,
+      functions: 100,
+      lines: 95,
+      statements: 95,
     },
   },
 };

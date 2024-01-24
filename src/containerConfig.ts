@@ -21,6 +21,7 @@ export const registerExternalValues = (options?: RegisterOptions): DependencyCon
   const fsConfig = config.get<IFSConfig>('FS');
   const s3Config = config.get<IS3Config>('S3');
   const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
+  const redisConfig = config.get<IMapProxyConfig>('redis');
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const logger = jsLogger({ ...loggerConfig, prettyPrint: loggerConfig.prettyPrint, mixin: getOtelMixin() });
 
@@ -35,6 +36,7 @@ export const registerExternalValues = (options?: RegisterOptions): DependencyCon
     { token: SERVICES.MAPPROXY, provider: { useValue: mapproxyConfig } },
     { token: SERVICES.FS, provider: { useValue: fsConfig } },
     { token: SERVICES.S3, provider: { useValue: s3Config } },
+    { token: SERVICES.REDISCONFIG, provider: { useValue: redisConfig } },
     {
       token: SERVICES.CONFIGPROVIDER,
       provider: {
