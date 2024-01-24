@@ -26,16 +26,6 @@ data:
   MAPPROXY_CACHE_GRIDS: {{ quote .Values.env.mapproxyCache.grids }}
   MAPPROXY_CACHE_UPSCALE_TILES: {{ quote .Values.env.mapproxyCache.upscaleTiles }}
   MAPPROXY_CACHE_DIRECTORY_LAYOUT: {{ quote .Values.env.mapproxyCache.directoryLayout }}
-  S3_ENDPOINT_URL: {{ quote .Values.storage.s3.endpointUrl }}
-  S3_BUCKET:  {{ quote .Values.storage.s3.tilesBucket }}
-  S3_SSL_ENABLED: {{ quote .Values.storage.s3.sslEnabled }}
-  {{- if eq (upper .Values.storage.mapproxyConfigProvider) "DB" }}
-  DB_HOST: {{ quote .Values.db.host }}
-  DB_NAME: {{ .Values.mapproxy.db.nameOverride | default .Values.db.name | quote }}
-  DB_PORT: {{ quote .Values.db.port }}
-  DB_SCHEMA: {{ quote .Values.mapproxy.db.schema }}
-  DB_SSL_ENABLE: {{ quote .Values.db.sslEnabled }}
-  DB_SSL_REJECT_UNAUTHORIZED: {{ .Values.env.dbRejectUnauthorized | quote }}
   {{ if .Values.redis.enabled }}
   REDIS_ENABLED: {{ quote .Values.redis.enabled }}
   REDIS_HOST: {{ quote .Values.redis.host }}
