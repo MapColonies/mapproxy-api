@@ -103,17 +103,20 @@ class LayersManager {
   public getAllLinkedCaches(baseCacheNames: string[], mapproxyConfiguration: IMapProxyJsonDocument): string[] {
     const linkedCaches: string[] = [];
     const baseCacheNamesDuplicate: string[] = [...baseCacheNames];
+
     baseCacheNamesDuplicate.forEach((currentCache) => {
-      if (mapproxyConfiguration.caches[currentCache] != undefined) {
-        if (currentCache.endsWith('-source')) {
-          if (!linkedCaches.includes(currentCache)) {
-            linkedCaches.push(currentCache);
-          }
-        } else {
-          linkedCaches.push(currentCache);
-          if (!linkedCaches.includes(`${currentCache}-source`)) {
-            linkedCaches.push(`${currentCache}-source`);
-          }
+      const sourceName = currentCache.endsWith('-source') ? currentCache : `${currentCache}-source`;
+      const redisSourceName = currentCache.endsWith('-source') ? currentCache.replace('-source', '') : currentCache;
+
+      if (mapproxyConfiguration.caches[sourceName] != undefined) {
+        if (!linkedCaches.includes(sourceName)) {
+          linkedCaches.push(sourceName);
+        }
+      }
+
+      if (mapproxyConfiguration.caches[redisSourceName] != undefined) {
+        if (!linkedCaches.includes(redisSourceName)) {
+          linkedCaches.push(redisSourceName);
         }
       }
     });
