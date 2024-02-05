@@ -26,6 +26,21 @@ data:
   MAPPROXY_CACHE_GRIDS: {{ quote .Values.env.mapproxyCache.grids }}
   MAPPROXY_CACHE_UPSCALE_TILES: {{ quote .Values.env.mapproxyCache.upscaleTiles }}
   MAPPROXY_CACHE_DIRECTORY_LAYOUT: {{ quote .Values.env.mapproxyCache.directoryLayout }}
+  {{ if .Values.redis.enabled }}
+  REDIS_ENABLED: {{ quote .Values.redis.enabled }}
+  REDIS_HOST: {{ quote .Values.redis.host }}
+  REDIS_PORT: {{ quote .Values.redis.port }}
+  {{ if .Values.redis.auth.enableRedisUser }}
+  REDIS_USER_ENABLED: {{ quote .Values.redis.auth.enableRedisUser }}
+  REDIS_USERNAME: {{ quote .Values.redis.auth.username }}
+  REDIS_PASSWORD: {{ quote .Values.redis.auth.password }}
+  {{ if .Values.redis.prefix.enablePrefix }}
+  REDIS_PREFIX_ENABLED: {{ quote .Values.redis.prefix.enablePrefix }}
+  REDIS_PREFIX: {{ quote .Values.redis.prefix.prefix }}
+  {{ end }}
+  REDIS_TYPE: {{ quote .Values.redis.type }}
+  REDIS_DEFAULT_TTL: {{ quote .Values.redis.default_ttl }}
+  {{ end }}
   {{- if eq (upper $storage.mapproxyConfigProvider) "S3" }}
   {{- $s3 := (include "common.s3.merged" .) | fromYaml }}
   S3_ENDPOINT_URL: {{ $s3.endpointUrl }}

@@ -320,7 +320,7 @@ components:
           example: s3
         name:
           type: string
-          example: amsterdam_5cm
+          example: amsterdam_5cm-source
         tilesPath:
           type: string
           example: /path/to/tiles/directory/in/bucket/
@@ -447,7 +447,7 @@ components:
       properties:
         layerName:
           type: string
-          example: amsterdam_5cm
+          example: amsterdam_5cm-source
     mosaic:
       type: object
       required:
@@ -463,7 +463,7 @@ components:
             properties:
               layerName:
                 type: string
-                example: amsterdam_5cm
+                example: amsterdam_5cm-source
               zIndex:
                 type: number
                 example: 1
@@ -472,5 +472,5 @@ components:
       items:
         type: string
       example:
-        - amsterdam_5cm
-        - amsterdam_5cm-ortho
+        - amsterdam_5cm-source
+        - amsterdam_5cm-ortho-source
