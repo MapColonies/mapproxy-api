@@ -22,7 +22,7 @@ data:
   TELEMETRY_METRICS_ENABLED: 'true'
   TELEMETRY_METRICS_URL: {{ $metricsUrl }}
   {{ end }}
-  MAPPROXY_CONFIG_PROVIDER: {{ $storage.mapproxyConfigProvider }}
+  MAPPROXY_CONFIG_PROVIDER: {{ quote $storage.mapproxyConfigProvider }}
   MAPPROXY_CACHE_GRIDS: {{ quote .Values.env.mapproxyCache.grids }}
   MAPPROXY_CACHE_UPSCALE_TILES: {{ quote .Values.env.mapproxyCache.upscaleTiles }}
   MAPPROXY_CACHE_DIRECTORY_LAYOUT: {{ quote .Values.env.mapproxyCache.directoryLayout }}
@@ -40,6 +40,7 @@ data:
   {{ end }}
   REDIS_TYPE: {{ quote .Values.redis.type }}
   REDIS_DEFAULT_TTL: {{ quote .Values.redis.default_ttl }}
+  {{ end }}
   {{ end }}
   {{- if eq (upper $storage.mapproxyConfigProvider) "S3" }}
   {{- $s3 := (include "common.s3.merged" .) | fromYaml }}
