@@ -110,6 +110,7 @@ redis:
   enabled: true
   host: ""
   port: "6379"
+  type: "redis"
   auth:
     enableRedisUser: false
     username: ""
