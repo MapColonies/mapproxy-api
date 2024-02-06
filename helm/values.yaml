@@ -107,7 +107,7 @@ resources:
       memory: 128Mi
 
 redis:
-  enabled: true
+  enabled: false
   host: ""
   port: "6379"
   type: "redis"
