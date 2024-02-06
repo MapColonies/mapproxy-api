@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/MapColonies/mapproxy-api/compare/v1.6.0...v1.7.0) (2024-02-06)
+
+
+### Features
+
+* enable redis layers automatic addition to config ([#107](https://github.com/MapColonies/mapproxy-api/issues/107)) ([ae8a138](https://github.com/MapColonies/mapproxy-api/commit/ae8a138f5f97e44595348ede9afb6fb0da2a9590))
+
+
+### Bug Fixes
+
+* remove duplicate values ([#112](https://github.com/MapColonies/mapproxy-api/issues/112)) ([e0b779c](https://github.com/MapColonies/mapproxy-api/commit/e0b779c38b0ce3e79abfe8037ee998a1ec94b8c2))
+
 ## [1.6.0](https://github.com/MapColonies/mapproxy-api/compare/v1.5.4...v1.6.0) (2024-01-15)
 
 
