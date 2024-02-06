@@ -107,16 +107,16 @@ resources:
       memory: 128Mi
 
 redis:
-  enabled: false
-  host: "raster-mapproxy-redis-master"
+  enabled: true
+  host: ""
   port: "6379"
   auth:
     enableRedisUser: false
-    username: "mapcolonies"
-    password: "mapcolonies"
+    username: ""
+    password: ""
   prefix:
     enablePrefix: false
-    prefix: "temp-prefix:"
+    prefix: ""
   default_ttl: '86400' # one day
 
 route:
