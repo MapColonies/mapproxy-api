@@ -81,37 +81,37 @@
       "ca": "DB_SSL_CA",
       "key": "DB_SSL_KEY",
       "cert": "DB_SSL_CERT"
+    }
+  },
+  "redis": {
+    "enabled": {
+      "__name": "REDIS_ENABLED",
+      "__format": "boolean"
     },
-    "redis": {
-      "enabled": {
-        "__name": "REDIS_ENABLED",
+    "host": "REDIS_HOST",
+    "port": {
+      "__name": "REDIS_PORT",
+      "__format": "number"
+    },
+    "prefix": {
+      "enablePrefix": {
+        "__name": "REDIS_PREFIX_ENABLED",
         "__format": "boolean"
       },
-      "host": "REDIS_HOST",
-      "port": {
-        "__name": "REDIS_PORT",
-        "__format": "number"
-      },
-      "prefix": {
-        "enablePrefix": {
-          "__name": "REDIS_PREFIX_ENABLED",
-          "__format": "boolean"
-        },
-        "prefix": "REDIS_PREFIX"
-      },
-      "auth": {
-        "username": "REDIS_USERNAME",
-        "password": "REDIS_PASSWORD"
-      },
-      "type": "REDIS_TYPE",
-      "default_ttl": {
-        "__name": "REDIS_DEFAULT_TTL",
-        "__format": "number"
-      },
-      "enableRedisUser": {
-        "__name": "REDIS_USER_ENABLED",
-        "__format": "boolean"
-      }
+      "prefix": "REDIS_PREFIX"
+    },
+    "auth": {
+      "username": "REDIS_USERNAME",
+      "password": "REDIS_PASSWORD"
+    },
+    "type": "REDIS_TYPE",
+    "default_ttl": {
+      "__name": "REDIS_DEFAULT_TTL",
+      "__format": "number"
+    },
+    "enableRedisUser": {
+      "__name": "REDIS_USER_ENABLED",
+      "__format": "boolean"
     }
   }
 }
