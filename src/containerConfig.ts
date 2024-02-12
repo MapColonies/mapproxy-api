@@ -8,7 +8,7 @@ import { tracing } from './common/tracing';
 import { InjectionObject, registerDependencies } from './common/dependencyRegistration';
 import { layersRouterFactory, LAYERS_ROUTER_SYMBOL } from './layers/routes/layersRouterFactory';
 import { configsRouterFactory, CONFIGS_ROUTER_SYMBOL } from './configs/routes/configsRouterFactory';
-import { IConfigProvider, IFSConfig, IMapProxyConfig, IS3Config } from './common/interfaces';
+import { IConfigProvider, IFSConfig, IMapProxyConfig, IRedisConfig, IS3Config } from './common/interfaces';
 import { getProvider } from './getProvider';
 
 export interface RegisterOptions {
@@ -21,7 +21,7 @@ export const registerExternalValues = (options?: RegisterOptions): DependencyCon
   const fsConfig = config.get<IFSConfig>('FS');
   const s3Config = config.get<IS3Config>('S3');
   const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
-  const redisConfig = config.get<IMapProxyConfig>('redis');
+  const redisConfig = config.get<IRedisConfig>('redis');
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const logger = jsLogger({ ...loggerConfig, prettyPrint: loggerConfig.prettyPrint, mixin: getOtelMixin() });
 
