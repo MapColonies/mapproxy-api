@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.1](https://github.com/MapColonies/mapproxy-api/compare/v1.7.0...v1.7.1) (2024-02-12)
+
+
+### Bug Fixes
+
+* redis enabled config ([#117](https://github.com/MapColonies/mapproxy-api/issues/117)) ([fb2b971](https://github.com/MapColonies/mapproxy-api/commit/fb2b9718b4c4ecf2dde71535241581afd9f6a26c))
+
 ## [1.7.0](https://github.com/MapColonies/mapproxy-api/compare/v1.6.0...v1.7.0) (2024-02-06)
 
 
