@@ -29,6 +29,18 @@ global:
     secretName: ""
     path: '/usr/local/share/ca-certificates'
     key: 'ca.crt'
+  redis:
+    host: ""
+    port: "6379"
+    type: "redis"
+    auth:
+      enableRedisUser: false
+      username: ""
+      password: ""
+    prefix:
+      enablePrefix: false
+      prefix: ""
+    default_ttl: '86400' # one day
 
 
 enabled: true
@@ -105,20 +117,6 @@ resources:
     requests:
       cpu: 100m
       memory: 128Mi
-
-redis:
-  enabled: false
-  host: ""
-  port: "6379"
-  type: "redis"
-  auth:
-    enableRedisUser: false
-    username: ""
-    password: ""
-  prefix:
-    enablePrefix: false
-    prefix: ""
-  default_ttl: '86400' # one day
 
 route:
   enabled: false

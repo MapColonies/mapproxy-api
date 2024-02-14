@@ -148,6 +148,7 @@ export interface ILayerPostRequest {
   tilesPath: string;
   cacheType: string;
   format: TileOutputFormat;
+  isRedis: boolean;
 }
 
 export interface ILayerToMosaicRequest {

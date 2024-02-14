@@ -84,10 +84,6 @@
     }
   },
   "redis": {
-    "enabled": {
-      "__name": "REDIS_ENABLED",
-      "__format": "boolean"
-    },
     "host": "REDIS_HOST",
     "port": {
       "__name": "REDIS_PORT",

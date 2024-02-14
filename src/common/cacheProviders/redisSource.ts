@@ -7,14 +7,12 @@ import { SourceTypes } from '../enums';
 
 class RedisSource implements ICacheProvider {
   private readonly redisSourceCacheType: SourceTypes;
-  private readonly mapproxyConfig: IMapProxyConfig;
   private readonly redisConfig: IRedisConfig;
   private readonly logger: Logger;
   private readonly redisSource!: IRedisSource;
 
   public constructor(container: DependencyContainer, grid?: string, cacheName?: string) {
     this.logger = container.resolve(SERVICES.LOGGER);
-    this.mapproxyConfig = container.resolve(SERVICES.MAPPROXY);
     this.redisConfig = container.resolve(SERVICES.REDISCONFIG);
     this.redisSourceCacheType = SourceTypes.REDIS;
     try {

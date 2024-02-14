@@ -15,7 +15,6 @@ import {
   IConfigProvider,
   ICacheProvider,
   ICacheSource,
-  IRedisConfig,
 } from '../../common/interfaces';
 import { sortArrayByZIndex } from '../../common/utils';
 import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
@@ -30,7 +29,6 @@ class LayersManager {
   public constructor(
     @inject(SERVICES.LOGGER) private readonly logger: Logger,
     @inject(SERVICES.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig,
-    @inject(SERVICES.REDISCONFIG) private readonly redisConfig: IRedisConfig,
     @inject(SERVICES.CONFIGPROVIDER) private readonly configProvider: IConfigProvider
   ) {}
 
@@ -258,7 +256,7 @@ class LayersManager {
   }
 
   private addNewCache(jsonDocument: IMapProxyJsonDocument, layerRequest: ILayerPostRequest): void {
-    if (this.redisConfig.enabled) {
+    if (layerRequest.isRedis) {
       this.addNewRedisLayerToConfig(layerRequest, jsonDocument);
     } else {
       this.addNewSourceLayerToConfig(layerRequest, jsonDocument);
