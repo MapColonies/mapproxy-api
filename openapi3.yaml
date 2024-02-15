@@ -320,7 +320,7 @@ components:
           example: s3
         name:
           type: string
-          example: amsterdam_5cm-source
+          example: amsterdam_5cm
         tilesPath:
           type: string
           example: /path/to/tiles/directory/in/bucket/
