@@ -266,7 +266,7 @@ class LayersManager {
   private addNewSourceLayerToConfig(layerRequest: ILayerPostRequest, jsonDocument: IMapProxyJsonDocument): void {
     //creates source cache, and a source layer
     this.logger.info({ msg: `adding ${layerRequest.name} as source layer`, layerRequest });
-    const sourceCacheTitle = `${layerRequest.name}-source`;
+    const sourceCacheTitle = `${layerRequest.name}`;
     if (isLayerNameExists(jsonDocument, sourceCacheTitle)) {
       throw new ConflictError(`Layer name '${sourceCacheTitle}' already exists`);
     }
