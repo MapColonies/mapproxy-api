@@ -10,8 +10,3 @@ export enum SourceTypes {
   FS = 'file',
   REDIS = 'redis',
 }
-
-export enum TileFormat {
-  JPEG = 'image/jpeg',
-  PNG = 'image/png',
-}
