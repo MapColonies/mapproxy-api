@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.4](https://github.com/MapColonies/mapproxy-api/compare/v1.7.3...v1.7.4) (2024-02-19)
+
+
+### Bug Fixes
+
+* internal mount dir for fs storage ([#121](https://github.com/MapColonies/mapproxy-api/issues/121)) ([5c1775a](https://github.com/MapColonies/mapproxy-api/commit/5c1775a71337c7bed0d58aea372881227adc63bd))
+
 ### [1.7.3](https://github.com/MapColonies/mapproxy-api/compare/v1.7.2...v1.7.3) (2024-02-12)
 
 
