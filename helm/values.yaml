@@ -85,6 +85,7 @@ env:
   logPrettyPrintEnabled: false
   responseCompressionEnabled: true
   requestPayloadLimit: 1mb
+  internalMountDir: /layerSources
   tracing:
     enabled: false
     url: http://localhost:55681/v1/trace

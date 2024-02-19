@@ -107,9 +107,9 @@ spec:
               value: /configSource/mapproxy.yaml
             - name: SUB_TILES_PATH
               value: {{ $fs.internalPvc.tilesSubPath }}
-            - name: INTERNAL_MOUNT_DIR
-              value: /layerSources
             {{- end }} 
+            - name: INTERNAL_MOUNT_DIR
+              value: {{ .Values.env.internalMountDir }}
             {{- if eq (upper $storage.mapproxyConfigProvider) "DB" }}
             - name: DB_USER
               valueFrom:
