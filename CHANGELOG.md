@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.5](https://github.com/MapColonies/mapproxy-api/compare/v1.7.4...v1.7.5) (2024-02-20)
+
+
+### Bug Fixes
+
+* layer name (MAPCO-4005) ([#122](https://github.com/MapColonies/mapproxy-api/issues/122)) ([ba8221e](https://github.com/MapColonies/mapproxy-api/commit/ba8221e1fc1e4a931605874914074b794fceeb80))
+
 ### [1.7.4](https://github.com/MapColonies/mapproxy-api/compare/v1.7.3...v1.7.4) (2024-02-19)
 
 
