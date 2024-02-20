@@ -155,7 +155,7 @@ describe('layersManager', () => {
       await expect(action).toResolve();
 
       const resultJson = await MockConfigProvider.getJson();
-      expect(resultJson.layers).toPartiallyContain({ name: mockLayerNameIsNotExists.name });
+      expect(resultJson.layers).toPartiallyContain({ name: mockLayerNameIsNotExists.name, sources: [`${mockLayerNameIsNotExists.name}-source`]  });
       expect(resultJson.caches).not.toContainKey(mockLayerNameIsNotExists.name);
       expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
