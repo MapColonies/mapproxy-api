@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/MapColonies/mapproxy-api/compare/v1.7.6...v1.8.0) (2024-02-20)
+
+
+### Features
+
+*  adding mimeType image format manipulate ([#120](https://github.com/MapColonies/mapproxy-api/issues/120)) ([9eb6b2f](https://github.com/MapColonies/mapproxy-api/commit/9eb6b2f144588e48920bb7c21af78d4a4884df91))
+
 ### [1.7.6](https://github.com/MapColonies/mapproxy-api/compare/v1.7.5...v1.7.6) (2024-02-20)
 
 
