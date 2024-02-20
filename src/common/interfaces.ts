@@ -2,7 +2,8 @@
 import { PoolClient } from 'pg';
 import { JsonObject } from 'swagger-ui-express';
 import { TileOutputFormat } from '@map-colonies/mc-model-types';
-import { Providers, TileFormat } from './enums';
+import { TilesMimeFormat } from '@map-colonies/types';
+import { Providers } from './enums';
 
 export interface IConfig {
   get: <T>(setting: string) => T;
@@ -43,7 +44,7 @@ export interface IMapProxyConfig {
   configProvider: Providers;
   cache: {
     grids: string;
-    format: TileFormat;
+    format: TilesMimeFormat;
     upscaleTiles: number;
     directoryLayout: string;
     gpkgExt: string;
