@@ -224,11 +224,11 @@ class LayersManager {
     return cache;
   }
 
-  public getLayerValues(layerName: string): IMapProxyLayer {
+  public getLayerValues(layerName: string, sourceCacheTitle?: string): IMapProxyLayer {
     const layer: IMapProxyLayer = {
       name: layerName,
       title: layerName,
-      sources: [layerName],
+      sources: [sourceCacheTitle ?? layerName],
     };
 
     return layer;
@@ -276,12 +276,13 @@ class LayersManager {
     const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
     this.logger.info(`adding ${sourceCacheTitle} to cache list`);
     jsonDocument.caches[sourceCacheTitle] = newCache;
-    this.addNewLayer(sourceCacheTitle, jsonDocument);
+    this.addNewLayer(layerRequest.name, sourceCacheTitle, jsonDocument);
   }
 
-  private addNewLayer(layerName: string, jsonDocument: IMapProxyJsonDocument): void {
+  private addNewLayer(layerName: string, sourceCacheTitle: string, jsonDocument: IMapProxyJsonDocument): void {
     this.logger.info(`adding ${layerName} to layer list`);
-    const newLayer: IMapProxyLayer = this.getLayerValues(layerName);
+
+    const newLayer: IMapProxyLayer = this.getLayerValues(layerName, sourceCacheTitle);
     jsonDocument.layers.push(newLayer);
   }
 
@@ -300,7 +301,7 @@ class LayersManager {
     this.logger.info(`adding ${redisCacheTitle} to cache list`);
     const redisCache: IMapProxyCache = this.createRedisCache(redisCacheTitle, sourceCacheTitle, tileFormat, this.mapproxyConfig);
     jsonDocument.caches[`${redisCacheTitle}`] = redisCache;
-    this.addNewLayer(redisCacheTitle, jsonDocument);
+    this.addNewLayer(layerRequest.name, redisCacheTitle, jsonDocument);
   }
 
   private createRedisCache(originalLayerName: string, sourceLayerName: string, format: string, mapproxyConfig: IMapProxyConfig): IMapProxyCache {
