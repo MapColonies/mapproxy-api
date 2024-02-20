@@ -224,11 +224,11 @@ class LayersManager {
     return cache;
   }
 
-  public getLayerValues(layerName: string,sourceCacheTitle?: string): IMapProxyLayer {
+  public getLayerValues(layerName: string, sourceCacheTitle?: string): IMapProxyLayer {
     const layer: IMapProxyLayer = {
       name: layerName,
       title: layerName,
-      sources: [sourceCacheTitle?? layerName],
+      sources: [sourceCacheTitle ?? layerName],
     };
 
     return layer;
@@ -281,7 +281,7 @@ class LayersManager {
 
   private addNewLayer(layerName: string, sourceCacheTitle: string, jsonDocument: IMapProxyJsonDocument): void {
     this.logger.info(`adding ${layerName} to layer list`);
-    
+
     const newLayer: IMapProxyLayer = this.getLayerValues(layerName, sourceCacheTitle);
     jsonDocument.layers.push(newLayer);
   }
