@@ -2,13 +2,16 @@
 {{- $chartName := include "mapproxy-api.name" . -}}
 {{- $ingressName := include "ingress.fullname" . }}
 {{- $serviceName := include "service.fullname" . -}}
+{{- $ingressHost := include "ingress.host" . }}
 {{- if and (.Values.enabled) (.Values.ingress.enabled) -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ $ingressName }}
   annotations:
+    {{- if ne .Values.cloudProvider.flavor "openshift" }}
     kubernetes.io/ingress.class: "nginx"
+    {{- end }}
     {{- if eq .Values.ingress.type "nginx-org" }}
     nginx.org/mergeable-ingress-type: "minion"
     nginx.org/rewrites: 'serviceName={{ $serviceName }} rewrite=/'
@@ -37,5 +40,5 @@ spec:
             name: {{ $serviceName }}
             port:
               number: {{ .Values.env.port }}
-    host: {{ .Values.ingress.host | quote }}
+    host: {{ $ingressHost }}
 {{- end -}}

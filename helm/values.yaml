@@ -29,7 +29,8 @@ global:
     secretName: ""
     path: '/usr/local/share/ca-certificates'
     key: 'ca.crt'
-
+  ingress:
+    domain: 'apps.aroapp.io'       
 
 enabled: true
 environment: development
@@ -136,6 +137,7 @@ ingress:
   cors:
     enabled: true
     origin: '*'
+  annotations: {}
 
 local: # for local stand alone deployment, external pvc and secrets should be used for full deployment
   fs:
