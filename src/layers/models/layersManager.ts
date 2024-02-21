@@ -10,14 +10,12 @@ import {
   IMapProxyJsonDocument,
   IMapProxyLayer,
   IMapProxyConfig,
-  IUpdateMosaicRequest,
-  ILayerToMosaicRequest,
   IConfigProvider,
   ICacheProvider,
   ICacheSource,
   IRedisConfig,
 } from '../../common/interfaces';
-import { sortArrayByZIndex } from '../../common/utils';
+// import { sortArrayByZIndex } from '../../common/utils';
 import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
 import { S3Source } from '../../common/cacheProviders/S3Source';
 import { GpkgSource } from '../../common/cacheProviders/gpkgSource';
@@ -32,7 +30,7 @@ class LayersManager {
     @inject(SERVICES.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig,
     @inject(SERVICES.REDISCONFIG) private readonly redisConfig: IRedisConfig,
     @inject(SERVICES.CONFIGPROVIDER) private readonly configProvider: IConfigProvider
-  ) { }
+  ) {}
   public async getLayer(layerName: string): Promise<IMapProxyCache> {
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
 
@@ -53,51 +51,51 @@ class LayersManager {
     await this.configProvider.updateJson(editJson);
   }
 
-  public async addLayerToMosaic(mosaicName: string, layerToMosaicRequest: ILayerToMosaicRequest): Promise<void> {
-    this.logger.info(`Add layer: ${layerToMosaicRequest.layerName} to mosaic: ${mosaicName} request`);
+  // public async addLayerToMosaic(mosaicName: string, layerToMosaicRequest: ILayerToMosaicRequest): Promise<void> {
+  //   this.logger.info(`Add layer: ${layerToMosaicRequest.layerName} to mosaic: ${mosaicName} request`);
 
-    const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
-      if (!isLayerNameExists(jsonDocument, layerToMosaicRequest.layerName)) {
-        throw new NotFoundError(`Layer name '${layerToMosaicRequest.layerName}' is not exists`);
-      }
+  //   const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
+  //     if (!isLayerNameExists(jsonDocument, layerToMosaicRequest.layerName)) {
+  //       throw new NotFoundError(`Layer name '${layerToMosaicRequest.layerName}' is not exists`);
+  //     }
 
-      if (!isLayerNameExists(jsonDocument, mosaicName)) {
-        throw new NotFoundError(`Mosaic name '${mosaicName}' is not exists`);
-      }
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const mosaicCache: IMapProxyCache = jsonDocument.caches[mosaicName];
-      mosaicCache.sources.push(layerToMosaicRequest.layerName);
-      return jsonDocument;
-    };
+  //     if (!isLayerNameExists(jsonDocument, mosaicName)) {
+  //       throw new NotFoundError(`Mosaic name '${mosaicName}' is not exists`);
+  //     }
+  //     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  //     const mosaicCache: IMapProxyCache = jsonDocument.caches[mosaicName];
+  //     mosaicCache.sources.push(layerToMosaicRequest.layerName);
+  //     return jsonDocument;
+  //   };
 
-    await this.configProvider.updateJson(editJson);
-    this.logger.info(`Successfully added layer: '${layerToMosaicRequest.layerName}' to mosaic: '${mosaicName}'`);
-  }
+  //   await this.configProvider.updateJson(editJson);
+  //   this.logger.info(`Successfully added layer: '${layerToMosaicRequest.layerName}' to mosaic: '${mosaicName}'`);
+  // }
 
-  public async updateMosaic(mosaicName: string, updateMosaicRequest: IUpdateMosaicRequest): Promise<void> {
-    this.logger.info(`Update mosaic: ${mosaicName} request`);
+  // public async updateMosaic(mosaicName: string, updateMosaicRequest: IUpdateMosaicRequest): Promise<void> {
+  //   this.logger.info(`Update mosaic: ${mosaicName} request`);
 
-    const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
-      if (!isLayerNameExists(jsonDocument, mosaicName)) {
-        throw new NotFoundError(`Mosaic name '${mosaicName}' is not exists`);
-      }
-      updateMosaicRequest.layers.forEach((layer) => {
-        if (!isLayerNameExists(jsonDocument, layer.layerName)) {
-          throw new NotFoundError(`Layer name '${layer.layerName}' is not exists`);
-        }
-      });
+  //   const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
+  //     if (!isLayerNameExists(jsonDocument, mosaicName)) {
+  //       throw new NotFoundError(`Mosaic name '${mosaicName}' is not exists`);
+  //     }
+  //     updateMosaicRequest.layers.forEach((layer) => {
+  //       if (!isLayerNameExists(jsonDocument, layer.layerName)) {
+  //         throw new NotFoundError(`Layer name '${layer.layerName}' is not exists`);
+  //       }
+  //     });
 
-      const sortedLayers: string[] = sortArrayByZIndex(updateMosaicRequest.layers);
+  //     const sortedLayers: string[] = sortArrayByZIndex(updateMosaicRequest.layers);
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const mosaicCache: IMapProxyCache = jsonDocument.caches[mosaicName];
-      mosaicCache.sources = sortedLayers;
-      return jsonDocument;
-    };
+  //     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  //     const mosaicCache: IMapProxyCache = jsonDocument.caches[mosaicName];
+  //     mosaicCache.sources = sortedLayers;
+  //     return jsonDocument;
+  //   };
 
-    await this.configProvider.updateJson(editJson);
-    this.logger.info(`Successfully updated mosaic: '${mosaicName}'`);
-  }
+  //   await this.configProvider.updateJson(editJson);
+  //   this.logger.info(`Successfully updated mosaic: '${mosaicName}'`);
+  // }
 
   public getAllLinkedCaches(baseCacheNames: string[], mapproxyConfiguration: IMapProxyJsonDocument): string[] {
     const linkedCaches: string[] = [];
@@ -146,7 +144,7 @@ class LayersManager {
       });
       failedLayers = layersName.filter((layerName) => !allLinkedCaches.includes(layerName));
       if (failedLayers.length !== 0) {
-        const notFoundMessege = `Layers: ['${failedLayers.join(',')}'] were not found`
+        const notFoundMessege = `Layers: ['${failedLayers.join(',')}'] were not found`;
         this.logger.error(notFoundMessege);
         throw new NotFoundError(notFoundMessege);
       }
@@ -175,7 +173,7 @@ class LayersManager {
     const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
       let newLayer: IMapProxyLayer;
       let redisLayerName: string = layerName;
-      let mainLayerName = layerName.replace('-redis','');
+      let mainLayerName = layerName.replace('-redis', '');
 
       if (jsonDocument.caches[layerName] == undefined) {
         throw new NotFoundError(`Cache name '${layerName}' does not exists`);
@@ -183,7 +181,7 @@ class LayersManager {
 
       if (!isRedisCache) {
         mainLayerName = layerName;
-        redisLayerName = `${layerName}-redis`
+        redisLayerName = `${layerName}-redis`;
         doesHaveRedisCache = jsonDocument.caches[redisLayerName] != undefined;
       }
 
@@ -320,11 +318,6 @@ class LayersManager {
     };
 
     return cache;
-  }
-
-  private isCacheExists(jsonDocument: IMapProxyJsonDocument, layerName: string): boolean {
-    const publishedLayers: string[] = Object.keys(jsonDocument.layers);
-    return publishedLayers.includes(layerName);
   }
 }
 

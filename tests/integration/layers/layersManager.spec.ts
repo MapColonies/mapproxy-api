@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-commented-out-tests */
 import httpStatusCodes from 'http-status-codes';
 import jsLogger from '@map-colonies/js-logger';
 import { trace } from '@opentelemetry/api';
@@ -8,11 +9,11 @@ import { NotFoundError } from '@map-colonies/error-types';
 import {
   IFSConfig,
   ILayerPostRequest,
-  ILayerToMosaicRequest,
+  // ILayerToMosaicRequest,
   IMapProxyCache,
   IMapProxyConfig,
   IS3Config,
-  IUpdateMosaicRequest,
+  // IUpdateMosaicRequest,
 } from '../../../src/common/interfaces';
 import { mockLayerNameIsNotExists } from '../../unit/mock/mockLayerNameIsNotExists';
 import { mockLayerNameAlreadyExists } from '../../unit/mock/mockLayerNameAlreadyExists';

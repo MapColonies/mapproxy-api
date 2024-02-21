@@ -5,7 +5,7 @@ export const mockData = (): IMapProxyJsonDocument => {
   const data = {
     caches: {
       mock: 'some content for unit-test',
-      'amsterdam_5cm': {
+      amsterdam_5cm: {
         sources: [],
         grids: ['epsg4326dir'],
         format: 'image/png',
@@ -16,7 +16,7 @@ export const mockData = (): IMapProxyJsonDocument => {
           directory_layout: 'tms',
         },
       },
-      'mockLayerNameExists': {
+      mockLayerNameExists: {
         sources: [],
         grids: ['epsg4326dir'],
         format: 'image/png',
@@ -28,7 +28,7 @@ export const mockData = (): IMapProxyJsonDocument => {
         },
       },
       combined_layers: { sources: ['mock'], grids: ['epsg4326dir'] },
-      'NameIsAlreadyExists': {
+      NameIsAlreadyExists: {
         sources: [],
         grids: ['epsg4326dir'],
         format: 'image/png',
@@ -38,7 +38,7 @@ export const mockData = (): IMapProxyJsonDocument => {
           directory: '/path/to/s3/directory/tile',
           directory_layout: 'tms',
         },
-        'redisExists': {
+        redisExists: {
           sources: [],
           grids: ['epsg4326dir'],
           format: 'image/png',

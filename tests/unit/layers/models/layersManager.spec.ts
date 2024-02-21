@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-commented-out-tests */
 /// <reference types="jest-extended" />
 import { normalize } from 'node:path';
 import { container } from 'tsyringe';
@@ -6,25 +7,18 @@ import { ConflictError, NotFoundError } from '@map-colonies/error-types';
 import { TileOutputFormat } from '@map-colonies/mc-model-types';
 import { lookup as mimeLookup, TilesMimeFormat } from '@map-colonies/types';
 import config from 'config';
-import {
-  ILayerPostRequest,
-  ILayerToMosaicRequest,
-  IMapProxyCache,
-  IMapProxyConfig,
-  IRedisConfig,
-  IUpdateMosaicRequest,
-} from '../../../../src/common/interfaces';
+import { ILayerPostRequest, IMapProxyCache, IMapProxyConfig, IRedisConfig } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExists';
 import { mockLayerNameIsNotExists } from '../../mock/mockLayerNameIsNotExists';
-import * as utils from '../../../../src/common/utils';
+// import * as utils from '../../../../src/common/utils';
 import { MockConfigProvider, getJsonMock, updateJsonMock, init as initConfigProvider } from '../../mock/mockConfigProvider';
 import { SERVICES } from '../../../../src/common/constants';
 import { registerTestValues } from '../../../integration/testContainerConfig';
 import { init as initConfig, clear as clearConfig } from '../../../configurations/config';
 
 let layersManager: LayersManager;
-let sortArrayByZIndexStub: jest.SpyInstance;
+// let sortArrayByZIndexStub: jest.SpyInstance;
 const logger = jsLogger({ enabled: false });
 
 describe('layersManager', () => {
@@ -37,7 +31,7 @@ describe('layersManager', () => {
     const redisConfig = container.resolve<IRedisConfig>(SERVICES.REDISCONFIG);
     const mapproxyConfig = container.resolve<IMapProxyConfig>(SERVICES.MAPPROXY);
     layersManager = new LayersManager(logger, mapproxyConfig, redisConfig, MockConfigProvider);
-    sortArrayByZIndexStub = jest.spyOn(utils, 'sortArrayByZIndex').mockReturnValueOnce(['mockLayer1', 'mockLayer2', 'mockLayer3']);
+    // sortArrayByZIndexStub = jest.spyOn(utils, 'sortArrayByZIndex').mockReturnValueOnce(['mockLayer1', 'mockLayer2', 'mockLayer3']);
   });
 
   afterEach(() => {
@@ -77,10 +71,12 @@ describe('layersManager', () => {
         sources: [],
         grids: ['epsg4326dir'],
         format: 'image/png',
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         upscale_tiles: 18,
         cache: {
           type: 's3',
           directory: '/path/to/s3/directory/tile',
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           directory_layout: 'tms',
         },
       };
@@ -307,11 +303,9 @@ describe('layersManager', () => {
       // mock
       const mockNotExistsLayerNames = ['mockLayerNameIsNotExists-redis', 'anotherMockLayerNameNotExists'];
       // action
-      const action = async () => {
-        await layersManager.removeLayer(mockNotExistsLayerNames);
-      };
+      const action = layersManager.removeLayer(mockNotExistsLayerNames);
       // expectation
-      expect(action).rejects.toThrow(NotFoundError);
+      await expect(action).rejects.toThrow(NotFoundError);
     });
   });
 
