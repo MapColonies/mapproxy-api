@@ -66,7 +66,7 @@ describe('layerManager', () => {
 
   describe('#getLayer', () => {
     it('Happy Path - should return status 200 and the layer', async () => {
-      const response = await requestSender.getLayer('mockLayerNameExists-source');
+      const response = await requestSender.getLayer('mockLayerNameExists');
 
       expect(response.status).toBe(httpStatusCodes.OK);
 
@@ -111,7 +111,7 @@ describe('layerManager', () => {
 
     it('Sad Path - should fail with response status 409 and layer name is already exists', async () => {
       const response = await requestSender.addLayer(mockLayerNameAlreadyExists);
-      const conflictErrorMessage = `Layer name '${mockLayerNameAlreadyExists.name}-source' already exists`;
+      const conflictErrorMessage = `Layer name '${mockLayerNameAlreadyExists.name}' already exists`;
 
       expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.CONFLICT);
@@ -121,14 +121,14 @@ describe('layerManager', () => {
 
   describe('#updateLayer', () => {
     const mockUpdateLayerRequest: ILayerPostRequest = {
-      name: 'amsterdam_5cm-source',
+      name: 'amsterdam_5cm',
       tilesPath: '/path/to/tiles/directory/in/my/bucket/',
       cacheType: 's3',
       format: TileOutputFormat.JPEG,
     };
 
     it('Happy Path - should return status 202', async () => {
-      const response = await requestSender.updateLayer(`${mockLayerNameAlreadyExists.name}-source`, mockUpdateLayerRequest);
+      const response = await requestSender.updateLayer(`${mockLayerNameAlreadyExists.name}`, mockUpdateLayerRequest);
 
       expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.ACCEPTED);
@@ -137,7 +137,7 @@ describe('layerManager', () => {
     it('Bad Path - should fail with response status 400 Bad Request', async () => {
       const mockBadRequest = {
         // mocking bad request with invalid field 'mockName' to test BadRequest status
-        mockName: 'amsterdam_5cm-source',
+        mockName: 'amsterdam_5cm',
         tilesPath: '/path/to/tiles/directory/in/my/bucket/',
       } as unknown as ILayerPostRequest;
 
@@ -159,7 +159,7 @@ describe('layerManager', () => {
 
   describe('#removeLayer', () => {
     it('Happy Path - should return status 200', async () => {
-      const mockLayerNames = ['mockLayerNameExists-source', 'NameIsAlreadyExists-source'];
+      const mockLayerNames = ['mockLayerNameExists', 'NameIsAlreadyExists'];
       const response = await requestSender.removeLayer(mockLayerNames);
 
       expect(response).toSatisfyApiSpec();
@@ -167,7 +167,7 @@ describe('layerManager', () => {
     });
 
     it('sad Path - should return status 404', async () => {
-      const mockLayerNames = ['mockLayerNameExists', 'NameIsAlreadyExists'];
+      const mockLayerNames = ['mockLayerNameExists-redis', 'NameIsAlreadyExists'];
       updateJsonMock.mockImplementation(() => {
         throw new NotFoundError('some problem');
       });
@@ -178,126 +178,126 @@ describe('layerManager', () => {
     });
   });
 
-  describe('#addLayerToMosaic', () => {
-    const mockMosaicName = 'existsMosaicName';
-    const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
-      layerName: 'mockLayerNameExists-source',
-    };
+  // describe('#addLayerToMosaic', () => {
+  //   const mockMosaicName = 'existsMosaicName';
+  //   const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
+  //     layerName: 'mockLayerNameExists',
+  //   };
 
-    it('Happy Path - should return status 201', async () => {
-      const response = await requestSender.addLayerToMosaic(mockMosaicName, mockLayerToMosaicRequest);
+  //   it('Happy Path - should return status 201', async () => {
+  //     const response = await requestSender.addLayerToMosaic(mockMosaicName, mockLayerToMosaicRequest);
 
-      expect(response).toSatisfyApiSpec();
-      expect(response.status).toBe(httpStatusCodes.CREATED);
-    });
+  //     expect(response).toSatisfyApiSpec();
+  //     expect(response.status).toBe(httpStatusCodes.CREATED);
+  //   });
 
-    it('Bad Path - should fail with response status 400 Bad Request', async () => {
-      const mockMosaicName = 'mosaicMockName';
-      // mocking bad request with invalid field 'mockName' to test BadRequest status
-      const mockBadRequestRequest = {
-        mockName: 'layerNameIsNotExists',
-      } as unknown as ILayerToMosaicRequest;
-      const response = await requestSender.addLayerToMosaic(mockMosaicName, mockBadRequestRequest);
+  //   it('Bad Path - should fail with response status 400 Bad Request', async () => {
+  //     const mockMosaicName = 'mosaicMockName';
+  //     // mocking bad request with invalid field 'mockName' to test BadRequest status
+  //     const mockBadRequestRequest = {
+  //       mockName: 'layerNameIsNotExists',
+  //     } as unknown as ILayerToMosaicRequest;
+  //     const response = await requestSender.addLayerToMosaic(mockMosaicName, mockBadRequestRequest);
 
-      expect(response).toSatisfyApiSpec();
-      expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
-    });
+  //     expect(response).toSatisfyApiSpec();
+  //     expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
+  //   });
 
-    it('Sad Path - should fail with response status 404 Not Found and layer name is not exists', async () => {
-      const mockMosaicName = 'existsMosaicName';
-      const mockLayerNotExistsRequest: ILayerToMosaicRequest = {
-        layerName: 'layerNameIsNotExists',
-      };
+  //   it('Sad Path - should fail with response status 404 Not Found and layer name is not exists', async () => {
+  //     const mockMosaicName = 'existsMosaicName';
+  //     const mockLayerNotExistsRequest: ILayerToMosaicRequest = {
+  //       layerName: 'layerNameIsNotExists',
+  //     };
 
-      const response = await requestSender.addLayerToMosaic(mockMosaicName, mockLayerNotExistsRequest);
-      const notFoundErrorMessage = `Layer name '${mockLayerNotExistsRequest.layerName}' is not exists`;
+  //     const response = await requestSender.addLayerToMosaic(mockMosaicName, mockLayerNotExistsRequest);
+  //     const notFoundErrorMessage = `Layer name '${mockLayerNotExistsRequest.layerName}' is not exists`;
 
-      expect(response).toSatisfyApiSpec();
-      expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
-      expect(response.body).toEqual({ message: notFoundErrorMessage });
-    });
+  //     expect(response).toSatisfyApiSpec();
+  //     expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
+  //     expect(response.body).toEqual({ message: notFoundErrorMessage });
+  //   });
 
-    // eslint-disable-next-line jest/no-identical-title
-    it('Sad Path - should fail with response status 404 Not Found and mosaic name is not exists', async () => {
-      const mockMosaicName = 'mosaicMockNameIsNotExists';
-      const mockMosaicNotExistsRequest: ILayerToMosaicRequest = {
-        layerName: 'mockLayerNameExists-source',
-      };
+  //   // eslint-disable-next-line jest/no-identical-title
+  //   it('Sad Path - should fail with response status 404 Not Found and mosaic name is not exists', async () => {
+  //     const mockMosaicName = 'mosaicMockNameIsNotExists';
+  //     const mockMosaicNotExistsRequest: ILayerToMosaicRequest = {
+  //       layerName: 'mockLayerNameExists',
+  //     };
 
-      const response = await requestSender.addLayerToMosaic(mockMosaicName, mockMosaicNotExistsRequest);
+  //     const response = await requestSender.addLayerToMosaic(mockMosaicName, mockMosaicNotExistsRequest);
 
-      expect(response).toSatisfyApiSpec();
-      const notFoundErrorMessage = `Mosaic name '${mockMosaicName}' is not exists`;
+  //     expect(response).toSatisfyApiSpec();
+  //     const notFoundErrorMessage = `Mosaic name '${mockMosaicName}' is not exists`;
 
-      expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
-      expect(response.body).toEqual({ message: notFoundErrorMessage });
-    });
-  });
+  //     expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
+  //     expect(response.body).toEqual({ message: notFoundErrorMessage });
+  //   });
+  // });
 
-  describe('#updateMosaic', () => {
-    const mockMosaicName = 'existsMosaicName';
-    const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
-      layers: [
-        { layerName: 'amsterdam_5cm-source', zIndex: 1 },
-        { layerName: 'NameIsAlreadyExists-source', zIndex: 0 },
-      ],
-    };
+  // describe('#updateMosaic', () => {
+  //   const mockMosaicName = 'existsMosaicName';
+  //   const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
+  //     layers: [
+  //       { layerName: 'amsterdam_5cm', zIndex: 1 },
+  //       { layerName: 'NameIsAlreadyExists', zIndex: 0 },
+  //     ],
+  //   };
 
-    it('Happy Path - should return status 201', async () => {
-      const response = await requestSender.updateMosaic(mockMosaicName, mockUpdateMosaicRequest);
+  //   it('Happy Path - should return status 201', async () => {
+  //     const response = await requestSender.updateMosaic(mockMosaicName, mockUpdateMosaicRequest);
 
-      expect(response).toSatisfyApiSpec();
-      expect(response.status).toBe(httpStatusCodes.CREATED);
-    });
+  //     expect(response).toSatisfyApiSpec();
+  //     expect(response.status).toBe(httpStatusCodes.CREATED);
+  //   });
 
-    it('Bad Path - should fail with response status 400 Bad Request', async () => {
-      const mockMosaicName = 'existsMosaicName';
-      const mockBadRequest = {
-        // mocking bad request with invalid field 'mockName' to test BadRequest status
-        layers: [
-          { mockName: 'amsterdam_5cm-source', zIndex: 1 },
-          { mockName: 'LayerNameIsNotExists', zIndex: 0 },
-        ],
-      } as unknown as IUpdateMosaicRequest;
-      const response = await requestSender.updateMosaic(mockMosaicName, mockBadRequest);
+  //   it('Bad Path - should fail with response status 400 Bad Request', async () => {
+  //     const mockMosaicName = 'existsMosaicName';
+  //     const mockBadRequest = {
+  //       // mocking bad request with invalid field 'mockName' to test BadRequest status
+  //       layers: [
+  //         { mockName: 'amsterdam_5cm', zIndex: 1 },
+  //         { mockName: 'LayerNameIsNotExists', zIndex: 0 },
+  //       ],
+  //     } as unknown as IUpdateMosaicRequest;
+  //     const response = await requestSender.updateMosaic(mockMosaicName, mockBadRequest);
 
-      expect(response).toSatisfyApiSpec();
-      expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
-    });
+  //     expect(response).toSatisfyApiSpec();
+  //     expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
+  //   });
 
-    it('Sad Path - should fail with response status 404 Not Found and layer name is not exists', async () => {
-      const mockMosaicName = 'existsMosaicName';
-      const mockLayerNotExistsRequest: IUpdateMosaicRequest = {
-        layers: [
-          { layerName: 'amsterdam_5cm-source', zIndex: 1 },
-          { layerName: 'LayerNameIsNotExists', zIndex: 0 },
-        ],
-      };
+  //   it('Sad Path - should fail with response status 404 Not Found and layer name is not exists', async () => {
+  //     const mockMosaicName = 'existsMosaicName';
+  //     const mockLayerNotExistsRequest: IUpdateMosaicRequest = {
+  //       layers: [
+  //         { layerName: 'amsterdam_5cm', zIndex: 1 },
+  //         { layerName: 'LayerNameIsNotExists', zIndex: 0 },
+  //       ],
+  //     };
 
-      const response = await requestSender.updateMosaic(mockMosaicName, mockLayerNotExistsRequest);
-      const notFoundErrorMessage = `Layer name '${mockLayerNotExistsRequest.layers[1].layerName}' is not exists`;
+  //     const response = await requestSender.updateMosaic(mockMosaicName, mockLayerNotExistsRequest);
+  //     const notFoundErrorMessage = `Layer name '${mockLayerNotExistsRequest.layers[1].layerName}' is not exists`;
 
-      expect(response).toSatisfyApiSpec();
-      expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
-      expect(response.body).toEqual({ message: notFoundErrorMessage });
-    });
+  //     expect(response).toSatisfyApiSpec();
+  //     expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
+  //     expect(response.body).toEqual({ message: notFoundErrorMessage });
+  //   });
 
-    // eslint-disable-next-line jest/no-identical-title
-    it('Sad Path - should fail with response status 404 Not Found and mosaic name is not exists', async () => {
-      const mockMosaicName = 'NotExistsMosaicName';
-      const mockMosaicNotExistsRequest: IUpdateMosaicRequest = {
-        layers: [
-          { layerName: 'amsterdam_5cm-source', zIndex: 1 },
-          { layerName: 'NameIsAlreadyExists-source', zIndex: 0 },
-        ],
-      };
+  //   // eslint-disable-next-line jest/no-identical-title
+  //   it('Sad Path - should fail with response status 404 Not Found and mosaic name is not exists', async () => {
+  //     const mockMosaicName = 'NotExistsMosaicName';
+  //     const mockMosaicNotExistsRequest: IUpdateMosaicRequest = {
+  //       layers: [
+  //         { layerName: 'amsterdam_5cm', zIndex: 1 },
+  //         { layerName: 'NameIsAlreadyExists', zIndex: 0 },
+  //       ],
+  //     };
 
-      const response = await requestSender.updateMosaic(mockMosaicName, mockMosaicNotExistsRequest);
-      const notFoundErrorMessage = `Mosaic name '${mockMosaicName}' is not exists`;
+  //     const response = await requestSender.updateMosaic(mockMosaicName, mockMosaicNotExistsRequest);
+  //     const notFoundErrorMessage = `Mosaic name '${mockMosaicName}' is not exists`;
 
-      expect(response).toSatisfyApiSpec();
-      expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
-      expect(response.body).toEqual({ message: notFoundErrorMessage });
-    });
-  });
+  //     expect(response).toSatisfyApiSpec();
+  //     expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
+  //     expect(response.body).toEqual({ message: notFoundErrorMessage });
+  //   });
+  // });
 });

@@ -11,7 +11,7 @@ paths:
     get:
       operationId: getConfig
       tags:
-        - Config
+      - Config
       summary: get current mapproxy config
       responses:
         '200':
@@ -20,13 +20,13 @@ paths:
             application/yaml:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/getConfigResponse'
-                  - $ref: '#/components/schemas/getConfigYamlResponse'
+                - $ref: '#/components/schemas/getConfigResponse'
+                - $ref: '#/components/schemas/getConfigYamlResponse'
             application/json:
               schema:
                 oneOf:
-                  - $ref: '#/components/schemas/getConfigResponse'
-                  - $ref: '#/components/schemas/getConfigYamlResponse'
+                - $ref: '#/components/schemas/getConfigResponse'
+                - $ref: '#/components/schemas/getConfigYamlResponse'
         '404':
           description: Not Found
           content:
@@ -43,7 +43,7 @@ paths:
     post:
       operationId: addLayer
       tags:
-        - Layer
+      - Layer
       summary: add layer to mapproxy
       responses:
         '201':
@@ -75,16 +75,16 @@ paths:
     delete:
       operationId: removeLayer
       tags:
-        - Layer
+      - Layer
       summary: remove layer from mapproxy
       parameters:
-        - name: layerNames
-          in: query
-          required: true
-          schema:
-            type: array
-            items:
-              type: string
+      - name: layerNames
+        in: query
+        required: true
+        schema:
+          type: array
+          items:
+            type: string
       responses:
         '200':
           description: OK
@@ -117,15 +117,16 @@ paths:
   /layer/{name}:
     get:
       operationId: getLayer
+      deprecated: true
       tags:
-        - Layer
+      - Layer
       summary: get existing layer
       parameters:
-        - name: name
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: OK
@@ -148,14 +149,14 @@ paths:
     put:
       operationId: updateLayer
       tags:
-        - Layer
+      - Layer
       summary: update existing layer source
       parameters:
-        - name: name
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '200':
           description: Updated
@@ -195,16 +196,17 @@ paths:
               $ref: '#/components/schemas/layer'
   /mosaic/{name}:
     post:
+      deprecated: true
       operationId: addLayerToMosaic
       tags:
-        - Mosaic
+      - Mosaic
       summary: add layer to mosaic
       parameters:
-        - name: name
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '201':
           description: Created
@@ -244,16 +246,17 @@ paths:
             schema:
               $ref: '#/components/schemas/mosaicLayer'
     put:
+      deprecated: true
       operationId: updateMosaic
       tags:
-        - Mosaic
+      - Mosaic
       summary: update mosaic layers
       parameters:
-        - name: name
-          in: path
-          required: true
-          schema:
-            type: string
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         '201':
           description: Created
@@ -299,24 +302,24 @@ components:
     error:
       type: object
       required:
-        - message
+      - message
       properties:
         message:
           type: string
     layer:
       type: object
       required:
-        - cacheType
-        - name
-        - tilesPath
-        - format
+      - cacheType
+      - name
+      - tilesPath
+      - format
       properties:
         cacheType:
           type: string
           enum:
-            - geopackage
-            - s3
-            - file
+          - geopackage
+          - s3
+          - file
           example: s3
         name:
           type: string
@@ -327,16 +330,16 @@ components:
         format:
           type: string
           enum:
-            - PNG
-            - JPEG
+          - PNG
+          - JPEG
     getLayerResponse:
       type: object
       required:
-        - cache
-        - grids
-        - sources
-        - upscale_tiles
-        - format
+      - cache
+      - grids
+      - sources
+      - upscale_tiles
+      - format
       properties:
         cache:
           type: object
@@ -360,8 +363,8 @@ components:
         format:
           type: string
           enum:
-            - image/png
-            - image/jpeg
+          - image/png
+          - image/jpeg
     getConfigResponse:
       type: object
       properties:
@@ -404,8 +407,8 @@ components:
                 format:
                   type: string
                   enum:
-                    - image/png
-                    - image/jpeg
+                  - image/png
+                  - image/jpeg
                 sources:
                   type: array
                   items:
@@ -443,7 +446,7 @@ components:
     mosaicLayer:
       type: object
       required:
-        - layerName
+      - layerName
       properties:
         layerName:
           type: string
@@ -451,15 +454,15 @@ components:
     mosaic:
       type: object
       required:
-        - layers
+      - layers
       properties:
         layers:
           type: array
           items:
             type: object
             required:
-              - layerName
-              - zIndex
+            - layerName
+            - zIndex
             properties:
               layerName:
                 type: string
@@ -472,5 +475,5 @@ components:
       items:
         type: string
       example:
-        - amsterdam_5cm-source
-        - amsterdam_5cm-ortho-source
+      - amsterdam_5cm-source
+      - amsterdam_5cm-ortho-source

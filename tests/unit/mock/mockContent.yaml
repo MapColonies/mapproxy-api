@@ -1,6 +1,6 @@
 caches:
   mock: some content for unit-test
-  amsterdam_5cm-source:
+  amsterdam_5cm:
     sources: []
     grids:
       - epsg4326dir
@@ -10,7 +10,7 @@ caches:
       type: s3
       directory: /path/to/s3/directory/tile
       directory_layout: tms
-  mockLayerNameExists-source:
+  mockLayerNameExists:
     sources: []
     grids:
       - epsg4326dir
@@ -25,17 +25,7 @@ caches:
       - mock
     grids:
       - epsg4326dir
-  NameIsAlreadyExists-source:
-    sources: []
-    grids:
-      - epsg4326dir
-    format: image/png
-    upscale_tiles: 18
-    cache:
-      type: s3
-      directory: /path/to/s3/directory/tile
-      directory_layout: tms
-  redisExists-source:
+  NameIsAlreadyExists:
     sources: []
     grids:
       - epsg4326dir
@@ -46,7 +36,17 @@ caches:
       directory: /path/to/s3/directory/tile
       directory_layout: tms
   redisExists:
-    sources: ['redisExists-source']
+    sources: []
+    grids:
+      - epsg4326dir
+    format: image/png
+    upscale_tiles: 18
+    cache:
+      type: s3
+      directory: /path/to/s3/directory/tile
+      directory_layout: tms
+  redisExists-redis:
+    sources: ['redisExists']
     grids:
       - epsg4326dir
     format: image/png
@@ -73,11 +73,11 @@ layers:
     title: title
     sources:
       - source
-  - name: amsterdam_5cm-source
+  - name: amsterdam_5cm
     title: amsterdam 5m layer discription
     sources:
-      - amsterdam_5cm-source
+      - amsterdam_5cm
   - name: redisExists
-    title: redisExists
+    title: redisExists-redis
     sources:
-      - redisExists
+      - redisExists-redis

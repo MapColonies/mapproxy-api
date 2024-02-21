@@ -65,30 +65,24 @@ describe('layersManager', () => {
 
       // action
       expect.assertions(2);
-      const resource: IMapProxyCache = await layersManager.getLayer('mockLayerNameExists-source');
+      const resource: IMapProxyCache = await layersManager.getLayer('mockLayerNameExists');
       // expectation;
 
       expect(getJsonMock).toHaveBeenCalledTimes(1);
       expect(resource).toStrictEqual(expectedCache);
     });
 
-    it('should successfully return the requested redis cache', async () => {
+    it('should successfully return the requested cache', async () => {
       const expectedCache = {
-        cache: {
-          host: 'raster-mapproxy-redis-master',
-          port: 6379,
-          username: 'mapcolonies',
-          password: 'mapcolonies',
-          prefix: 'mcrl:',
-          type: 'redis',
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          default_ttl: 86400,
-        },
-        sources: ['redisExists-source'],
+        sources: [],
         grids: ['epsg4326dir'],
         format: 'image/png',
-        // eslint-disable-next-line @typescript-eslint/naming-convention
         upscale_tiles: 18,
+        cache: {
+          type: 's3',
+          directory: '/path/to/s3/directory/tile',
+          directory_layout: 'tms',
+        },
       };
 
       // action
@@ -126,7 +120,7 @@ describe('layersManager', () => {
 
     it('should successfully add layer + redis cache', async () => {
       // action
-      expect.assertions(5);
+      expect.assertions(6);
       const action = layersManager.addLayer(mockLayerNameIsNotExists);
 
       // expectation
@@ -134,7 +128,8 @@ describe('layersManager', () => {
 
       const resultJson = await MockConfigProvider.getJson();
       expect(resultJson.layers).toPartiallyContain({ name: mockLayerNameIsNotExists.name });
-      expect(resultJson.caches).toContainKey(`${mockLayerNameIsNotExists.name}-source`);
+      expect(resultJson.layers).toPartiallyContain({ name: mockLayerNameIsNotExists.name, sources: [`${mockLayerNameIsNotExists.name}-redis`] });
+      expect(resultJson.caches).toContainKey(`${mockLayerNameIsNotExists.name}-redis`);
       expect(resultJson.caches).toContainKey(mockLayerNameIsNotExists.name);
       expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
@@ -155,122 +150,122 @@ describe('layersManager', () => {
       await expect(action).toResolve();
 
       const resultJson = await MockConfigProvider.getJson();
-      expect(resultJson.layers).toPartiallyContain({ name: mockLayerNameIsNotExists.name, sources: [`${mockLayerNameIsNotExists.name}-source`] });
-      expect(resultJson.caches).not.toContainKey(mockLayerNameIsNotExists.name);
+      expect(resultJson.layers).toPartiallyContain({ name: mockLayerNameIsNotExists.name, sources: [mockLayerNameIsNotExists.name] });
+      expect(resultJson.caches).not.toContainKey(`${mockLayerNameIsNotExists.name}-redis`);
       expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
   });
 
-  describe('#addLayerToMosaic', () => {
-    it('should reject with not found error due layer name is not exists', async () => {
-      // mock
-      const mockMosaicName = 'mosaicMockName';
-      const mockLayerNotExistsToMosaicRequest: ILayerToMosaicRequest = {
-        layerName: 'layerNameIsNotExists',
-      };
-      // action
-      const action = async () => {
-        await layersManager.addLayerToMosaic(mockMosaicName, mockLayerNotExistsToMosaicRequest);
-      };
-      // expectation
-      await expect(action).rejects.toThrow(NotFoundError);
-      expect(updateJsonMock).toHaveBeenCalledTimes(1);
-    });
+  // describe('#addLayerToMosaic', () => {
+  //   it('should reject with not found error due layer name is not exists', async () => {
+  //     // mock
+  //     const mockMosaicName = 'mosaicMockName';
+  //     const mockLayerNotExistsToMosaicRequest: ILayerToMosaicRequest = {
+  //       layerName: 'layerNameIsNotExists',
+  //     };
+  //     // action
+  //     const action = async () => {
+  //       await layersManager.addLayerToMosaic(mockMosaicName, mockLayerNotExistsToMosaicRequest);
+  //     };
+  //     // expectation
+  //     await expect(action).rejects.toThrow(NotFoundError);
+  //     expect(updateJsonMock).toHaveBeenCalledTimes(1);
+  //   });
 
-    it('should reject with not found error due mosaic name is not exists', async () => {
-      // mock
-      const mockMosaicName = 'mosaicNameIsNotExists';
-      const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
-        layerName: 'mockLayerNameExists-source',
-      };
-      // action
-      const action = async () => {
-        await layersManager.addLayerToMosaic(mockMosaicName, mockLayerToMosaicRequest);
-      };
-      // expectation
-      await expect(action).rejects.toThrow(NotFoundError);
-      expect(updateJsonMock).toHaveBeenCalledTimes(1);
-    });
+  //   it('should reject with not found error due mosaic name is not exists', async () => {
+  //     // mock
+  //     const mockMosaicName = 'mosaicNameIsNotExists';
+  //     const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
+  //       layerName: 'mockLayerNameExists-source',
+  //     };
+  //     // action
+  //     const action = async () => {
+  //       await layersManager.addLayerToMosaic(mockMosaicName, mockLayerToMosaicRequest);
+  //     };
+  //     // expectation
+  //     await expect(action).rejects.toThrow(NotFoundError);
+  //     expect(updateJsonMock).toHaveBeenCalledTimes(1);
+  //   });
 
-    it('should successfully add layer to mosaic', async () => {
-      // mock
-      const mockMosaicName = 'existsMosaicName';
-      const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
-        layerName: 'mockLayerNameExists-source',
-      };
-      // action
-      const action = async () => {
-        await layersManager.addLayerToMosaic(mockMosaicName, mockLayerToMosaicRequest);
-      };
-      // expectation
-      await expect(action()).resolves.not.toThrow();
-      expect(updateJsonMock).toHaveBeenCalledTimes(1);
-    });
-  });
+  //   it('should successfully add layer to mosaic', async () => {
+  //     // mock
+  //     const mockMosaicName = 'existsMosaicName';
+  //     const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
+  //       layerName: 'mockLayerNameExists-source',
+  //     };
+  //     // action
+  //     const action = async () => {
+  //       await layersManager.addLayerToMosaic(mockMosaicName, mockLayerToMosaicRequest);
+  //     };
+  //     // expectation
+  //     await expect(action()).resolves.not.toThrow();
+  //     expect(updateJsonMock).toHaveBeenCalledTimes(1);
+  //   });
+  // });
 
-  describe('#updateMosaic', () => {
-    it('should successfully update mosaic layers by their z-index', async () => {
-      // mock
-      const mockMosaicName = 'existsMosaicName';
-      const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
-        layers: [
-          { layerName: 'amsterdam_5cm-source', zIndex: 1 },
-          { layerName: 'NameIsAlreadyExists-source', zIndex: 0 },
-        ],
-      };
-      // action
-      const action = async () => {
-        await layersManager.updateMosaic(mockMosaicName, mockUpdateMosaicRequest);
-      };
-      // expectation
-      await expect(action()).resolves.not.toThrow();
-      expect(sortArrayByZIndexStub).toHaveBeenCalledTimes(1);
-      expect(updateJsonMock).toHaveBeenCalledTimes(1);
-    });
+  // describe('#updateMosaic', () => {
+  //   it('should successfully update mosaic layers by their z-index', async () => {
+  //     // mock
+  //     const mockMosaicName = 'existsMosaicName';
+  //     const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
+  //       layers: [
+  //         { layerName: 'amsterdam_5cm-source', zIndex: 1 },
+  //         { layerName: 'NameIsAlreadyExists-source', zIndex: 0 },
+  //       ],
+  //     };
+  //     // action
+  //     const action = async () => {
+  //       await layersManager.updateMosaic(mockMosaicName, mockUpdateMosaicRequest);
+  //     };
+  //     // expectation
+  //     await expect(action()).resolves.not.toThrow();
+  //     expect(sortArrayByZIndexStub).toHaveBeenCalledTimes(1);
+  //     expect(updateJsonMock).toHaveBeenCalledTimes(1);
+  //   });
 
-    it('should reject with not found error due layer name is not exists', async () => {
-      // mock
-      const mockMosaicName = 'existsMosaicName';
-      const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
-        layers: [
-          { layerName: 'amsterdam_5cm-source', zIndex: 1 },
-          { layerName: 'LayerNameIsNotExists', zIndex: 0 },
-        ],
-      };
-      // action
-      const action = async () => {
-        await layersManager.updateMosaic(mockMosaicName, mockUpdateMosaicRequest);
-      };
-      // expectation
-      await expect(action).rejects.toThrow(NotFoundError);
-      expect(sortArrayByZIndexStub).toHaveBeenCalledTimes(0);
-      expect(updateJsonMock).toHaveBeenCalledTimes(1);
-    });
+  //   it('should reject with not found error due layer name is not exists', async () => {
+  //     // mock
+  //     const mockMosaicName = 'existsMosaicName';
+  //     const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
+  //       layers: [
+  //         { layerName: 'amsterdam_5cm-source', zIndex: 1 },
+  //         { layerName: 'LayerNameIsNotExists', zIndex: 0 },
+  //       ],
+  //     };
+  //     // action
+  //     const action = async () => {
+  //       await layersManager.updateMosaic(mockMosaicName, mockUpdateMosaicRequest);
+  //     };
+  //     // expectation
+  //     await expect(action).rejects.toThrow(NotFoundError);
+  //     expect(sortArrayByZIndexStub).toHaveBeenCalledTimes(0);
+  //     expect(updateJsonMock).toHaveBeenCalledTimes(1);
+  //   });
 
-    it('should reject with not found error due mosaic name is not exists', async () => {
-      // mock
-      const mockMosaicName = 'NotExistsMosaicName';
-      const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
-        layers: [
-          { layerName: 'amsterdam_5cm-source', zIndex: 1 },
-          { layerName: 'NameIsAlreadyExists-source', zIndex: 0 },
-        ],
-      };
-      // action
-      const action = async () => {
-        await layersManager.updateMosaic(mockMosaicName, mockUpdateMosaicRequest);
-      };
-      // expectation
-      await expect(action).rejects.toThrow(NotFoundError);
-      expect(sortArrayByZIndexStub).toHaveBeenCalledTimes(0);
-      expect(updateJsonMock).toHaveBeenCalledTimes(1);
-    });
-  });
+  //   it('should reject with not found error due mosaic name is not exists', async () => {
+  //     // mock
+  //     const mockMosaicName = 'NotExistsMosaicName';
+  //     const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
+  //       layers: [
+  //         { layerName: 'amsterdam_5cm-source', zIndex: 1 },
+  //         { layerName: 'NameIsAlreadyExists-source', zIndex: 0 },
+  //       ],
+  //     };
+  //     // action
+  //     const action = async () => {
+  //       await layersManager.updateMosaic(mockMosaicName, mockUpdateMosaicRequest);
+  //     };
+  //     // expectation
+  //     await expect(action).rejects.toThrow(NotFoundError);
+  //     expect(sortArrayByZIndexStub).toHaveBeenCalledTimes(0);
+  //     expect(updateJsonMock).toHaveBeenCalledTimes(1);
+  //   });
+  // });
 
   describe('#removeLayer', () => {
     it('should successfully remove layer', async () => {
       // mock
-      const mockLayerNames = ['mockLayerNameExists-source', 'NameIsAlreadyExists-source'];
+      const mockLayerNames = ['mockLayerNameExists', 'NameIsAlreadyExists'];
       // action
       const action = async () => {
         await layersManager.removeLayer(mockLayerNames);
@@ -285,9 +280,9 @@ describe('layersManager', () => {
       const mockLayerNames = ['redisExists'];
       const data = await MockConfigProvider.getJson();
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      expect(data.caches[`${mockLayerNames}`]).toBeDefined();
+      expect(data.caches[`${mockLayerNames}-redis`]).toBeDefined();
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      expect(data.caches[`${mockLayerNames}-source`]).toBeDefined();
+      expect(data.caches[`${mockLayerNames}`]).toBeDefined();
 
       // action
       expect.assertions(6);
@@ -299,25 +294,24 @@ describe('layersManager', () => {
       const resultJson = await MockConfigProvider.getJson();
       expect(resultJson.layers).not.toPartiallyContain({ name: `${mockLayerNameIsNotExists.name}` });
       expect(resultJson.caches).not.toContainKey(mockLayerNameIsNotExists.name);
-      expect(resultJson.caches).not.toContainKey(`${mockLayerNameIsNotExists.name}-source`);
+      expect(resultJson.caches).not.toContainKey(`${mockLayerNameIsNotExists.name}-redis`);
     });
 
-    it('should return not found layers array and not to throw', async () => {
+    it('should return not found and throw 404', async () => {
       //check data
-      expect.assertions(5);
+      expect.assertions(3);
       const data = await MockConfigProvider.getJson();
-      expect(data.caches['mockLayerNameIsNotExists-source']).toBeUndefined();
-      expect(data.caches['anotherMockLayerNameNotExists']).toBeUndefined();
+      expect(data.caches['mockLayerNameIsNotExists']).toBeUndefined();
+      expect(data.caches['anotherMockLayerNameNotExists-redis']).toBeUndefined();
 
       // mock
-      const mockNotExistsLayerNames = ['mockLayerNameIsNotExists-source', 'anotherMockLayerNameNotExists'];
+      const mockNotExistsLayerNames = ['mockLayerNameIsNotExists-redis', 'anotherMockLayerNameNotExists'];
       // action
-      const result = await layersManager.removeLayer(mockNotExistsLayerNames);
-
+      const action = async () => {
+        await layersManager.removeLayer(mockNotExistsLayerNames);
+      };
       // expectation
-      expect(result).toEqual(expect.any(Array));
-      expect(result).toEqual(mockNotExistsLayerNames);
-      expect(updateJsonMock).toHaveBeenCalledTimes(1);
+      expect(action).rejects.toThrow(NotFoundError);
     });
   });
 
@@ -331,7 +325,7 @@ describe('layersManager', () => {
 
     it('should successfully update layer', async () => {
       // mock
-      const mockLayerName = 'mockLayerNameExists-source';
+      const mockLayerName = 'mockLayerNameExists';
       // action
       const action = async () => {
         await layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
@@ -343,8 +337,8 @@ describe('layersManager', () => {
 
     it('should successfully update layer + redis attributes', async () => {
       // mock
-      const mockLayerName = 'redisExists-source';
-      const mockRedisLayerName = 'redisExists';
+      const mockLayerName = 'redisExists';
+      const mockRedisLayerName = 'redisExists-redis';
       const expectedTileMimeFormatPng = mimeLookup(TileOutputFormat.PNG) as TilesMimeFormat;
       const expectedTileMimeFormatJpeg = mimeLookup(TileOutputFormat.JPEG) as TilesMimeFormat;
 

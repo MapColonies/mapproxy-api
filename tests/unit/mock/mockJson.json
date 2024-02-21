@@ -1,7 +1,7 @@
 {
   "caches": {
     "mock": "some content for unit-test",
-    "amsterdam_5cm-source": {
+    "amsterdam_5cm": {
       "sources": [],
       "grids": ["epsg4326dir"],
       "format": "image/png",
@@ -12,7 +12,7 @@
         "directory_layout": "tms"
       }
     },
-    "mockLayerNameExists-source": {
+    "mockLayerNameExists": {
       "sources": [],
       "grids": ["epsg4326dir"],
       "format": "image/png",
@@ -27,7 +27,7 @@
       "sources": ["mock"],
       "grids": ["epsg4326dir"]
     },
-    "NameIsAlreadyExists-source": {
+    "NameIsAlreadyExists": {
       "sources": [],
       "grids": ["epsg4326dir"],
       "format": "image/png",
@@ -38,8 +38,8 @@
         "directory_layout": "tms"
       }
     },
-    "redisExists": {
-      "sources": ["redisExists-source"],
+    "redisExists-redis": {
+      "sources": ["redisExists"],
       "grids": ["epsg4326dir"],
       "format": "image/png",
       "upscale_tiles": 18,
@@ -53,7 +53,7 @@
         "default_ttl": 86400
       }
     },
-    "redisExists-source": {
+    "redisExists": {
       "sources": [],
       "grids": ["epsg4326dir"],
       "format": "image/png",
@@ -71,14 +71,14 @@
   },
   "layers": [
     {
-      "name": "NameIsAlreadyExists-source",
+      "name": "NameIsAlreadyExists",
       "title": "title",
-      "sources": ["NameIsAlreadyExists-source"]
+      "sources": ["NameIsAlreadyExists"]
     },
     {
-      "name": "mockLayerNameExists-source",
+      "name": "mockLayerNameExists",
       "title": "title",
-      "sources": ["mockLayerNameExists-source"]
+      "sources": ["mockLayerNameExists"]
     },
     {
       "name": "mock",
@@ -92,13 +92,13 @@
     },
     {
       "name": "redisExists",
-      "title": "redisExists",
-      "sources": ["redisExists"]
+      "title": "redisExists-redis",
+      "sources": ["redisExists-redis"]
     },
     {
-      "name": "amsterdam_5cm-source",
+      "name": "amsterdam_5cm",
       "title": "amsterdam 5m layer discription",
-      "sources": ["amsterdam_5cm-source"]
+      "sources": ["amsterdam_5cm"]
     }
   ]
 }

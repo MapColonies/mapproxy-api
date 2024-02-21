@@ -32,7 +32,7 @@ class LayersManager {
     @inject(SERVICES.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig,
     @inject(SERVICES.REDISCONFIG) private readonly redisConfig: IRedisConfig,
     @inject(SERVICES.CONFIGPROVIDER) private readonly configProvider: IConfigProvider
-  ) {}
+  ) { }
   public async getLayer(layerName: string): Promise<IMapProxyCache> {
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
 
@@ -104,18 +104,18 @@ class LayersManager {
     const baseCacheNamesDuplicate: string[] = [...baseCacheNames];
 
     baseCacheNamesDuplicate.forEach((currentCache) => {
-      const sourceName = currentCache.endsWith('-source') ? currentCache : `${currentCache}-source`;
-      const redisSourceName = currentCache.endsWith('-source') ? currentCache.replace('-source', '') : currentCache;
+      const mainCacheName = currentCache.endsWith('-redis') ? currentCache.replace('-redis', '') : currentCache;
+      const redisCacheName = currentCache.endsWith('-redis') ? currentCache : currentCache.replace('-redis', '');
 
-      if (mapproxyConfiguration.caches[sourceName] != undefined) {
-        if (!linkedCaches.includes(sourceName)) {
-          linkedCaches.push(sourceName);
+      if (mapproxyConfiguration.caches[mainCacheName] != undefined) {
+        if (!linkedCaches.includes(mainCacheName)) {
+          linkedCaches.push(mainCacheName);
         }
       }
 
-      if (mapproxyConfiguration.caches[redisSourceName] != undefined) {
-        if (!linkedCaches.includes(redisSourceName)) {
-          linkedCaches.push(redisSourceName);
+      if (mapproxyConfiguration.caches[redisCacheName] != undefined) {
+        if (!linkedCaches.includes(redisCacheName)) {
+          linkedCaches.push(redisCacheName);
         }
       }
     });
@@ -126,6 +126,7 @@ class LayersManager {
     this.logger.info(`Remove layers request for: [${layersName.join(',')}]`);
     const errorMessage = 'no valid layers to delete';
     let failedLayers;
+    const deletedLayers: string[] = [];
 
     const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
       let updateCounter = 0;
@@ -140,11 +141,14 @@ class LayersManager {
           jsonDocument.layers.splice(requestedLayerIndex, 1);
           updateCounter++;
           this.logger.info(`Successfully removed layer '${cacheName}'`);
+          deletedLayers.concat([cacheName]);
         }
       });
       failedLayers = layersName.filter((layerName) => !allLinkedCaches.includes(layerName));
       if (failedLayers.length !== 0) {
-        this.logger.warn(`Layers: ['${failedLayers.join(',')}'] does not exist`);
+        const notFoundMessege = `Layers: ['${failedLayers.join(',')}'] were not found`
+        this.logger.error(notFoundMessege);
+        throw new NotFoundError(notFoundMessege);
       }
       if (updateCounter === 0) {
         throw new Error(errorMessage);
@@ -159,45 +163,45 @@ class LayersManager {
       }
     });
 
-    return failedLayers;
+    return deletedLayers;
   }
 
   public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<void> {
     this.logger.info({ msg: `Update layer: '${layerName}' request`, layerRequest });
     const tileMimeFormat = mimeLookup(layerRequest.format) as TilesMimeFormat;
-    const isRedisCache = !layerName.endsWith('-source');
+    const isRedisCache = layerName.endsWith('-redis');
     let doesHaveRedisCache = false;
 
     const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
       let newLayer: IMapProxyLayer;
-      let sourceLayerName = `${layerName}-source`;
       let redisLayerName: string = layerName;
+      let mainLayerName = layerName.replace('-redis','');
 
-      if (!isLayerNameExists(jsonDocument, layerName)) {
+      if (jsonDocument.caches[layerName] == undefined) {
         throw new NotFoundError(`Cache name '${layerName}' does not exists`);
       }
 
       if (!isRedisCache) {
-        redisLayerName = layerName.replace('-source', '');
+        mainLayerName = layerName;
+        redisLayerName = `${layerName}-redis`
         doesHaveRedisCache = jsonDocument.caches[redisLayerName] != undefined;
-        sourceLayerName = `${layerName}`;
       }
 
       if (isRedisCache || doesHaveRedisCache) {
         // update existing layer cache values with the new requested layer cache values
-        const newRedisCache: IMapProxyCache = this.createRedisCache(redisLayerName, sourceLayerName, tileMimeFormat, this.mapproxyConfig);
+        const newRedisCache: IMapProxyCache = this.createRedisCache(redisLayerName, mainLayerName, tileMimeFormat, this.mapproxyConfig);
         jsonDocument.caches[redisLayerName] = newRedisCache;
         // update existing layer values with the new requested layer values
         newLayer = this.getLayerValues(redisLayerName);
         const redisLayerIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === redisLayerName);
         jsonDocument.layers[redisLayerIndex] = newLayer;
       } else {
-        newLayer = this.getLayerValues(sourceLayerName);
-        const sourceLayerNameIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === sourceLayerName);
+        newLayer = this.getLayerValues(mainLayerName);
+        const sourceLayerNameIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === mainLayerName);
         jsonDocument.layers[sourceLayerNameIndex] = newLayer;
       }
       const newSourceCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileMimeFormat);
-      jsonDocument.caches[sourceLayerName] = newSourceCache;
+      jsonDocument.caches[mainLayerName] = newSourceCache;
 
       return jsonDocument;
     };
@@ -266,19 +270,19 @@ class LayersManager {
 
   private addNewSourceLayerToConfig(layerRequest: ILayerPostRequest, jsonDocument: IMapProxyJsonDocument): void {
     //creates source cache, and a source layer
-    this.logger.info({ msg: `adding ${layerRequest.name} as source layer`, layerRequest });
-    const sourceCacheTitle = `${layerRequest.name}-source`;
-    if (isLayerNameExists(jsonDocument, sourceCacheTitle)) {
-      throw new ConflictError(`Layer name '${sourceCacheTitle}' already exists`);
+    this.logger.info({ msg: `adding ${layerRequest.name} as main layer`, layerRequest });
+    const mainCacheTitle = layerRequest.name;
+    if (isLayerNameExists(jsonDocument, mainCacheTitle)) {
+      throw new ConflictError(`Layer name '${mainCacheTitle}' already exists`);
     }
     const tileMimeFormat = mimeLookup(layerRequest.format) as TilesMimeFormat;
     const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileMimeFormat);
-    this.logger.info(`adding ${sourceCacheTitle} to cache list`);
-    jsonDocument.caches[sourceCacheTitle] = newCache;
-    this.addNewLayer(layerRequest.name, sourceCacheTitle, jsonDocument);
+    this.logger.info(`adding ${mainCacheTitle} to cache list`);
+    jsonDocument.caches[mainCacheTitle] = newCache;
+    this.addNewLayer(mainCacheTitle, jsonDocument);
   }
 
-  private addNewLayer(layerName: string, sourceCacheTitle: string, jsonDocument: IMapProxyJsonDocument): void {
+  private addNewLayer(layerName: string, jsonDocument: IMapProxyJsonDocument, sourceCacheTitle?: string): void {
     this.logger.info(`adding ${layerName} to layer list`);
 
     const newLayer: IMapProxyLayer = this.getLayerValues(layerName, sourceCacheTitle);
@@ -287,20 +291,20 @@ class LayersManager {
 
   private addNewRedisLayerToConfig(layerRequest: ILayerPostRequest, jsonDocument: IMapProxyJsonDocument): void {
     this.logger.info({ msg: `adding ${layerRequest.name} as redis layer`, layerRequest });
-    //creates source cache+redis cache, and a redis layer
-    const sourceCacheTitle = `${layerRequest.name}-source`;
-    const redisCacheTitle = layerRequest.name;
-    if (isLayerNameExists(jsonDocument, sourceCacheTitle)) {
-      throw new ConflictError(`Layer name '${sourceCacheTitle}' already exists`);
+    //creates main cache+redis cache, and a redis layer
+    const redisCacheTitle = `${layerRequest.name}-redis`;
+    const mainCacheTitle = layerRequest.name;
+    if (isLayerNameExists(jsonDocument, mainCacheTitle)) {
+      throw new ConflictError(`Layer name '${mainCacheTitle}' already exists`);
     }
     const tileMimeFormat = mimeLookup(layerRequest.format) as TilesMimeFormat;
-    this.logger.info(`adding ${sourceCacheTitle} to cache list`);
+    this.logger.info(`adding ${mainCacheTitle} to cache list`);
     const sourceCacheBase: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileMimeFormat);
-    jsonDocument.caches[`${sourceCacheTitle}`] = sourceCacheBase;
+    jsonDocument.caches[`${mainCacheTitle}`] = sourceCacheBase;
     this.logger.info(`adding ${redisCacheTitle} to cache list`);
-    const redisCache: IMapProxyCache = this.createRedisCache(redisCacheTitle, sourceCacheTitle, tileMimeFormat, this.mapproxyConfig);
+    const redisCache: IMapProxyCache = this.createRedisCache(redisCacheTitle, mainCacheTitle, tileMimeFormat, this.mapproxyConfig);
     jsonDocument.caches[`${redisCacheTitle}`] = redisCache;
-    this.addNewLayer(layerRequest.name, redisCacheTitle, jsonDocument);
+    this.addNewLayer(mainCacheTitle, jsonDocument, redisCacheTitle);
   }
 
   private createRedisCache(originalLayerName: string, sourceLayerName: string, format: string, mapproxyConfig: IMapProxyConfig): IMapProxyCache {
@@ -316,6 +320,11 @@ class LayersManager {
     };
 
     return cache;
+  }
+
+  private isCacheExists(jsonDocument: IMapProxyJsonDocument, layerName: string): boolean {
+    const publishedLayers: string[] = Object.keys(jsonDocument.layers);
+    return publishedLayers.includes(layerName);
   }
 }
 
