@@ -15,7 +15,6 @@ import {
   ICacheSource,
   IRedisConfig,
 } from '../../common/interfaces';
-// import { sortArrayByZIndex } from '../../common/utils';
 import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
 import { S3Source } from '../../common/cacheProviders/S3Source';
 import { GpkgSource } from '../../common/cacheProviders/gpkgSource';
@@ -103,7 +102,7 @@ class LayersManager {
 
     baseCacheNamesDuplicate.forEach((currentCache) => {
       const mainCacheName = currentCache.endsWith('-redis') ? currentCache.replace('-redis', '') : currentCache;
-      const redisCacheName = currentCache.endsWith('-redis') ? currentCache : currentCache.replace('-redis', '');
+      const redisCacheName = currentCache.endsWith('-redis') ? currentCache : `${currentCache}-redis`;
 
       if (mapproxyConfiguration.caches[mainCacheName] != undefined) {
         if (!linkedCaches.includes(mainCacheName)) {
@@ -132,14 +131,15 @@ class LayersManager {
       allLinkedCaches.forEach((cacheName) => {
         // remove requested layer cache source from cache list
         delete jsonDocument.caches[cacheName];
+        this.logger.info(`Successfully removed cache '${cacheName}'`);
+        deletedLayers.push(cacheName);
+        updateCounter++;
         // remove requested layer from layers array
         const requestedLayerIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === cacheName);
         // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         if (requestedLayerIndex !== -1) {
           jsonDocument.layers.splice(requestedLayerIndex, 1);
-          updateCounter++;
           this.logger.info(`Successfully removed layer '${cacheName}'`);
-          deletedLayers.concat([cacheName]);
         }
       });
       failedLayers = layersName.filter((layerName) => !allLinkedCaches.includes(layerName));
