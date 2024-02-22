@@ -30,7 +30,7 @@ global:
     path: '/usr/local/share/ca-certificates'
     key: 'ca.crt'
   ingress:
-    domain: 'apps.aroapp.io'       
+    domain: 'apps.aroapp.io'
 
 enabled: true
 environment: development
@@ -48,7 +48,7 @@ image:
   repository: mapproxy-api
   tag: 'latest'
 
-storage: 
+storage:
   mapproxyConfigProvider: "" #  -> 'DB' | 'FS' | 'S3'
   s3:
     endpointUrl: ""
@@ -71,9 +71,9 @@ db:
     useExternal: false
     externalSecretName: ""
 
-# add pod annotations
-# example:
-# podAnnotations:
+  # add pod annotations
+  # example:
+  # podAnnotations:
   # annotation1: annotation-value-1
   # annotation2: annotation-value-2
 podAnnotations: {}
@@ -94,7 +94,7 @@ env:
     enabled: false
     url: http://localhost:55681/v1/metrics
   mapproxyCache:
-    grids: World84CRS
+    grids: WorldCRS84
     upscaleTiles: 18
     directoryLayout: tms
 
