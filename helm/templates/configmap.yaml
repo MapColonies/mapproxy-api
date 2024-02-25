@@ -30,13 +30,13 @@ data:
   {{ if .Values.redis.enabled }}
   REDIS_HOST: {{ quote .Values.redis.host }}
   REDIS_PORT: {{ quote .Values.redis.port }}
-  {{ if .Values.redis.auth.enableRedisUser }}
   REDIS_USER_ENABLED: {{ quote .Values.redis.auth.enableRedisUser }}
+  {{ if .Values.redis.auth.enableRedisUser }}
   REDIS_USERNAME: {{ quote .Values.redis.auth.username }}
   REDIS_PASSWORD: {{ quote .Values.redis.auth.password }}
   {{ end }}
-  {{ if .Values.redis.prefix.enablePrefix }}
   REDIS_PREFIX_ENABLED: {{ quote .Values.redis.prefix.enablePrefix }}
+  {{ if .Values.redis.prefix.enablePrefix }}
   REDIS_PREFIX: {{ quote .Values.redis.prefix.prefix }}
   {{ end }}
   REDIS_TYPE: {{ quote .Values.redis.type }}

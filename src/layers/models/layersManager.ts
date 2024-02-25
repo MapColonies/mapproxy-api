@@ -102,7 +102,7 @@ class LayersManager {
 
     baseCacheNamesDuplicate.forEach((currentCache) => {
       const mainCacheName = currentCache.endsWith('-redis') ? currentCache.replace('-redis', '') : currentCache;
-      const redisCacheName = currentCache.endsWith('-redis') ? currentCache : `${currentCache}-redis`;
+      const redisCacheName = `${mainCacheName}-redis`;
 
       if (mapproxyConfiguration.caches[mainCacheName] != undefined) {
         if (!linkedCaches.includes(mainCacheName)) {
