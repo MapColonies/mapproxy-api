@@ -350,33 +350,6 @@ components:
           type: object
     getConfigYamlResponse:
       type: string
-    mosaicLayer:
-      type: object
-      required:
-        - layerName
-      properties:
-        layerName:
-          type: string
-          example: amsterdam_5cm-source
-    mosaic:
-      type: object
-      required:
-        - layers
-      properties:
-        layers:
-          type: array
-          items:
-            type: object
-            required:
-              - layerName
-              - zIndex
-            properties:
-              layerName:
-                type: string
-                example: amsterdam_5cm-source
-              zIndex:
-                type: number
-                example: 1
     failedRemoveDiscreteLayers:
       type: array
       items:
