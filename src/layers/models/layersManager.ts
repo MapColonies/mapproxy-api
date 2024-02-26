@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { container, inject, injectable } from 'tsyringe';
 import { Logger } from '@map-colonies/js-logger';
-import { ConflictError, NotFoundError } from '@map-colonies/error-types';
+import { ConflictError, NotFoundError, NotImplementedError } from '@map-colonies/error-types';
 import { lookup as mimeLookup, TilesMimeFormat } from '@map-colonies/types';
 import { SERVICES } from '../../common/constants';
 import {
@@ -77,40 +77,50 @@ class LayersManager {
   public async removeLayer(layersName: string[]): Promise<string[] | void> {
     this.logger.info(`Remove layers request for: [${layersName.join(',')}]`);
     const errorMessage = 'no valid layers to delete';
-    let failedLayers;
+    let failedCaches;
+    const failedLayers: string[] = [];
     const deletedLayers: string[] = [];
 
-    layersName.forEach(layerName => {
-      if (isRedisCacheLayer(layerName)){
-        const errorMsg = `layer names that ends with '-redis' are not supported`
-        throw Error(errorMsg)
+    layersName.forEach((layerName) => {
+      if (isRedisCacheLayer(layerName)) {
+        const errorMsg = `layer names that ends with '-redis' are not supported`;
+        throw new NotImplementedError(errorMsg);
       }
     });
 
     const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
-      let updateCounter = 0;
+      layersName.forEach((layerName) => {
+        // remove requested layer from layers array
+        const requestedLayerIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === layerName);
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+        if (requestedLayerIndex !== -1) {
+          jsonDocument.layers.splice(requestedLayerIndex, 1);
+          this.logger.info(`Successfully removed layer '${layerName}'`);
+          deletedLayers.push(layerName);
+        } else {
+          this.logger.error(`failed to removed layer '${layerName}'`);
+          failedLayers.push(layerName);
+        }
+      });
+
       const allLinkedCaches = this.getAllLayerLinkedCaches(layersName, jsonDocument);
       allLinkedCaches.forEach((cacheName) => {
         // remove requested layer cache source from cache list
         delete jsonDocument.caches[cacheName];
         this.logger.info(`Successfully removed cache '${cacheName}'`);
-        // remove requested layer from layers array
-        const requestedLayerIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === cacheName);
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        if (requestedLayerIndex !== -1) {
-          jsonDocument.layers.splice(requestedLayerIndex, 1);
-          this.logger.info(`Successfully removed layer '${cacheName}'`);
-          deletedLayers.push(cacheName);
-          updateCounter++;
-        }
       });
-      failedLayers = layersName.filter((layerName) => !allLinkedCaches.includes(layerName));
+
       if (failedLayers.length !== 0) {
-        const notFoundMessege = `Layers: ['${failedLayers.join(',')}'] were not found`;
+        const notFoundMessege = `layers: ['${failedLayers.join(',')}'] were not found`;
         this.logger.error(notFoundMessege);
-        throw new NotFoundError(notFoundMessege);
       }
-      if (updateCounter === 0) {
+
+      failedCaches = layersName.filter((layerName) => !allLinkedCaches.includes(layerName));
+      if (failedCaches.length !== 0) {
+        const notFoundMessege = `caches: ['${failedCaches.join(',')}'] were not found`;
+        this.logger.error(notFoundMessege);
+      }
+      if (deletedLayers.length === 0) {
         throw new Error(errorMessage);
       }
       return jsonDocument;
@@ -123,7 +133,7 @@ class LayersManager {
       }
     });
 
-    return deletedLayers;
+    return failedLayers;
   }
 
   public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<void> {
@@ -131,10 +141,10 @@ class LayersManager {
     const tileMimeFormat = mimeLookup(layerRequest.format) as TilesMimeFormat;
     const isRedisCache = isRedisCacheLayer(layerName);
     let doesHaveRedisCache = false;
-    
-    if (isRedisCacheLayer(layerName)){
-      const errorMsg = `layer names that ends with '-redis' are not supported`
-      throw Error(errorMsg)
+
+    if (isRedisCacheLayer(layerName)) {
+      const errorMsg = `layer names that ends with '-redis' are not supported`;
+      throw new NotImplementedError(errorMsg);
     }
 
     const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {

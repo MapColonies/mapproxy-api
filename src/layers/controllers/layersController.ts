@@ -12,7 +12,7 @@ type UpdateLayerHandler = RequestHandler<{ name: string }, ILayerPostRequest, IL
 type DeleteLayerHandler = RequestHandler<undefined, string[] | void, undefined, { layerNames: string[] }>;
 @injectable()
 export class LayersController {
-  public constructor(@inject(SERVICES.LOGGER) private readonly logger: Logger, @inject(LayersManager) private readonly manager: LayersManager) { }
+  public constructor(@inject(SERVICES.LOGGER) private readonly logger: Logger, @inject(LayersManager) private readonly manager: LayersManager) {}
 
   public getLayer: GetLayerHandler = async (req, res, next) => {
     try {

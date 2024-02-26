@@ -114,6 +114,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
+        '501':
+          description: Not Implemented
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                LayerNotFound:
+                  value:
+                    message: Layer names that ends with '-redis' are not supported
   /layer/{name}:
     get:
       operationId: getLayer
