@@ -93,6 +93,14 @@
       "__name": "REDIS_PORT",
       "__format": "number"
     },
+    "auth": {
+      "enableRedisUser": {
+        "__name": "REDIS_USER_ENABLED",
+        "__format": "boolean"
+      },
+      "username": "REDIS_USERNAME",
+      "password": "REDIS_PASSWORD"
+    },
     "prefix": {
       "enablePrefix": {
         "__name": "REDIS_PREFIX_ENABLED",
@@ -100,18 +108,10 @@
       },
       "prefix": "REDIS_PREFIX"
     },
-    "auth": {
-      "username": "REDIS_USERNAME",
-      "password": "REDIS_PASSWORD"
-    },
     "type": "REDIS_TYPE",
     "default_ttl": {
       "__name": "REDIS_DEFAULT_TTL",
       "__format": "number"
-    },
-    "enableRedisUser": {
-      "__name": "REDIS_USER_ENABLED",
-      "__format": "boolean"
     }
   }
 }
