@@ -9,11 +9,9 @@ import { NotFoundError } from '@map-colonies/error-types';
 import {
   IFSConfig,
   ILayerPostRequest,
-  // ILayerToMosaicRequest,
   IMapProxyCache,
   IMapProxyConfig,
   IS3Config,
-  // IUpdateMosaicRequest,
 } from '../../../src/common/interfaces';
 import { mockLayerNameIsNotExists } from '../../unit/mock/mockLayerNameIsNotExists';
 import { mockLayerNameAlreadyExists } from '../../unit/mock/mockLayerNameAlreadyExists';

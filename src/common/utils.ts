@@ -42,6 +42,14 @@ export function getFileExtension(path: string): string {
   return extname(path);
 }
 
+export function getRedisCacheName(cacheName: string): string {
+  return `${cacheName}-redis`;
+}
+
+export function isRedisCacheLayer(layerName: string): boolean {
+  return layerName.endsWith('-redis');
+}
+
 export function adjustTilesPath(tilesPath: string, cacheSource: string): string {
   const fsConfig = container.resolve<IFSConfig>(SERVICES.FS);
   switch (cacheSource) {

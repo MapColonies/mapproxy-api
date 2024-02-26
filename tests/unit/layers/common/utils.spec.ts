@@ -129,4 +129,38 @@ describe('utils', () => {
       expect(action()).toBe('');
     });
   });
+
+  describe('#getRedisCacheName', () => {
+    it('should return redis cache name', function () {
+      // mock
+      const layerName = 'cache_name';
+      // action
+      const action = () => utils.getRedisCacheName(layerName);
+
+      // expectation
+      expect(action()).toBe('cache_name-redis');
+    });
+  });
+
+  describe('#isRedisCacheLayer', () => {
+    it('should return true for redis cache name', function () {
+      // mock
+      const layerName = 'cache_name-redis';
+      // action
+      const action = () => utils.isRedisCacheLayer(layerName);
+
+      // expectation
+      expect(action()).toBe(true);
+    });
+  });
+
+  it('should return false for not redis cache name', function () {
+    // mock
+    const layerName = 'cache_name';
+    // action
+    const action = () => utils.isRedisCacheLayer(layerName);
+
+    // expectation
+    expect(action()).toBe(false);
+  });
 });

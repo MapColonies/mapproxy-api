@@ -12,7 +12,7 @@ type UpdateLayerHandler = RequestHandler<{ name: string }, ILayerPostRequest, IL
 type DeleteLayerHandler = RequestHandler<undefined, string[] | void, undefined, { layerNames: string[] }>;
 @injectable()
 export class LayersController {
-  public constructor(@inject(SERVICES.LOGGER) private readonly logger: Logger, @inject(LayersManager) private readonly manager: LayersManager) {}
+  public constructor(@inject(SERVICES.LOGGER) private readonly logger: Logger, @inject(LayersManager) private readonly manager: LayersManager) { }
 
   public getLayer: GetLayerHandler = async (req, res, next) => {
     try {
@@ -42,28 +42,10 @@ export class LayersController {
 
   public removeLayer: DeleteLayerHandler = async (req, res, next) => {
     try {
-      const deletedLayers = await this.manager.removeLayer(req.query.layerNames);
-      return res.status(httpStatus.OK).send(deletedLayers);
+      const failedLayers = await this.manager.removeLayer(req.query.layerNames);
+      return res.status(httpStatus.OK).send(failedLayers);
     } catch (error) {
       next(error);
     }
   };
-
-  // public addLayerToMosaic: CreateMosaicHandler = async (req, res, next) => {
-  //   try {
-  //     await this.manager.addLayerToMosaic(req.params.name, req.body);
-  //     return res.status(httpStatus.CREATED).send(req.body);
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // };
-
-  //   public updateMosaic: PutMosaicHandler = async (req, res, next) => {
-  //     try {
-  //       await this.manager.updateMosaic(req.params.name, req.body);
-  //       return res.status(httpStatus.CREATED).send(req.body);
-  //     } catch (error) {
-  //       next(error);
-  //     }
-  //   };
 }
