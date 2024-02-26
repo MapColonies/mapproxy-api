@@ -11,14 +11,12 @@ import { ILayerPostRequest, IMapProxyCache, IMapProxyConfig, IRedisConfig } from
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExists';
 import { mockLayerNameIsNotExists } from '../../mock/mockLayerNameIsNotExists';
-// import * as utils from '../../../../src/common/utils';
 import { MockConfigProvider, getJsonMock, updateJsonMock, init as initConfigProvider } from '../../mock/mockConfigProvider';
 import { SERVICES } from '../../../../src/common/constants';
 import { registerTestValues } from '../../../integration/testContainerConfig';
 import { init as initConfig, clear as clearConfig } from '../../../configurations/config';
 
 let layersManager: LayersManager;
-// let sortArrayByZIndexStub: jest.SpyInstance;
 const logger = jsLogger({ enabled: false });
 
 describe('layersManager', () => {
@@ -31,7 +29,6 @@ describe('layersManager', () => {
     const redisConfig = container.resolve<IRedisConfig>(SERVICES.REDISCONFIG);
     const mapproxyConfig = container.resolve<IMapProxyConfig>(SERVICES.MAPPROXY);
     layersManager = new LayersManager(logger, mapproxyConfig, redisConfig, MockConfigProvider);
-    // sortArrayByZIndexStub = jest.spyOn(utils, 'sortArrayByZIndex').mockReturnValueOnce(['mockLayer1', 'mockLayer2', 'mockLayer3']);
   });
 
   afterEach(() => {
