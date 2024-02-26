@@ -115,7 +115,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/error'
         '501':
-          description: Not Implemented
+          description: Not Implemented, layer names that ends with '-redis' are not supported
           content:
             application/json:
               schema:
