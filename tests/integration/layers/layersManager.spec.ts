@@ -5,7 +5,7 @@ import { trace } from '@opentelemetry/api';
 import config from 'config';
 import { container } from 'tsyringe';
 import { TileOutputFormat } from '@map-colonies/mc-model-types';
-import { IFSConfig, ILayerPostRequest, IMapProxyCache, IMapProxyConfig, IS3Config } from '../../../src/common/interfaces';
+import { ICacheName, IFSConfig, ILayerPostRequest, IMapProxyCache, IMapProxyConfig, IS3Config } from '../../../src/common/interfaces';
 import { mockLayerNameIsNotExists } from '../../unit/mock/mockLayerNameIsNotExists';
 import { mockLayerNameAlreadyExists } from '../../unit/mock/mockLayerNameAlreadyExists';
 import { MockConfigProvider, init as configProviderInit, updateJsonMock } from '../../unit/mock/mockConfigProvider';
@@ -80,6 +80,39 @@ describe('layerManager', () => {
       expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
       expect(response.body).toEqual({ message: notFoundErrorMessage });
+    });
+  });
+
+  describe('#getLayersCache', () => {
+    it('Happy Path - should return status 200 and the cacheName', async () => {
+      const response = await requestSender.getLayersCache('mockLayerNameExists', 's3');
+
+      expect(response.status).toBe(httpStatusCodes.OK);
+
+      const resource = response.body as ICacheName;
+      expect(response).toSatisfyApiSpec();
+      expect(resource.cacheName).toBe('mockLayerNameExists');
+    });
+
+    it('Sad Path - should fail with response status 404 Not Found and layer name is not exists', async () => {
+      const mockLayerName = 'mockLayerNameIsNotExists';
+      const response = await requestSender.getLayersCache(mockLayerName, 's3');
+      const notFoundErrorMessage = `Layer ${mockLayerName} or fitting cache do not exist`;
+
+      expect(response).toSatisfyApiSpec();
+      expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
+      expect(response.body).toEqual({ message: notFoundErrorMessage });
+    });
+
+    it('Sad Path - should fail with error not valid type formay', async () => {
+      const mockLayerName = 'mockLayerNameIsExists';
+      const cacheType = 'notValid';
+      const response = await requestSender.getLayersCache(mockLayerName, cacheType);
+      const badRequestMessage = `Invalid cache type: ${cacheType} has been provided , available values: "geopackage", "s3", "file", "redis"`;
+
+      expect(response).toSatisfyApiSpec();
+      expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
+      expect(response.body).toEqual({ message: badRequestMessage });
     });
   });
 

@@ -204,6 +204,49 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/layer'
+  /layer/{name}/{type}:
+    get:
+      operationId: getCache
+      tags:
+        - Layer
+      summary: cache from sources of layer
+      parameters:
+        - name: layerName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: cacheType
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getLayerResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        '400':
+          description: Not valid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+        '500':
+          description: Ineternal Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+
 components:
   schemas:
     error:

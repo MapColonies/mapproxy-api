@@ -7,7 +7,7 @@ import { ConflictError, NotFoundError, NotImplementedError } from '@map-colonies
 import { TileOutputFormat } from '@map-colonies/mc-model-types';
 import { lookup as mimeLookup, TilesMimeFormat } from '@map-colonies/types';
 import config from 'config';
-import { ILayerPostRequest, IMapProxyCache, IMapProxyConfig, IRedisConfig } from '../../../../src/common/interfaces';
+import { ICacheName, ILayerPostRequest, IMapProxyCache, IMapProxyConfig, IRedisConfig } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExists';
 import { mockLayerNameIsNotExists } from '../../mock/mockLayerNameIsNotExists';
@@ -96,6 +96,36 @@ describe('layersManager', () => {
       await expect(action).rejects.toThrow(NotFoundError);
       expect(getJsonMock).toHaveBeenCalledTimes(1);
       expect(updateJsonMock).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('#getCacheName', () => {
+    it('should successfully return the cache name', async () => {
+      const expectedCache = { cacheName: "mockLayerNameExists"};
+
+      // action
+      expect.assertions(2);
+      const action =  layersManager.getCacheName('mockLayerNameExists', "s3");
+      // expectation;
+
+      expect(getJsonMock).toHaveBeenCalledTimes(1);
+      expect(await action).toStrictEqual(expectedCache);
+    });
+
+    it('should fail with not found', async () => {
+      // action
+      expect.assertions(1);
+      const action = layersManager.getCacheName('mockLayerNameNotExists', "s3");
+      // expectation;
+      await expect(action).rejects.toThrow(NotFoundError);
+    });
+
+    it('should fail with not valid source type', async () => {
+      // action
+      expect.assertions(1);
+      const action = layersManager.getCacheName('mockLayerNameExists', "notValidType");
+      // expectation;
+      await expect(action).rejects.toThrow(Error);
     });
   });
 

@@ -3,11 +3,12 @@ import { RequestHandler } from 'express';
 import httpStatus from 'http-status-codes';
 import { injectable, inject } from 'tsyringe';
 import { SERVICES } from '../../common/constants';
-import { ILayerPostRequest, IMapProxyCache } from '../../common/interfaces';
+import { ICacheName, ILayerPostRequest, IMapProxyCache } from '../../common/interfaces';
 import { LayersManager } from '../models/layersManager';
 
 type CreateLayerHandler = RequestHandler<undefined, ILayerPostRequest, ILayerPostRequest>;
 type GetLayerHandler = RequestHandler<{ name: string }, IMapProxyCache, IMapProxyCache>;
+type GetCacheHandler = RequestHandler<{ name: string ,type : string}, ICacheName>;
 type UpdateLayerHandler = RequestHandler<{ name: string }, ILayerPostRequest, ILayerPostRequest>;
 type DeleteLayerHandler = RequestHandler<undefined, string[] | void, undefined, { layerNames: string[] }>;
 @injectable()
@@ -17,6 +18,15 @@ export class LayersController {
   public getLayer: GetLayerHandler = async (req, res, next) => {
     try {
       return res.status(httpStatus.OK).json(await this.manager.getLayer(req.params.name));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public getLayersCache: GetCacheHandler = async (req, res, next) => {
+    try {
+      const resultJson = await this.manager.getCacheName(req.params.name, req.params.type)
+      return res.status(httpStatus.OK).json(resultJson);
     } catch (error) {
       next(error);
     }

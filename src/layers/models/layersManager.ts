@@ -14,6 +14,7 @@ import {
   ICacheProvider,
   ICacheSource,
   IRedisConfig,
+  ICacheName,
 } from '../../common/interfaces';
 import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
 import { S3Source } from '../../common/cacheProviders/S3Source';
@@ -30,7 +31,7 @@ class LayersManager {
     @inject(SERVICES.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig,
     @inject(SERVICES.REDISCONFIG) private readonly redisConfig: IRedisConfig,
     @inject(SERVICES.CONFIGPROVIDER) private readonly configProvider: IConfigProvider
-  ) {}
+  ) { }
   public async getLayer(layerName: string): Promise<IMapProxyCache> {
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
 
@@ -39,6 +40,32 @@ class LayersManager {
     }
     const requestedLayer: IMapProxyCache = jsonDocument.caches[layerName] as IMapProxyCache;
     return requestedLayer;
+  }
+
+  public async getCacheName(layerName: string, cacheType: string): Promise<ICacheName> {
+    const errorMsg = `Layer ${layerName} or fitting cache do not exist`
+    if (!this.isCacheTypeValid(cacheType)) {
+      const invalidCacheTypeMsg = `Invalid cache type: ${cacheType} has been provided , available values: "geopackage", "s3", "file", "redis"`
+      throw new Error(invalidCacheTypeMsg);
+    }
+    const configJson = await this.configProvider.getJson();
+    const requestedLayerIndex = configJson.layers.findIndex((layer) => layer.name === layerName)
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+    if (requestedLayerIndex != -1) {
+      const sourcesOfLayer: string[] = configJson.layers[requestedLayerIndex].sources;
+
+
+      const requestedCache = sourcesOfLayer.find(sourceName => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const currentSourceCache: IMapProxyCache = configJson.caches[sourceName];
+        return (currentSourceCache.cache.type == cacheType)
+      });
+
+      if (requestedCache != null) {
+        return { cacheName: requestedCache };
+      }
+    }
+    throw new NotFoundError(errorMsg)
   }
 
   public async addLayer(layerRequest: ILayerPostRequest): Promise<void> {
@@ -237,6 +264,11 @@ class LayersManager {
     }
 
     return sourceProvider.getCacheSource(sourcePath);
+  }
+
+  public isCacheTypeValid(cacheType: string): boolean {
+    const SourceTypesArray = Object.values(SourceTypes)
+    return SourceTypesArray.find((currentCacheType) => currentCacheType === cacheType) ? true : false;
   }
 
   private addNewCache(jsonDocument: IMapProxyJsonDocument, layerRequest: ILayerPostRequest): void {

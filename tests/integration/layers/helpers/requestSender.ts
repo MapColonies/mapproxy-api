@@ -4,6 +4,10 @@ import { ILayerPostRequest, ILayerToMosaicRequest, IUpdateMosaicRequest } from '
 export class LayersRequestSender {
   public constructor(private readonly app: Express.Application) {}
 
+  public async getLayersCache(cacheName: string, cacheType: string): Promise<supertest.Response> {
+    return supertest.agent(this.app).get(`/layer/${cacheName}/${cacheType}`).set('Content-Type', 'application/json');
+  }
+
   public async getLayer(layerName: string): Promise<supertest.Response> {
     return supertest.agent(this.app).get(`/layer/${layerName}`).set('Content-Type', 'application/json');
   }
