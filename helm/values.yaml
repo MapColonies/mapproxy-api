@@ -70,6 +70,10 @@ db:
     useExternal: false
     externalSecretName: ""
 
+tracing:
+  enabled: false
+  url: ''
+
 # add pod annotations
 # example:
 # podAnnotations:
@@ -85,9 +89,6 @@ env:
   logPrettyPrintEnabled: false
   responseCompressionEnabled: true
   requestPayloadLimit: 1mb
-  tracing:
-    enabled: false
-    url: http://localhost:55681/v1/trace
   metrics:
     enabled: false
     url: http://localhost:55681/v1/metrics

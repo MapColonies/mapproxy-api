@@ -3,6 +3,8 @@ import { container, inject, injectable } from 'tsyringe';
 import { Logger } from '@map-colonies/js-logger';
 import { ConflictError, NotFoundError } from '@map-colonies/error-types';
 import { TileOutputFormat } from '@map-colonies/mc-model-types';
+import { withSpanAsyncV4, withSpanV4 } from '@map-colonies/telemetry';
+import { Tracer } from '@opentelemetry/api';
 import { SERVICES } from '../../common/constants';
 import {
   ILayerPostRequest,
@@ -31,9 +33,11 @@ class LayersManager {
     @inject(SERVICES.LOGGER) private readonly logger: Logger,
     @inject(SERVICES.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig,
     @inject(SERVICES.REDISCONFIG) private readonly redisConfig: IRedisConfig,
-    @inject(SERVICES.CONFIGPROVIDER) private readonly configProvider: IConfigProvider
+    @inject(SERVICES.CONFIGPROVIDER) private readonly configProvider: IConfigProvider,
+    @inject(SERVICES.TRACER) public readonly tracer: Tracer
   ) {}
 
+  @withSpanAsyncV4
   public async getLayer(layerName: string): Promise<IMapProxyCache> {
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
 
@@ -44,6 +48,7 @@ class LayersManager {
     return requestedLayer;
   }
 
+  @withSpanAsyncV4
   public async addLayer(layerRequest: ILayerPostRequest): Promise<void> {
     const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
       this.addNewCache(jsonDocument, layerRequest);
@@ -54,6 +59,7 @@ class LayersManager {
     await this.configProvider.updateJson(editJson);
   }
 
+  @withSpanAsyncV4
   public async addLayerToMosaic(mosaicName: string, layerToMosaicRequest: ILayerToMosaicRequest): Promise<void> {
     this.logger.info(`Add layer: ${layerToMosaicRequest.layerName} to mosaic: ${mosaicName} request`);
 
@@ -75,6 +81,7 @@ class LayersManager {
     this.logger.info(`Successfully added layer: '${layerToMosaicRequest.layerName}' to mosaic: '${mosaicName}'`);
   }
 
+  @withSpanAsyncV4
   public async updateMosaic(mosaicName: string, updateMosaicRequest: IUpdateMosaicRequest): Promise<void> {
     this.logger.info(`Update mosaic: ${mosaicName} request`);
 
@@ -100,6 +107,7 @@ class LayersManager {
     this.logger.info(`Successfully updated mosaic: '${mosaicName}'`);
   }
 
+  @withSpanV4
   public getAllLinkedCaches(baseCacheNames: string[], mapproxyConfiguration: IMapProxyJsonDocument): string[] {
     const linkedCaches: string[] = [];
     const baseCacheNamesDuplicate: string[] = [...baseCacheNames];
@@ -123,6 +131,7 @@ class LayersManager {
     return linkedCaches;
   }
 
+  @withSpanAsyncV4
   public async removeLayer(layersName: string[]): Promise<string[] | void> {
     this.logger.info(`Remove layers request for: [${layersName.join(',')}]`);
     const errorMessage = 'no valid layers to delete';
@@ -163,6 +172,7 @@ class LayersManager {
     return failedLayers;
   }
 
+  @withSpanAsyncV4
   public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<void> {
     this.logger.info({ msg: `Update layer: '${layerName}' request`, layerRequest });
     const tileFormat = this.mapToTileFormat(layerRequest.format);
@@ -257,6 +267,7 @@ class LayersManager {
     return sourceProvider.getCacheSource(sourcePath);
   }
 
+  @withSpanV4
   private addNewCache(jsonDocument: IMapProxyJsonDocument, layerRequest: ILayerPostRequest): void {
     if (this.redisConfig.enabled) {
       this.addNewRedisLayerToConfig(layerRequest, jsonDocument);
@@ -265,6 +276,7 @@ class LayersManager {
     }
   }
 
+  @withSpanV4
   private addNewSourceLayerToConfig(layerRequest: ILayerPostRequest, jsonDocument: IMapProxyJsonDocument): void {
     //creates source cache, and a source layer
     this.logger.info({ msg: `adding ${layerRequest.name} as source layer`, layerRequest });
@@ -279,12 +291,14 @@ class LayersManager {
     this.addNewLayer(sourceCacheTitle, jsonDocument);
   }
 
+  @withSpanV4
   private addNewLayer(layerName: string, jsonDocument: IMapProxyJsonDocument): void {
     this.logger.info(`adding ${layerName} to layer list`);
     const newLayer: IMapProxyLayer = this.getLayerValues(layerName);
     jsonDocument.layers.push(newLayer);
   }
 
+  @withSpanV4
   private addNewRedisLayerToConfig(layerRequest: ILayerPostRequest, jsonDocument: IMapProxyJsonDocument): void {
     this.logger.info({ msg: `adding ${layerRequest.name} as redis layer`, layerRequest });
     //creates source cache+redis cache, and a redis layer
@@ -303,6 +317,7 @@ class LayersManager {
     this.addNewLayer(redisCacheTitle, jsonDocument);
   }
 
+  @withSpanV4
   private createRedisCache(originalLayerName: string, sourceLayerName: string, format: string, mapproxyConfig: IMapProxyConfig): IMapProxyCache {
     const firstGridIndex = 0;
     const grids = mapproxyConfig.cache.grids.split(',');
