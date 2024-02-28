@@ -107,7 +107,6 @@ class LayersManager {
     this.logger.info(`Successfully updated mosaic: '${mosaicName}'`);
   }
 
-  @withSpanV4
   public getAllLinkedCaches(baseCacheNames: string[], mapproxyConfiguration: IMapProxyJsonDocument): string[] {
     const linkedCaches: string[] = [];
     const baseCacheNamesDuplicate: string[] = [...baseCacheNames];
@@ -267,7 +266,6 @@ class LayersManager {
     return sourceProvider.getCacheSource(sourcePath);
   }
 
-  @withSpanV4
   private addNewCache(jsonDocument: IMapProxyJsonDocument, layerRequest: ILayerPostRequest): void {
     if (this.redisConfig.enabled) {
       this.addNewRedisLayerToConfig(layerRequest, jsonDocument);
@@ -276,7 +274,6 @@ class LayersManager {
     }
   }
 
-  @withSpanV4
   private addNewSourceLayerToConfig(layerRequest: ILayerPostRequest, jsonDocument: IMapProxyJsonDocument): void {
     //creates source cache, and a source layer
     this.logger.info({ msg: `adding ${layerRequest.name} as source layer`, layerRequest });
@@ -291,15 +288,12 @@ class LayersManager {
     this.addNewLayer(layerRequest.name, sourceCacheTitle, jsonDocument);
   }
 
-  @withSpanV4
   private addNewLayer(layerName: string, sourceCacheTitle: string, jsonDocument: IMapProxyJsonDocument): void {
     this.logger.info(`adding ${layerName} to layer list`);
-
     const newLayer: IMapProxyLayer = this.getLayerValues(layerName, sourceCacheTitle);
     jsonDocument.layers.push(newLayer);
   }
 
-  @withSpanV4
   private addNewRedisLayerToConfig(layerRequest: ILayerPostRequest, jsonDocument: IMapProxyJsonDocument): void {
     this.logger.info({ msg: `adding ${layerRequest.name} as redis layer`, layerRequest });
     //creates source cache+redis cache, and a redis layer
@@ -318,7 +312,6 @@ class LayersManager {
     this.addNewLayer(layerRequest.name, redisCacheTitle, jsonDocument);
   }
 
-  @withSpanV4
   private createRedisCache(originalLayerName: string, sourceLayerName: string, format: string, mapproxyConfig: IMapProxyConfig): IMapProxyCache {
     const firstGridIndex = 0;
     const grids = mapproxyConfig.cache.grids.split(',');
