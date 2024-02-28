@@ -292,7 +292,7 @@ class LayersManager {
   }
 
   @withSpanV4
-  private addNewLayer(layerName: string, jsonDocument: IMapProxyJsonDocument): void {
+  private addNewLayer(layerName: string, sourceCacheTitle: string, jsonDocument: IMapProxyJsonDocument): void {
     this.logger.info(`adding ${layerName} to layer list`);
 
     const newLayer: IMapProxyLayer = this.getLayerValues(layerName, sourceCacheTitle);
