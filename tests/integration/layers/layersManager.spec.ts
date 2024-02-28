@@ -143,6 +143,7 @@ describe('layerManager', () => {
     };
 
     it('Happy Path - should return status 202', async () => {
+      jest.spyOn(ConfigsManager.prototype,'getConfig').mockResolvedValue(mockData());
       const response = await requestSender.updateLayer(`${mockLayerNameAlreadyExists.name}-source`, mockUpdateLayerRequest);
 
       expect(response).toSatisfyApiSpec();
@@ -150,6 +151,7 @@ describe('layerManager', () => {
     });
 
     it('Bad Path - should fail with response status 400 Bad Request', async () => {
+      jest.spyOn(ConfigsManager.prototype,'getConfig').mockResolvedValue(mockData());
       const mockBadRequest = {
         // mocking bad request with invalid field 'mockName' to test BadRequest status
         mockName: 'amsterdam_5cm-source',
@@ -162,7 +164,16 @@ describe('layerManager', () => {
       expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
     });
 
+    it('Bad Path - should fail with response status 400 Bad Request due to grid not in global grids', async () => {
+      jest.spyOn(ConfigsManager.prototype,'getConfig').mockResolvedValue(mockFalseData());
+      const response = await requestSender.updateLayer(`${mockLayerNameAlreadyExists.name}-source`, mockUpdateLayerRequest);
+
+      expect(response).toSatisfyApiSpec();
+      expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
+    });
+
     it('Sad Path - should fail with response status 404 Not Found and layer name is not exists', async () => {
+      jest.spyOn(ConfigsManager.prototype,'getConfig').mockResolvedValue(mockData());
       const response = await requestSender.updateLayer(mockLayerNameIsNotExists.name, mockUpdateLayerRequest);
       const notFoundErrorMessage = `Cache name '${mockLayerNameIsNotExists.name}' does not exists`;
 

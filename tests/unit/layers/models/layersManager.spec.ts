@@ -353,6 +353,7 @@ describe('layersManager', () => {
     it('should successfully update layer', async () => {
       // mock
       const mockLayerName = 'mockLayerNameExists-source';
+      jest.spyOn(configManager,'getConfig').mockResolvedValue(mockData());
       // action
       const action = async () => {
         await layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
@@ -368,7 +369,7 @@ describe('layersManager', () => {
       const mockRedisLayerName = 'redisExists';
       const expectedTileMimeFormatPng = mimeLookup(TileOutputFormat.PNG) as TilesMimeFormat;
       const expectedTileMimeFormatJpeg = mimeLookup(TileOutputFormat.JPEG) as TilesMimeFormat;
-
+      jest.spyOn(configManager,'getConfig').mockResolvedValue(mockData());
       //check data
       const data = await MockConfigProvider.getJson();
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -393,12 +394,25 @@ describe('layersManager', () => {
     it('should reject with not found error due layer name is not exists', async () => {
       // mock
       const mockLayerName = 'mockLayerNameIsNotExists';
+      jest.spyOn(configManager,'getConfig').mockResolvedValue(mockData());
       // action
       const action = async () => {
         await layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
       };
       // expectation
       await expect(action).rejects.toThrow(NotFoundError);
+    });
+
+    it('should reject with bad request error due to grid not in global grids', async () => {
+      // mock
+      const mockLayerName = 'mockLayerNameIsNotExists';
+      jest.spyOn(configManager,'getConfig').mockResolvedValue(mockFalseData());
+      // action
+      const action = async () => {
+        await layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
+      };
+      // expectation
+      await expect(action).rejects.toThrow(BadRequestError);
     });
   });
 

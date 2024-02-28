@@ -157,6 +157,10 @@ class LayersManager {
   @withSpanAsyncV4
   public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<void> {
     this.logger.info({ msg: `Update layer: '${layerName}' request`, layerRequest });
+    const configJson = await this.manager.getConfig();
+    if (!(this.mapproxyConfig.cache.grids in configJson.grids)) {
+      throw new BadRequestError(`grid ${this.mapproxyConfig.cache.grids} doesn't exist in mapproxy global grids list`);
+    }
     const tileMimeFormat = mimeLookup(layerRequest.format) as TilesMimeFormat;
     const isRedisCache = !layerName.endsWith('-source');
     let doesHaveRedisCache = false;
