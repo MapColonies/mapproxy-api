@@ -72,8 +72,8 @@ db:
     externalSecretName: ""
 
 metrics:
-    enabled: false
-    url: ''
+  enabled: false
+  url: ''
 
 tracing:
   enabled: false
