@@ -22,14 +22,19 @@ import { getApp } from '../../../src/app';
 import { SERVICES } from '../../../src/common/constants';
 import { layersRouterFactory, LAYERS_ROUTER_SYMBOL } from '../../../src/layers/routes/layersRouterFactory';
 import { LayersRequestSender } from '../layers/helpers/requestSender';
+import { mockData } from '../../unit/mock/mockData';
+import { ConfigsManager } from '../../../src/configs/models/configsManager';
 
 let requestSender: LayersRequestSender;
+const logger = jsLogger({ enabled: false });
+
 describe('layerManager', () => {
   beforeEach(() => {
     const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
     const fsConfig = config.get<IFSConfig>('FS');
     const s3Config = config.get<IS3Config>('S3');
     const redisConfig = config.get<IMapProxyConfig>('redis');
+    const configManager = new ConfigsManager(logger, mapproxyConfig, MockConfigProvider);
     configProviderInit();
     /* eslint-disable-next-line @typescript-eslint/naming-convention*/
     const app = getApp({
@@ -54,6 +59,7 @@ describe('layerManager', () => {
     //container.resolve<ServerBuilder>(ServerBuilder);
     requestSender = new LayersRequestSender(app);
     jest.spyOn(utils, 'replaceYamlFileContent').mockResolvedValue(undefined);
+    
   });
 
   afterEach(() => {
@@ -93,6 +99,7 @@ describe('layerManager', () => {
 
   describe('#addLayer', () => {
     it('Happy Path - should return status 201', async () => {
+      jest.spyOn(configManager,'getConfig').mockResolvedValue(mockData());
       const response = await requestSender.addLayer(mockLayerNameIsNotExists);
 
       expect(response.status).toBe(httpStatusCodes.CREATED);

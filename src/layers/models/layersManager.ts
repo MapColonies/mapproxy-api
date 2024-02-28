@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { container, inject, injectable } from 'tsyringe';
 import { Logger } from '@map-colonies/js-logger';
-import { ConflictError, NotFoundError } from '@map-colonies/error-types';
+import { ConflictError, NotFoundError, BadRequestError } from '@map-colonies/error-types';
 import { lookup as mimeLookup, TilesMimeFormat } from '@map-colonies/types';
 import { SERVICES } from '../../common/constants';
 import {
@@ -24,6 +24,7 @@ import { GpkgSource } from '../../common/cacheProviders/gpkgSource';
 import { FSSource } from '../../common/cacheProviders/fsSource';
 import { SourceTypes } from '../../common/enums';
 import { RedisSource } from '../../common/cacheProviders/redisSource';
+import { ConfigsManager } from '../../configs/models/configsManager';
 
 @injectable()
 class LayersManager {
@@ -31,7 +32,8 @@ class LayersManager {
     @inject(SERVICES.LOGGER) private readonly logger: Logger,
     @inject(SERVICES.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig,
     @inject(SERVICES.REDISCONFIG) private readonly redisConfig: IRedisConfig,
-    @inject(SERVICES.CONFIGPROVIDER) private readonly configProvider: IConfigProvider
+    @inject(SERVICES.CONFIGPROVIDER) private readonly configProvider: IConfigProvider,
+    @inject(ConfigsManager) private readonly manager: ConfigsManager
   ) {}
   public async getLayer(layerName: string): Promise<IMapProxyCache> {
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
@@ -44,6 +46,10 @@ class LayersManager {
   }
 
   public async addLayer(layerRequest: ILayerPostRequest): Promise<void> {
+    const configJson = await this.manager.getConfig();
+    if (!(this.mapproxyConfig.cache.grids in configJson.grids)) {
+      throw new BadRequestError(`grid ${this.mapproxyConfig.cache.grids} doesn't exist in mapproxy global grids list`);
+    }
     const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
       this.addNewCache(jsonDocument, layerRequest);
 

@@ -26,9 +26,9 @@
     }
   },
   "mapproxy": {
-    "configProvider": "fs",
+    "configProvider": "db",
     "cache": {
-      "grids": "epsg4326ul",
+      "grids": "WorldCRS84",
       "upscaleTiles": 18,
       "directoryLayout": "tms",
       "gpkgExt": ".gpkg"
@@ -40,19 +40,19 @@
     "subTilesPath": ""
   },
   "S3": {
-    "accessKeyId": "minioadmin",
-    "secretAccessKey": "minioadmin",
-    "endpointUrl": "http://localhost:9000",
+    "accessKeyId": "raster",
+    "secretAccessKey": "rasterPassword",
+    "endpointUrl": "10.8.0.9",
     "bucket": "",
     "objectKey": "mapproxy.yaml",
     "sslEnabled": false
   },
   "DB": {
-    "host": "localhost",
+    "host": "10.0.4.4",
     "user": "postgres",
-    "password": "postgres",
-    "database": "",
-    "schema": "public",
+    "password": "Libot4allnonprod",
+    "database": "raster-dev",
+    "schema": "MapproxyConfig",
     "port": 5432,
     "table": "config",
     "columns": {
