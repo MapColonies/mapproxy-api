@@ -39,6 +39,7 @@ class LayersManager {
   /**
    * @deprecated getLayer not in use and will be removed on future
    */
+  
   public async getLayer(layerName: string): Promise<IMapProxyCache> {
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
 
