@@ -2,6 +2,59 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.8.2](https://github.com/MapColonies/mapproxy-api/compare/v1.8.1...v1.8.2) (2024-02-20)
+
+### [1.8.1](https://github.com/MapColonies/mapproxy-api/compare/v1.8.0...v1.8.1) (2024-02-20)
+
+
+### Bug Fixes
+
+* support helm registry auto pushing ([#124](https://github.com/MapColonies/mapproxy-api/issues/124)) ([868f2cf](https://github.com/MapColonies/mapproxy-api/commit/868f2cf1d7cc420f50bb972dc1ce405edab746cb))
+
+## [1.8.0](https://github.com/MapColonies/mapproxy-api/compare/v1.7.6...v1.8.0) (2024-02-20)
+
+
+### Features
+
+*  adding mimeType image format manipulate ([#120](https://github.com/MapColonies/mapproxy-api/issues/120)) ([9eb6b2f](https://github.com/MapColonies/mapproxy-api/commit/9eb6b2f144588e48920bb7c21af78d4a4884df91))
+
+### [1.7.6](https://github.com/MapColonies/mapproxy-api/compare/v1.7.5...v1.7.6) (2024-02-20)
+
+
+### Bug Fixes
+
+* chart configmap condition + default values ([#123](https://github.com/MapColonies/mapproxy-api/issues/123)) ([3f48416](https://github.com/MapColonies/mapproxy-api/commit/3f4841658cd615b2992aeb3652074d56d2b3251f))
+
+### [1.7.5](https://github.com/MapColonies/mapproxy-api/compare/v1.7.4...v1.7.5) (2024-02-20)
+
+
+### Bug Fixes
+
+* layer name (MAPCO-4005) ([#122](https://github.com/MapColonies/mapproxy-api/issues/122)) ([ba8221e](https://github.com/MapColonies/mapproxy-api/commit/ba8221e1fc1e4a931605874914074b794fceeb80))
+
+### [1.7.4](https://github.com/MapColonies/mapproxy-api/compare/v1.7.3...v1.7.4) (2024-02-19)
+
+
+### Bug Fixes
+
+* internal mount dir for fs storage ([#121](https://github.com/MapColonies/mapproxy-api/issues/121)) ([5c1775a](https://github.com/MapColonies/mapproxy-api/commit/5c1775a71337c7bed0d58aea372881227adc63bd))
+
+### [1.7.3](https://github.com/MapColonies/mapproxy-api/compare/v1.7.2...v1.7.3) (2024-02-12)
+
+
+### Bug Fixes
+
+* fix config scope ([#118](https://github.com/MapColonies/mapproxy-api/issues/118)) ([28827cb](https://github.com/MapColonies/mapproxy-api/commit/28827cbb811cbbd5f3eace71f6fff025c54dffd1))
+
+### [1.7.2](https://github.com/MapColonies/mapproxy-api/compare/v1.7.1...v1.7.2) (2024-02-12)
+
+### [1.7.1](https://github.com/MapColonies/mapproxy-api/compare/v1.7.0...v1.7.1) (2024-02-12)
+
+
+### Bug Fixes
+
+* redis enabled config ([#117](https://github.com/MapColonies/mapproxy-api/issues/117)) ([fb2b971](https://github.com/MapColonies/mapproxy-api/commit/fb2b9718b4c4ecf2dde71535241581afd9f6a26c))
+
 ## [1.7.0](https://github.com/MapColonies/mapproxy-api/compare/v1.6.0...v1.7.0) (2024-02-06)
 
 

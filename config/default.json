@@ -73,12 +73,12 @@
     "port": 6379,
     "auth": {
       "enableRedisUser": true,
-      "username": "mapcolonies",
-      "password": "mapcolonies"
+      "username": "",
+      "password": ""
     },
     "prefix": {
-      "enablePrefix": true,
-      "prefix": "this is default config:"
+      "enablePrefix": false,
+      "prefix": ""
     },
     "type": "redis",
     "default_ttl": 86400

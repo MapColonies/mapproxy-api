@@ -29,7 +29,8 @@ global:
     secretName: ""
     path: '/usr/local/share/ca-certificates'
     key: 'ca.crt'
-
+  ingress:
+    domain: 'apps.aroapp.io'       
 
 enabled: true
 environment: development
@@ -89,11 +90,12 @@ env:
   logPrettyPrintEnabled: false
   responseCompressionEnabled: true
   requestPayloadLimit: 1mb
+  internalMountDir: /layerSources
   metrics:
     enabled: false
     url: http://localhost:55681/v1/metrics
   mapproxyCache:
-    grids: epsg4326grid
+    grids: World84CRS
     upscaleTiles: 18
     directoryLayout: tms
 
@@ -136,6 +138,7 @@ ingress:
   cors:
     enabled: true
     origin: '*'
+  annotations: {}
 
 local: # for local stand alone deployment, external pvc and secrets should be used for full deployment
   fs:

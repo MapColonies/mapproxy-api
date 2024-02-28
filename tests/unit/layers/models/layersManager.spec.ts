@@ -4,6 +4,7 @@ import { container } from 'tsyringe';
 import jsLogger from '@map-colonies/js-logger';
 import { ConflictError, NotFoundError } from '@map-colonies/error-types';
 import { TileOutputFormat } from '@map-colonies/mc-model-types';
+import { lookup as mimeLookup, TilesMimeFormat } from '@map-colonies/types';
 import config from 'config';
 import {
   ILayerPostRequest,
@@ -21,7 +22,6 @@ import { MockConfigProvider, getJsonMock, updateJsonMock, init as initConfigProv
 import { SERVICES } from '../../../../src/common/constants';
 import { registerTestValues } from '../../../integration/testContainerConfig';
 import { init as initConfig, clear as clearConfig } from '../../../configurations/config';
-import { TileFormat } from '../../../../src/common/enums';
 import { tracerMock } from '../../mock/tracer';
 
 let layersManager: LayersManager;
@@ -156,7 +156,7 @@ describe('layersManager', () => {
       await expect(action).toResolve();
 
       const resultJson = await MockConfigProvider.getJson();
-      expect(resultJson.layers).toPartiallyContain({ name: `${mockLayerNameIsNotExists.name}-source` });
+      expect(resultJson.layers).toPartiallyContain({ name: mockLayerNameIsNotExists.name, sources: [`${mockLayerNameIsNotExists.name}-source`] });
       expect(resultJson.caches).not.toContainKey(mockLayerNameIsNotExists.name);
       expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
@@ -346,13 +346,15 @@ describe('layersManager', () => {
       // mock
       const mockLayerName = 'redisExists-source';
       const mockRedisLayerName = 'redisExists';
+      const expectedTileMimeFormatPng = mimeLookup(TileOutputFormat.PNG) as TilesMimeFormat;
+      const expectedTileMimeFormatJpeg = mimeLookup(TileOutputFormat.JPEG) as TilesMimeFormat;
 
       //check data
       const data = await MockConfigProvider.getJson();
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(data.caches[mockLayerName].format).toBe(TileFormat.PNG);
+      expect(data.caches[mockLayerName].format).toBe(expectedTileMimeFormatPng);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(data.caches[mockRedisLayerName].format).toBe(TileFormat.PNG);
+      expect(data.caches[mockRedisLayerName].format).toBe(expectedTileMimeFormatPng);
 
       // action
       const action = layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
@@ -362,9 +364,9 @@ describe('layersManager', () => {
       await expect(action).toResolve();
       const result = await MockConfigProvider.getJson();
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(result.caches[mockLayerName].format).toBe(TileFormat.JPEG);
+      expect(result.caches[mockLayerName].format).toBe(expectedTileMimeFormatJpeg);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(result.caches[mockRedisLayerName].format).toBe(TileFormat.JPEG);
+      expect(result.caches[mockRedisLayerName].format).toBe(expectedTileMimeFormatJpeg);
       expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
 

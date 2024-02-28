@@ -2,7 +2,7 @@
 import { container, inject, injectable } from 'tsyringe';
 import { Logger } from '@map-colonies/js-logger';
 import { ConflictError, NotFoundError } from '@map-colonies/error-types';
-import { TileOutputFormat } from '@map-colonies/mc-model-types';
+import { lookup as mimeLookup, TilesMimeFormat } from '@map-colonies/types';
 import { withSpanAsyncV4, withSpanV4 } from '@map-colonies/telemetry';
 import { Tracer } from '@opentelemetry/api';
 import { SERVICES } from '../../common/constants';
@@ -24,7 +24,7 @@ import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
 import { S3Source } from '../../common/cacheProviders/S3Source';
 import { GpkgSource } from '../../common/cacheProviders/gpkgSource';
 import { FSSource } from '../../common/cacheProviders/fsSource';
-import { SourceTypes, TileFormat } from '../../common/enums';
+import { SourceTypes } from '../../common/enums';
 import { RedisSource } from '../../common/cacheProviders/redisSource';
 
 @injectable()
@@ -175,7 +175,7 @@ class LayersManager {
   @withSpanAsyncV4
   public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<void> {
     this.logger.info({ msg: `Update layer: '${layerName}' request`, layerRequest });
-    const tileFormat = this.mapToTileFormat(layerRequest.format);
+    const tileMimeFormat = mimeLookup(layerRequest.format) as TilesMimeFormat;
     const isRedisCache = !layerName.endsWith('-source');
     let doesHaveRedisCache = false;
 
@@ -196,7 +196,7 @@ class LayersManager {
 
       if (isRedisCache || doesHaveRedisCache) {
         // update existing layer cache values with the new requested layer cache values
-        const newRedisCache: IMapProxyCache = this.createRedisCache(redisLayerName, sourceLayerName, tileFormat, this.mapproxyConfig);
+        const newRedisCache: IMapProxyCache = this.createRedisCache(redisLayerName, sourceLayerName, tileMimeFormat, this.mapproxyConfig);
         jsonDocument.caches[redisLayerName] = newRedisCache;
         // update existing layer values with the new requested layer values
         newLayer = this.getLayerValues(redisLayerName);
@@ -207,7 +207,7 @@ class LayersManager {
         const sourceLayerNameIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === sourceLayerName);
         jsonDocument.layers[sourceLayerNameIndex] = newLayer;
       }
-      const newSourceCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
+      const newSourceCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileMimeFormat);
       jsonDocument.caches[sourceLayerName] = newSourceCache;
 
       return jsonDocument;
@@ -234,11 +234,11 @@ class LayersManager {
     return cache;
   }
 
-  public getLayerValues(layerName: string): IMapProxyLayer {
+  public getLayerValues(layerName: string, sourceCacheTitle?: string): IMapProxyLayer {
     const layer: IMapProxyLayer = {
       name: layerName,
       title: layerName,
-      sources: [layerName],
+      sources: [sourceCacheTitle ?? layerName],
     };
 
     return layer;
@@ -284,17 +284,18 @@ class LayersManager {
     if (isLayerNameExists(jsonDocument, sourceCacheTitle)) {
       throw new ConflictError(`Layer name '${sourceCacheTitle}' already exists`);
     }
-    const tileFormat = this.mapToTileFormat(layerRequest.format);
-    const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
+    const tileMimeFormat = mimeLookup(layerRequest.format) as TilesMimeFormat;
+    const newCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileMimeFormat);
     this.logger.info(`adding ${sourceCacheTitle} to cache list`);
     jsonDocument.caches[sourceCacheTitle] = newCache;
-    this.addNewLayer(sourceCacheTitle, jsonDocument);
+    this.addNewLayer(layerRequest.name, sourceCacheTitle, jsonDocument);
   }
 
   @withSpanV4
   private addNewLayer(layerName: string, jsonDocument: IMapProxyJsonDocument): void {
     this.logger.info(`adding ${layerName} to layer list`);
-    const newLayer: IMapProxyLayer = this.getLayerValues(layerName);
+
+    const newLayer: IMapProxyLayer = this.getLayerValues(layerName, sourceCacheTitle);
     jsonDocument.layers.push(newLayer);
   }
 
@@ -307,14 +308,14 @@ class LayersManager {
     if (isLayerNameExists(jsonDocument, sourceCacheTitle)) {
       throw new ConflictError(`Layer name '${sourceCacheTitle}' already exists`);
     }
-    const tileFormat = this.mapToTileFormat(layerRequest.format);
+    const tileMimeFormat = mimeLookup(layerRequest.format) as TilesMimeFormat;
     this.logger.info(`adding ${sourceCacheTitle} to cache list`);
-    const sourceCacheBase: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileFormat);
+    const sourceCacheBase: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileMimeFormat);
     jsonDocument.caches[`${sourceCacheTitle}`] = sourceCacheBase;
     this.logger.info(`adding ${redisCacheTitle} to cache list`);
-    const redisCache: IMapProxyCache = this.createRedisCache(redisCacheTitle, sourceCacheTitle, tileFormat, this.mapproxyConfig);
+    const redisCache: IMapProxyCache = this.createRedisCache(redisCacheTitle, sourceCacheTitle, tileMimeFormat, this.mapproxyConfig);
     jsonDocument.caches[`${redisCacheTitle}`] = redisCache;
-    this.addNewLayer(redisCacheTitle, jsonDocument);
+    this.addNewLayer(layerRequest.name, redisCacheTitle, jsonDocument);
   }
 
   @withSpanV4
@@ -331,14 +332,6 @@ class LayersManager {
     };
 
     return cache;
-  }
-
-  private mapToTileFormat(tileOutputFormat: TileOutputFormat): TileFormat {
-    if (tileOutputFormat === TileOutputFormat.JPEG) {
-      return TileFormat.JPEG;
-    } else {
-      return TileFormat.PNG;
-    }
   }
 }
 
