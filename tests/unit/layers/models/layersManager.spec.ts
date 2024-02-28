@@ -22,6 +22,7 @@ import { MockConfigProvider, getJsonMock, updateJsonMock, init as initConfigProv
 import { SERVICES } from '../../../../src/common/constants';
 import { registerTestValues } from '../../../integration/testContainerConfig';
 import { init as initConfig, clear as clearConfig } from '../../../configurations/config';
+import { tracerMock } from '../../mock/tracer';
 
 let layersManager: LayersManager;
 let sortArrayByZIndexStub: jest.SpyInstance;
@@ -36,7 +37,7 @@ describe('layersManager', () => {
     //defalut layerManger - redis is enabled
     const redisConfig = container.resolve<IRedisConfig>(SERVICES.REDISCONFIG);
     const mapproxyConfig = container.resolve<IMapProxyConfig>(SERVICES.MAPPROXY);
-    layersManager = new LayersManager(logger, mapproxyConfig, redisConfig, MockConfigProvider);
+    layersManager = new LayersManager(logger, mapproxyConfig, redisConfig, MockConfigProvider, tracerMock);
     sortArrayByZIndexStub = jest.spyOn(utils, 'sortArrayByZIndex').mockReturnValueOnce(['mockLayer1', 'mockLayer2', 'mockLayer3']);
   });
 
@@ -145,7 +146,7 @@ describe('layersManager', () => {
       container.register(SERVICES.REDISCONFIG, { useValue: redisConfigValue });
       const redisConfig = container.resolve<IRedisConfig>(SERVICES.REDISCONFIG);
       const mapproxyConfig = container.resolve<IMapProxyConfig>(SERVICES.MAPPROXY);
-      layersManager = new LayersManager(logger, mapproxyConfig, redisConfig, MockConfigProvider);
+      layersManager = new LayersManager(logger, mapproxyConfig, redisConfig, MockConfigProvider, tracerMock);
 
       // action
       expect.assertions(4);
