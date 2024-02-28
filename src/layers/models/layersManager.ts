@@ -3,7 +3,7 @@ import { container, inject, injectable } from 'tsyringe';
 import { Logger } from '@map-colonies/js-logger';
 import { ConflictError, NotFoundError } from '@map-colonies/error-types';
 import { lookup as mimeLookup, TilesMimeFormat } from '@map-colonies/types';
-import { withSpanAsyncV4, withSpanV4 } from '@map-colonies/telemetry';
+import { withSpanAsyncV4 } from '@map-colonies/telemetry';
 import { Tracer } from '@opentelemetry/api';
 import { SERVICES } from '../../common/constants';
 import {
@@ -107,29 +107,6 @@ class LayersManager {
     this.logger.info(`Successfully updated mosaic: '${mosaicName}'`);
   }
 
-  public getAllLinkedCaches(baseCacheNames: string[], mapproxyConfiguration: IMapProxyJsonDocument): string[] {
-    const linkedCaches: string[] = [];
-    const baseCacheNamesDuplicate: string[] = [...baseCacheNames];
-
-    baseCacheNamesDuplicate.forEach((currentCache) => {
-      const sourceName = currentCache.endsWith('-source') ? currentCache : `${currentCache}-source`;
-      const redisSourceName = currentCache.endsWith('-source') ? currentCache.replace('-source', '') : currentCache;
-
-      if (mapproxyConfiguration.caches[sourceName] != undefined) {
-        if (!linkedCaches.includes(sourceName)) {
-          linkedCaches.push(sourceName);
-        }
-      }
-
-      if (mapproxyConfiguration.caches[redisSourceName] != undefined) {
-        if (!linkedCaches.includes(redisSourceName)) {
-          linkedCaches.push(redisSourceName);
-        }
-      }
-    });
-    return linkedCaches;
-  }
-
   @withSpanAsyncV4
   public async removeLayer(layersName: string[]): Promise<string[] | void> {
     this.logger.info(`Remove layers request for: [${layersName.join(',')}]`);
@@ -214,6 +191,29 @@ class LayersManager {
 
     await this.configProvider.updateJson(editJson);
     this.logger.info(`Successfully updated layer '${layerName}'`);
+  }
+
+  public getAllLinkedCaches(baseCacheNames: string[], mapproxyConfiguration: IMapProxyJsonDocument): string[] {
+    const linkedCaches: string[] = [];
+    const baseCacheNamesDuplicate: string[] = [...baseCacheNames];
+
+    baseCacheNamesDuplicate.forEach((currentCache) => {
+      const sourceName = currentCache.endsWith('-source') ? currentCache : `${currentCache}-source`;
+      const redisSourceName = currentCache.endsWith('-source') ? currentCache.replace('-source', '') : currentCache;
+
+      if (mapproxyConfiguration.caches[sourceName] != undefined) {
+        if (!linkedCaches.includes(sourceName)) {
+          linkedCaches.push(sourceName);
+        }
+      }
+
+      if (mapproxyConfiguration.caches[redisSourceName] != undefined) {
+        if (!linkedCaches.includes(redisSourceName)) {
+          linkedCaches.push(redisSourceName);
+        }
+      }
+    });
+    return linkedCaches;
   }
 
   public getCacheValues(cacheSource: string, sourcePath: string, format: string): IMapProxyCache {
