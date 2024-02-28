@@ -92,7 +92,7 @@ export const mockData = (): IMapProxyJsonDocument => {
         },
       ],
     },
-    grids:{epsg4326dir:'ests'}
+    grids: { epsg4326dir: 'ests' },
   };
   return data as unknown as IMapProxyJsonDocument;
 };
@@ -188,7 +188,7 @@ export const mockFalseData = (): IMapProxyJsonDocument => {
         },
       ],
     },
-    grids:{epsg1111:'ests'}
+    grids: { epsg1111: 'ests' },
   };
   return data as unknown as IMapProxyJsonDocument;
 };
