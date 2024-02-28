@@ -14,11 +14,11 @@ data:
   RESPONSE_COMPRESSION_ENABLED: {{ .Values.env.responseCompressionEnabled | quote }}
   LOG_LEVEL: {{ .Values.env.logLevel | quote }}
   LOG_PRETTY_PRINT_ENABLED: {{ .Values.env.logPrettyPrintEnabled | quote }}
-  TELEMETRY_TRACING_ENABLED: {{ $tracing.enabled }}
+  TELEMETRY_TRACING_ENABLED: {{ $tracing.enabled | quote }}
   {{ if $tracing.enabled }}
   TELEMETRY_TRACING_URL: {{ $tracing.url }}
   {{ end }}
-  TELEMETRY_METRICS_ENABLED: {{ $metrics.enabled }}
+  TELEMETRY_METRICS_ENABLED: {{ $metrics.enabled | quote }}
   {{ if $metrics.enabled }}
   TELEMETRY_METRICS_URL: {{ $metrics.url }}
   {{ end }}
