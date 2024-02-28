@@ -3,6 +3,8 @@ import { container, inject, injectable } from 'tsyringe';
 import { Logger } from '@map-colonies/js-logger';
 import { ConflictError, NotFoundError, BadRequestError } from '@map-colonies/error-types';
 import { lookup as mimeLookup, TilesMimeFormat } from '@map-colonies/types';
+import { withSpanAsyncV4 } from '@map-colonies/telemetry';
+import { Tracer } from '@opentelemetry/api';
 import { SERVICES } from '../../common/constants';
 import {
   ILayerPostRequest,
@@ -33,8 +35,11 @@ class LayersManager {
     @inject(SERVICES.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig,
     @inject(SERVICES.REDISCONFIG) private readonly redisConfig: IRedisConfig,
     @inject(SERVICES.CONFIGPROVIDER) private readonly configProvider: IConfigProvider,
+    @inject(SERVICES.TRACER) public readonly tracer: Tracer,
     @inject(ConfigsManager) private readonly manager: ConfigsManager
   ) {}
+
+  @withSpanAsyncV4
   public async getLayer(layerName: string): Promise<IMapProxyCache> {
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
 
@@ -45,6 +50,7 @@ class LayersManager {
     return requestedLayer;
   }
 
+  @withSpanAsyncV4
   public async addLayer(layerRequest: ILayerPostRequest): Promise<void> {
     const configJson = await this.manager.getConfig();
     if (!(this.mapproxyConfig.cache.grids in configJson.grids)) {
@@ -59,6 +65,7 @@ class LayersManager {
     await this.configProvider.updateJson(editJson);
   }
 
+  @withSpanAsyncV4
   public async addLayerToMosaic(mosaicName: string, layerToMosaicRequest: ILayerToMosaicRequest): Promise<void> {
     this.logger.info(`Add layer: ${layerToMosaicRequest.layerName} to mosaic: ${mosaicName} request`);
 
@@ -80,6 +87,7 @@ class LayersManager {
     this.logger.info(`Successfully added layer: '${layerToMosaicRequest.layerName}' to mosaic: '${mosaicName}'`);
   }
 
+  @withSpanAsyncV4
   public async updateMosaic(mosaicName: string, updateMosaicRequest: IUpdateMosaicRequest): Promise<void> {
     this.logger.info(`Update mosaic: ${mosaicName} request`);
 
@@ -105,29 +113,7 @@ class LayersManager {
     this.logger.info(`Successfully updated mosaic: '${mosaicName}'`);
   }
 
-  public getAllLinkedCaches(baseCacheNames: string[], mapproxyConfiguration: IMapProxyJsonDocument): string[] {
-    const linkedCaches: string[] = [];
-    const baseCacheNamesDuplicate: string[] = [...baseCacheNames];
-
-    baseCacheNamesDuplicate.forEach((currentCache) => {
-      const sourceName = currentCache.endsWith('-source') ? currentCache : `${currentCache}-source`;
-      const redisSourceName = currentCache.endsWith('-source') ? currentCache.replace('-source', '') : currentCache;
-
-      if (mapproxyConfiguration.caches[sourceName] != undefined) {
-        if (!linkedCaches.includes(sourceName)) {
-          linkedCaches.push(sourceName);
-        }
-      }
-
-      if (mapproxyConfiguration.caches[redisSourceName] != undefined) {
-        if (!linkedCaches.includes(redisSourceName)) {
-          linkedCaches.push(redisSourceName);
-        }
-      }
-    });
-    return linkedCaches;
-  }
-
+  @withSpanAsyncV4
   public async removeLayer(layersName: string[]): Promise<string[] | void> {
     this.logger.info(`Remove layers request for: [${layersName.join(',')}]`);
     const errorMessage = 'no valid layers to delete';
@@ -168,6 +154,7 @@ class LayersManager {
     return failedLayers;
   }
 
+  @withSpanAsyncV4
   public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<void> {
     this.logger.info({ msg: `Update layer: '${layerName}' request`, layerRequest });
     const tileMimeFormat = mimeLookup(layerRequest.format) as TilesMimeFormat;
@@ -210,6 +197,29 @@ class LayersManager {
 
     await this.configProvider.updateJson(editJson);
     this.logger.info(`Successfully updated layer '${layerName}'`);
+  }
+
+  public getAllLinkedCaches(baseCacheNames: string[], mapproxyConfiguration: IMapProxyJsonDocument): string[] {
+    const linkedCaches: string[] = [];
+    const baseCacheNamesDuplicate: string[] = [...baseCacheNames];
+
+    baseCacheNamesDuplicate.forEach((currentCache) => {
+      const sourceName = currentCache.endsWith('-source') ? currentCache : `${currentCache}-source`;
+      const redisSourceName = currentCache.endsWith('-source') ? currentCache.replace('-source', '') : currentCache;
+
+      if (mapproxyConfiguration.caches[sourceName] != undefined) {
+        if (!linkedCaches.includes(sourceName)) {
+          linkedCaches.push(sourceName);
+        }
+      }
+
+      if (mapproxyConfiguration.caches[redisSourceName] != undefined) {
+        if (!linkedCaches.includes(redisSourceName)) {
+          linkedCaches.push(redisSourceName);
+        }
+      }
+    });
+    return linkedCaches;
   }
 
   public getCacheValues(cacheSource: string, sourcePath: string, format: string): IMapProxyCache {
@@ -286,7 +296,6 @@ class LayersManager {
 
   private addNewLayer(layerName: string, sourceCacheTitle: string, jsonDocument: IMapProxyJsonDocument): void {
     this.logger.info(`adding ${layerName} to layer list`);
-
     const newLayer: IMapProxyLayer = this.getLayerValues(layerName, sourceCacheTitle);
     jsonDocument.layers.push(newLayer);
   }

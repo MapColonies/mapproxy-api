@@ -71,6 +71,14 @@ db:
     useExternal: false
     externalSecretName: ""
 
+metrics:
+  enabled: false
+  url: ''
+
+tracing:
+  enabled: false
+  url: ''
+
 # add pod annotations
 # example:
 # podAnnotations:
@@ -87,14 +95,8 @@ env:
   responseCompressionEnabled: true
   requestPayloadLimit: 1mb
   internalMountDir: /layerSources
-  tracing:
-    enabled: false
-    url: http://localhost:55681/v1/trace
-  metrics:
-    enabled: false
-    url: http://localhost:55681/v1/metrics
   mapproxyCache:
-    grids: World84CRS
+    grids: WorldCRS84
     upscaleTiles: 18
     directoryLayout: tms
 
