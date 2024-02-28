@@ -123,12 +123,17 @@ export interface ICacheName {
   cacheName: string;
 }
 
+export interface ICacheObject {
+  cacheName: string;
+  cache: IRedisSource | IS3Source | IFSSource;
+}
+
 export interface IGpkgSource extends ICacheSource {
   filename: string;
   table_name: string;
 }
 
-export interface IFSSource extends IS3Source { }
+export interface IFSSource extends IS3Source {}
 
 export interface IMapProxyCache {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -46,6 +46,11 @@ export function getRedisCacheName(cacheName: string): string {
   return `${cacheName}-redis`;
 }
 
+// reduce from cache name to layerName
+export function getRedisCacheOriginalName(cacheName: string): string {
+  return cacheName.replace('-redis', '');
+}
+
 export function isRedisCacheLayer(layerName: string): boolean {
   return layerName.endsWith('-redis');
 }

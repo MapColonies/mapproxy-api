@@ -204,7 +204,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/layer'
-  /layer/{name}/{type}:
+  /layer/{layerName}/{cacheType}:
     get:
       operationId: getCache
       tags:
@@ -221,13 +221,18 @@ paths:
           required: true
           schema:
             type: string
+            enum:
+              - s3
+              - file
+              - redis
+              - geopackage
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/getLayerResponse'
+                $ref: '#/components/schemas/getCacheResponse'
         '404':
           description: Not Found
           content:
@@ -315,6 +320,28 @@ components:
           enum:
             - image/png
             - image/jpeg
+
+    getCacheResponse:
+      type: object
+      required:
+        - cacheName
+        - cache
+      properties:
+        cacheName:
+          type: string
+        cache:
+          type: object
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum:
+                - s3
+                - file
+                - redis
+                - geopackage
+
     getConfigResponse:
       type: object
       properties:

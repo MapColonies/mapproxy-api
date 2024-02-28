@@ -8,7 +8,7 @@ import { LayersManager } from '../models/layersManager';
 
 type CreateLayerHandler = RequestHandler<undefined, ILayerPostRequest, ILayerPostRequest>;
 type GetLayerHandler = RequestHandler<{ name: string }, IMapProxyCache, IMapProxyCache>;
-type GetCacheHandler = RequestHandler<{ name: string ,type : string}, ICacheName>;
+type GetCacheHandler = RequestHandler<{ layerName: string; cacheType: string }, ICacheName>;
 type UpdateLayerHandler = RequestHandler<{ name: string }, ILayerPostRequest, ILayerPostRequest>;
 type DeleteLayerHandler = RequestHandler<undefined, string[] | void, undefined, { layerNames: string[] }>;
 @injectable()
@@ -25,7 +25,7 @@ export class LayersController {
 
   public getLayersCache: GetCacheHandler = async (req, res, next) => {
     try {
-      const resultJson = await this.manager.getCacheName(req.params.name, req.params.type)
+      const resultJson = await this.manager.getCacheByNameAndType(req.params.layerName, req.params.cacheType);
       return res.status(httpStatus.OK).json(resultJson);
     } catch (error) {
       next(error);

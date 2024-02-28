@@ -97,18 +97,18 @@ describe('layerManager', () => {
     it('Sad Path - should fail with response status 404 Not Found and layer name is not exists', async () => {
       const mockLayerName = 'mockLayerNameIsNotExists';
       const response = await requestSender.getLayersCache(mockLayerName, 's3');
-      const notFoundErrorMessage = `Layer ${mockLayerName} or fitting cache do not exist`;
+      const notFoundErrorMessage = `${mockLayerName} layer not found on mapproxy configuration`;
 
       expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
       expect(response.body).toEqual({ message: notFoundErrorMessage });
     });
 
-    it('Sad Path - should fail with error not valid type formay', async () => {
+    it('Sad Path - should fail with error not valid type format', async () => {
       const mockLayerName = 'mockLayerNameIsExists';
       const cacheType = 'notValid';
       const response = await requestSender.getLayersCache(mockLayerName, cacheType);
-      const badRequestMessage = `Invalid cache type: ${cacheType} has been provided , available values: "geopackage", "s3", "file", "redis"`;
+      const badRequestMessage = `request/params/cacheType must be equal to one of the allowed values: s3, file, redis, geopackage`;
 
       expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);

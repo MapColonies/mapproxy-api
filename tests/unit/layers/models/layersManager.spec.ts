@@ -7,7 +7,7 @@ import { ConflictError, NotFoundError, NotImplementedError } from '@map-colonies
 import { TileOutputFormat } from '@map-colonies/mc-model-types';
 import { lookup as mimeLookup, TilesMimeFormat } from '@map-colonies/types';
 import config from 'config';
-import { ICacheName, ILayerPostRequest, IMapProxyCache, IMapProxyConfig, IRedisConfig } from '../../../../src/common/interfaces';
+import { ILayerPostRequest, IMapProxyCache, IMapProxyConfig, IRedisConfig } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExists';
 import { mockLayerNameIsNotExists } from '../../mock/mockLayerNameIsNotExists';
@@ -73,8 +73,7 @@ describe('layersManager', () => {
         cache: {
           type: 's3',
           directory: '/path/to/s3/directory/tile',
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          directory_layout: 'tms',
+          directory_layout: 'tms', // eslint-disable-line @typescript-eslint/naming-convention
         },
       };
 
@@ -99,13 +98,17 @@ describe('layersManager', () => {
     });
   });
 
-  describe('#getCacheName', () => {
+  describe('#getCacheByNameAndType', () => {
     it('should successfully return the cache name', async () => {
-      const expectedCache = { cacheName: "mockLayerNameExists"};
+      const expectedCache = {
+        cacheName: 'mockLayerNameExists',
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        cache: { directory: '/path/to/s3/directory/tile', directory_layout: 'tms', type: 's3' },
+      };
 
       // action
       expect.assertions(2);
-      const action =  layersManager.getCacheName('mockLayerNameExists', "s3");
+      const action = layersManager.getCacheByNameAndType('mockLayerNameExists', 's3');
       // expectation;
 
       expect(getJsonMock).toHaveBeenCalledTimes(1);
@@ -115,17 +118,25 @@ describe('layersManager', () => {
     it('should fail with not found', async () => {
       // action
       expect.assertions(1);
-      const action = layersManager.getCacheName('mockLayerNameNotExists', "s3");
+      const action = layersManager.getCacheByNameAndType('mockLayerNameNotExists', 's3');
       // expectation;
       await expect(action).rejects.toThrow(NotFoundError);
     });
 
+    it('should fail with not found for layer without cache object', async () => {
+      // action
+      const layerName = 'noCacheForLayer';
+      expect.assertions(1);
+      const action = layersManager.getCacheByNameAndType(layerName, 's3');
+      // expectation;
+      await expect(action).rejects.toThrow(new NotFoundError(`cache not found for ${layerName} layer`));
+    });
     it('should fail with not valid source type', async () => {
       // action
       expect.assertions(1);
-      const action = layersManager.getCacheName('mockLayerNameExists', "notValidType");
+      const action = layersManager.getCacheByNameAndType('mockLayerNameExists', 'notValidType');
       // expectation;
-      await expect(action).rejects.toThrow(Error);
+      await expect(action).rejects.toThrow(new NotFoundError(`mockLayerNameExists layer cache not found with requested cache type: notValidType`));
     });
   });
 
