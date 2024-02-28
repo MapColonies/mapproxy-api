@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.9.0](https://github.com/MapColonies/mapproxy-api/compare/v1.8.2...v1.9.0) (2024-02-28)
+
+
+### Features
+
+* add tracing (MAPCO-3914) ([#127](https://github.com/MapColonies/mapproxy-api/issues/127)) ([ea566bd](https://github.com/MapColonies/mapproxy-api/commit/ea566bdf9aff3e0235d5327bba58f6951c66dd1f))
+
 ### [1.8.2](https://github.com/MapColonies/mapproxy-api/compare/v1.8.1...v1.8.2) (2024-02-20)
 
 ### [1.8.1](https://github.com/MapColonies/mapproxy-api/compare/v1.8.0...v1.8.1) (2024-02-20)
