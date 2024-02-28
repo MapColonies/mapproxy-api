@@ -52,10 +52,17 @@ class LayersManager {
 
   @withSpanAsyncV4
   public async addLayer(layerRequest: ILayerPostRequest): Promise<void> {
-    const configJson = await this.manager.getConfig();
-    if (!(this.mapproxyConfig.cache.grids in configJson.grids)) {
-      throw new BadRequestError(`grid ${this.mapproxyConfig.cache.grids} doesn't exist in mapproxy global grids list`);
+    try{
+      await this.checkGrids();
     }
+    catch(error){
+      if(error instanceof BadRequestError){
+        throw new BadRequestError(error.message);
+      }
+      else{
+        throw error;
+      }
+    }    
     const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
       this.addNewCache(jsonDocument, layerRequest);
 
@@ -157,9 +164,16 @@ class LayersManager {
   @withSpanAsyncV4
   public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<void> {
     this.logger.info({ msg: `Update layer: '${layerName}' request`, layerRequest });
-    const configJson = await this.manager.getConfig();
-    if (!(this.mapproxyConfig.cache.grids in configJson.grids)) {
-      throw new BadRequestError(`grid ${this.mapproxyConfig.cache.grids} doesn't exist in mapproxy global grids list`);
+    try{
+      await this.checkGrids();
+    }
+    catch(error){
+      if(error instanceof BadRequestError){
+        throw new BadRequestError(error.message);
+      }
+      else{
+        throw error;
+      }
     }
     const tileMimeFormat = mimeLookup(layerRequest.format) as TilesMimeFormat;
     const isRedisCache = !layerName.endsWith('-source');
@@ -335,6 +349,13 @@ class LayersManager {
     };
 
     return cache;
+  }
+
+  private async checkGrids(): Promise<void>{
+    const configJson = await this.manager.getConfig();
+    if (!(this.mapproxyConfig.cache.grids in configJson.grids)) {
+      throw new BadRequestError(`grid ${this.mapproxyConfig.cache.grids} doesn't exist in mapproxy global grids list`);
+    }
   }
 }
 
