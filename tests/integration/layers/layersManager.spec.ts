@@ -22,8 +22,9 @@ import { getApp } from '../../../src/app';
 import { SERVICES } from '../../../src/common/constants';
 import { layersRouterFactory, LAYERS_ROUTER_SYMBOL } from '../../../src/layers/routes/layersRouterFactory';
 import { LayersRequestSender } from '../layers/helpers/requestSender';
-import { mockData } from '../../unit/mock/mockData';
-import { ConfigsManager } from '../../../src/configs/models/configsManager';
+import { mockData , mockFalseData} from '../../unit/mock/mockData';
+import {ConfigsManager} from '../../../src/configs/models/configsManager';
+
 
 let requestSender: LayersRequestSender;
 const logger = jsLogger({ enabled: false });
@@ -34,7 +35,6 @@ describe('layerManager', () => {
     const fsConfig = config.get<IFSConfig>('FS');
     const s3Config = config.get<IS3Config>('S3');
     const redisConfig = config.get<IMapProxyConfig>('redis');
-    const configManager = new ConfigsManager(logger, mapproxyConfig, MockConfigProvider);
     configProviderInit();
     /* eslint-disable-next-line @typescript-eslint/naming-convention*/
     const app = getApp({
@@ -99,10 +99,17 @@ describe('layerManager', () => {
 
   describe('#addLayer', () => {
     it('Happy Path - should return status 201', async () => {
-      jest.spyOn(configManager,'getConfig').mockResolvedValue(mockData());
+      jest.spyOn(ConfigsManager.prototype,'getConfig').mockResolvedValue(mockData());
       const response = await requestSender.addLayer(mockLayerNameIsNotExists);
 
       expect(response.status).toBe(httpStatusCodes.CREATED);
+    });
+
+    it('Bad Path - should fail with response status 400 Bad Request due to wrong grid', async () => {
+      jest.spyOn(ConfigsManager.prototype,'getConfig').mockResolvedValue(mockFalseData());
+      const response = await requestSender.addLayer(mockLayerNameIsNotExists);
+
+      expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
     });
 
     it('Bad Path - should fail with response status 400 Bad Request', async () => {
@@ -117,6 +124,7 @@ describe('layerManager', () => {
     });
 
     it('Sad Path - should fail with response status 409 and layer name is already exists', async () => {
+      jest.spyOn(ConfigsManager.prototype,'getConfig').mockResolvedValue(mockData());
       const response = await requestSender.addLayer(mockLayerNameAlreadyExists);
       const conflictErrorMessage = `Layer name '${mockLayerNameAlreadyExists.name}-source' already exists`;
 
