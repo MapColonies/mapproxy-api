@@ -348,6 +348,7 @@ class LayersManager {
   }
 
   private async checkGrids(): Promise<void> {
+    this.logger.info(`checking grids`);
     const configJson = await this.manager.getConfig();
     if (!(this.mapproxyConfig.cache.grids in configJson.grids)) {
       throw new BadRequestError(`grid ${this.mapproxyConfig.cache.grids} doesn't exist in mapproxy global grids list`);
