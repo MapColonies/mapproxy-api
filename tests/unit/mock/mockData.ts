@@ -62,10 +62,6 @@ export const mockData = (): IMapProxyJsonDocument => {
             default_ttl: '86400',
           },
         },
-        existsMosaicName: {
-          sources: ['bluemar', 'planet', 'artzi'],
-          grids: ['epsg4326'],
-        },
       },
       layers: [
         {

@@ -160,23 +160,6 @@ export interface ILayerPostRequest {
   format: TileOutputFormat;
 }
 
-export interface ILayerToMosaicRequest {
-  layerName: string;
-}
-
-export interface IMosaicLayer {
-  layers: string[];
-}
-
-export interface IMosaicLayerObject {
-  layerName: string;
-  zIndex: number;
-}
-
-export interface IUpdateMosaicRequest {
-  layers: IMosaicLayerObject[];
-}
-
 export interface IConfigProvider {
   updateJson: (editJson: (content: IMapProxyJsonDocument) => IMapProxyJsonDocument) => Promise<void>;
   getJson: () => Promise<IMapProxyJsonDocument>;

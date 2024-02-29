@@ -1,11 +1,10 @@
 import { readFileSync } from 'fs';
 import jsyaml, { YAMLException } from 'js-yaml';
 import * as utils from '../../../../src/common/utils';
-import { IMapProxyJsonDocument, IMapProxyLayer, IMosaicLayerObject } from '../../../../src/common/interfaces';
+import { IMapProxyJsonDocument, IMapProxyLayer } from '../../../../src/common/interfaces';
 
 let safeLoadStub: jest.SpyInstance;
 let safeDumpStub: jest.SpyInstance;
-let sortArrayByZIndexStub: jest.SpyInstance;
 let replaceYamlFileContentStub: jest.SpyInstance;
 
 describe('utils', () => {
@@ -13,7 +12,6 @@ describe('utils', () => {
     // stub util functions
     safeLoadStub = jest.spyOn(jsyaml, 'safeLoad');
     safeDumpStub = jest.spyOn(jsyaml, 'safeDump');
-    sortArrayByZIndexStub = jest.spyOn(utils, 'sortArrayByZIndex');
     replaceYamlFileContentStub = jest.spyOn(utils, 'replaceYamlFileContent');
   });
 
@@ -84,27 +82,6 @@ describe('utils', () => {
       expect(action).not.toThrow();
       expect(typeof convertedYaml).toBe('string');
       expect(newConvertedJson.layers).toContainEqual(mockLayer);
-    });
-  });
-
-  describe('#sortArrayByZIndex', () => {
-    it('should sort an array in numerical order', function () {
-      // mock
-      const layers: IMosaicLayerObject[] = [
-        { layerName: 'mockLayer1', zIndex: 2 },
-        { layerName: 'mockLayer2', zIndex: 1 },
-        { layerName: 'mockLayer3', zIndex: 0 },
-      ];
-      // action
-      const action = () => utils.sortArrayByZIndex(layers);
-
-      // expectation
-      expect(layers[0].layerName).toBe('mockLayer1');
-      expect(layers[1].layerName).toBe('mockLayer2');
-      expect(layers[2].layerName).toBe('mockLayer3');
-      expect(action()).toEqual(['mockLayer3', 'mockLayer2', 'mockLayer1']);
-      expect(sortArrayByZIndexStub).toHaveReturned();
-      expect(sortArrayByZIndexStub).toHaveBeenCalledTimes(1);
     });
   });
 

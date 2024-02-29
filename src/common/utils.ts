@@ -3,7 +3,7 @@ import { promises as fsp } from 'node:fs';
 import { safeLoad, safeDump, YAMLException } from 'js-yaml';
 import { container } from 'tsyringe';
 import { SERVICES } from '../common/constants';
-import { IFSConfig, IMapProxyJsonDocument, IMosaicLayerObject } from './interfaces';
+import { IFSConfig, IMapProxyJsonDocument } from './interfaces';
 import { SourceTypes } from './enums';
 
 // read mapproxy yaml config file and convert it into a json object
@@ -29,12 +29,6 @@ export function convertJsonToYaml(jsonDocument: IMapProxyJsonDocument): string {
 // write new content in mapproxy yaml config file
 export async function replaceYamlFileContent(yamlFilePath: string, yamlContent: string): Promise<void> {
   await fsp.writeFile(yamlFilePath, yamlContent, 'utf8');
-}
-
-// sort an array in numerical order
-export function sortArrayByZIndex(layersArr: IMosaicLayerObject[]): string[] {
-  const sortedArray = layersArr.sort((a, b) => a.zIndex - b.zIndex);
-  return sortedArray.map((val) => val.layerName);
 }
 
 // get the extension from a file path

@@ -63,10 +63,6 @@
         "directory": "/path/to/s3/directory/tile",
         "directory_layout": "tms"
       }
-    },
-    "existsMosaicName": {
-      "sources": ["bluemar", "planet", "artzi"],
-      "grids": ["epsg4326"]
     }
   },
   "layers": [
