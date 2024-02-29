@@ -342,11 +342,7 @@ class LayersManager {
       }
     } catch (error) {
       this.logger.error({ msg: `error in adding a layer, grid check failed. `, error });
-      if (error instanceof BadRequestError) {
-        throw new BadRequestError(error.message);
-      } else {
-        throw error;
-      }
+      throw error;
     }
   }
 }
