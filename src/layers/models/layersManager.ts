@@ -337,7 +337,6 @@ class LayersManager {
       const configJson = await this.manager.getConfig();
       if (!(this.mapproxyConfig.cache.grids in configJson.grids)) {
         const message = `grid ${this.mapproxyConfig.cache.grids} doesn't exist in mapproxy global grids list`;
-        this.logger.error({ msg: message });
         throw new BadRequestError(message);
       }
     } catch (error) {
