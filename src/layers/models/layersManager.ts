@@ -332,16 +332,16 @@ class LayersManager {
   }
 
   private async validateGridCorrectness(): Promise<void> {
-    this.logger.debug(`validate grid correctness`);
+    this.logger.debug({msg:`validate grid correctness`});
     try {
       const configJson = await this.manager.getConfig();
       if (!(this.mapproxyConfig.cache.grids in configJson.grids)) {
         const message = `grid ${this.mapproxyConfig.cache.grids} doesn't exist in mapproxy global grids list`;
-        this.logger.error(message);
+        this.logger.error({msg:message});
         throw new BadRequestError(message);
       }
     } catch (error) {
-      this.logger.error(`error in adding a layer, grid check failed. error message: ${(error as Error).message}`);
+      this.logger.error({msg:`error in adding a layer, grid check failed. `,error});
       if (error instanceof BadRequestError) {
         throw new BadRequestError(error.message);
       } else {
