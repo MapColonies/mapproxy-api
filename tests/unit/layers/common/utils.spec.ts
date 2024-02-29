@@ -142,12 +142,12 @@ describe('utils', () => {
     });
   });
 
-  describe('#isRedisCacheLayer', () => {
+  describe('#isLayerNameSuffixRedis', () => {
     it('should return true for redis cache name', function () {
       // mock
       const layerName = 'cache_name-redis';
       // action
-      const action = () => utils.isRedisCacheLayer(layerName);
+      const action = () => utils.isLayerNameSuffixRedis(layerName);
 
       // expectation
       expect(action()).toBe(true);
@@ -158,7 +158,7 @@ describe('utils', () => {
     // mock
     const layerName = 'cache_name';
     // action
-    const action = () => utils.isRedisCacheLayer(layerName);
+    const action = () => utils.isLayerNameSuffixRedis(layerName);
 
     // expectation
     expect(action()).toBe(false);

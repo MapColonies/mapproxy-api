@@ -25,7 +25,7 @@ import { GpkgSource } from '../../common/cacheProviders/gpkgSource';
 import { FSSource } from '../../common/cacheProviders/fsSource';
 import { SourceTypes } from '../../common/enums';
 import { RedisSource } from '../../common/cacheProviders/redisSource';
-import { getRedisCacheName, getRedisCacheOriginalName, isRedisCacheLayer } from '../../common/utils';
+import { getRedisCacheName, getRedisCacheOriginalName, isLayerNameSuffixRedis } from '../../common/utils';
 
 @injectable()
 class LayersManager {
@@ -39,7 +39,7 @@ class LayersManager {
   /**
    * @deprecated getLayer not in use and will be removed on future
    */
-  
+
   public async getLayer(layerName: string): Promise<IMapProxyCache> {
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
 
@@ -86,7 +86,7 @@ class LayersManager {
 
   public async addLayer(layerRequest: ILayerPostRequest): Promise<void> {
     const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
-      if (isRedisCacheLayer(layerRequest.name)) {
+      if (isLayerNameSuffixRedis(layerRequest.name)) {
         const errorMsg = `layer names that ends with '-redis' are not supported`;
         this.logger.warn({ msg: errorMsg, request: layerRequest });
         throw new NotImplementedError(errorMsg);
@@ -105,7 +105,7 @@ class LayersManager {
     const baseCacheNamesDuplicate: string[] = [...baseCacheNames];
 
     baseCacheNamesDuplicate.forEach((currentCache) => {
-      const mainCacheName = isRedisCacheLayer(currentCache) ? getRedisCacheOriginalName(currentCache) : currentCache;
+      const mainCacheName = isLayerNameSuffixRedis(currentCache) ? getRedisCacheOriginalName(currentCache) : currentCache;
       const redisCacheName = getRedisCacheName(mainCacheName);
 
       if (mapproxyConfiguration.caches[mainCacheName] != undefined) {
@@ -124,14 +124,14 @@ class LayersManager {
   }
 
   public async removeLayer(layersName: string[]): Promise<string[] | void> {
-    this.logger.info(`Remove layers request for: [${layersName.join(',')}]`);
+    this.logger.info({ msg: `Remove layers request for: [${layersName.join(',')}]`, layersName });
     const errorMessage = 'no valid layers to delete';
     let failedCaches;
     const failedLayers: string[] = [];
     const deletedLayers: string[] = [];
 
     layersName.forEach((layerName) => {
-      if (isRedisCacheLayer(layerName)) {
+      if (isLayerNameSuffixRedis(layerName)) {
         const errorMsg = `layer names that ends with '-redis' are not supported`;
         this.logger.warn({ msg: errorMsg, layersName, currentLayerName: layerName });
         throw new NotImplementedError(errorMsg);
@@ -145,32 +145,34 @@ class LayersManager {
         // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         if (requestedLayerIndex !== -1) {
           jsonDocument.layers.splice(requestedLayerIndex, 1);
-          this.logger.info(`Successfully removed layer '${layerName}'`);
+          this.logger.info({ msg: `Successfully removed layer '${layerName}'` });
           deletedLayers.push(layerName);
         } else {
-          this.logger.error(`failed to removed layer '${layerName}'`);
+          this.logger.error({ msg: `Failed to removed layer '${layerName}'` });
           failedLayers.push(layerName);
         }
       });
 
       const allLinkedCaches = this.getAllLayerLinkedCaches(layersName, jsonDocument);
+      this.logger.info({ msg: `Total linked caches that will be removed is ${allLinkedCaches.length}`, layersName, allLinkedCaches });
       allLinkedCaches.forEach((cacheName) => {
         // remove requested layer cache source from cache list
         delete jsonDocument.caches[cacheName];
-        this.logger.info(`Successfully removed cache '${cacheName}'`);
+        this.logger.info({ msg: `Successfully removed cache '${cacheName}'`, cacheName });
       });
 
       if (failedLayers.length !== 0) {
-        const notFoundMessege = `layers: ['${failedLayers.join(',')}'] were not found`;
-        this.logger.error(notFoundMessege);
+        const notFoundMessege = `layers were not found for deletion`;
+        this.logger.error({ msg: notFoundMessege, failedLayers, totalFailedLayers: failedLayers.length });
       }
 
       failedCaches = layersName.filter((layerName) => !allLinkedCaches.includes(layerName));
       if (failedCaches.length !== 0) {
         const notFoundMessege = `caches: ['${failedCaches.join(',')}'] were not found`;
-        this.logger.error(notFoundMessege);
+        this.logger.error({ msg: notFoundMessege, failedCaches, totalFailedCaches: failedCaches.length });
       }
       if (deletedLayers.length === 0) {
+        this.logger.error({ msg: errorMessage });
         throw new Error(errorMessage);
       }
       return jsonDocument;
@@ -179,6 +181,7 @@ class LayersManager {
     await this.configProvider.updateJson(editJson).catch((err) => {
       const error = err as Error;
       if (error.message !== errorMessage) {
+        this.logger.error({ msg: error.message, error });
         throw error;
       }
     });
@@ -189,45 +192,35 @@ class LayersManager {
   public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<void> {
     this.logger.info({ msg: `Update layer: '${layerName}' request`, layerRequest });
     const tileMimeFormat = mimeLookup(layerRequest.format) as TilesMimeFormat;
-    const isRedisCache = isRedisCacheLayer(layerName);
+    const isRedisCache = isLayerNameSuffixRedis(layerName);
     let doesHaveRedisCache = false;
 
-    if (isRedisCacheLayer(layerName)) {
+    if (isRedisCache) {
       const errorMsg = `layer names that ends with '-redis' are not supported`;
       this.logger.warn({ msg: errorMsg, layerName, layerRequest });
       throw new NotImplementedError(errorMsg);
     }
 
     const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
-      let newLayer: IMapProxyLayer;
       const redisCacheName = getRedisCacheName(layerName);
       const mainLayerName = layerName;
-      doesHaveRedisCache = jsonDocument.caches[redisCacheName] != undefined;
+      doesHaveRedisCache = jsonDocument.caches[redisCacheName] !== undefined;
 
-      if (jsonDocument.caches[layerName] == undefined) {
-        throw new NotFoundError(`Cache name '${layerName}' does not exists`);
+      if (jsonDocument.caches[layerName] === undefined) {
+        const errorMsg = `Cache name '${layerName}' does not exists`;
+        this.logger.error({ msg: errorMsg, layerName, layerRequest });
+        throw new NotFoundError(errorMsg);
       }
 
-      if (isRedisCache || doesHaveRedisCache) {
+      if (doesHaveRedisCache) {
         // update existing layer cache values with the new requested layer cache values
         const newRedisCache: IMapProxyCache = this.createRedisCache(redisCacheName, mainLayerName, tileMimeFormat, this.mapproxyConfig);
         this.logger.info({ msg: `updating cache ${redisCacheName}`, newRedisCache });
         jsonDocument.caches[redisCacheName] = newRedisCache;
-        // update existing layer values with the new requested layer values
-        newLayer = this.getLayerValues(redisCacheName);
-        const redisLayerIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === redisCacheName);
-        this.logger.info({ msg: `updating layer ${redisCacheName}`, newLayer });
-        jsonDocument.layers[redisLayerIndex] = newLayer;
-      } else {
-        newLayer = this.getLayerValues(mainLayerName);
-        const sourceLayerNameIndex: number = jsonDocument.layers.findIndex((layer) => layer.name === mainLayerName);
-        this.logger.info({ msg: `updating layer ${mainLayerName}`, newLayer });
-        jsonDocument.layers[sourceLayerNameIndex] = newLayer;
       }
       const mainSourceCache: IMapProxyCache = this.getCacheValues(layerRequest.cacheType, layerRequest.tilesPath, tileMimeFormat);
       this.logger.info({ msg: `updating cache ${mainLayerName}`, newSourceCache: mainSourceCache });
       jsonDocument.caches[mainLayerName] = mainSourceCache;
-
       return jsonDocument;
     };
 

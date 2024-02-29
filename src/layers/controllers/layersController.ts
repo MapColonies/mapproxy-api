@@ -15,6 +15,9 @@ type DeleteLayerHandler = RequestHandler<undefined, string[] | void, undefined, 
 export class LayersController {
   public constructor(@inject(SERVICES.LOGGER) private readonly logger: Logger, @inject(LayersManager) private readonly manager: LayersManager) {}
 
+  /**
+   * @deprecated getLayer not in use and will be removed on future
+   */
   public getLayer: GetLayerHandler = async (req, res, next) => {
     try {
       return res.status(httpStatus.OK).json(await this.manager.getLayer(req.params.name));
