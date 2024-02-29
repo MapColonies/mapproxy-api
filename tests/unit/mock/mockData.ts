@@ -5,7 +5,7 @@ export const mockData = (): IMapProxyJsonDocument => {
   const data = {
     caches: {
       mock: 'some content for unit-test',
-      'amsterdam_5cm-source': {
+      amsterdam_5cm: {
         sources: [],
         grids: ['epsg4326dir'],
         format: 'image/png',
@@ -16,7 +16,7 @@ export const mockData = (): IMapProxyJsonDocument => {
           directory_layout: 'tms',
         },
       },
-      'mockLayerNameExists-source': {
+      mockLayerNameExists: {
         sources: [],
         grids: ['epsg4326dir'],
         format: 'image/png',
@@ -28,7 +28,7 @@ export const mockData = (): IMapProxyJsonDocument => {
         },
       },
       combined_layers: { sources: ['mock'], grids: ['epsg4326dir'] },
-      'NameIsAlreadyExists-source': {
+      NameIsAlreadyExists: {
         sources: [],
         grids: ['epsg4326dir'],
         format: 'image/png',
@@ -38,7 +38,7 @@ export const mockData = (): IMapProxyJsonDocument => {
           directory: '/path/to/s3/directory/tile',
           directory_layout: 'tms',
         },
-        'redisExists-source': {
+        redisExists: {
           sources: [],
           grids: ['epsg4326dir'],
           format: 'image/png',
@@ -49,8 +49,8 @@ export const mockData = (): IMapProxyJsonDocument => {
             directory_layout: 'tms',
           },
         },
-        redisExists: {
-          sources: ['redisExists-source'],
+        'redisExists-redis': {
+          sources: ['redisExists'],
           grids: ['epsg4326dir'],
           format: 'image/png',
           upscale_tiles: 18,
@@ -62,33 +62,29 @@ export const mockData = (): IMapProxyJsonDocument => {
             default_ttl: '86400',
           },
         },
-        existsMosaicName: {
-          sources: ['bluemar', 'planet', 'artzi'],
-          grids: ['epsg4326'],
-        },
       },
       layers: [
         {
-          name: 'NameIsAlreadyExists-source',
+          name: 'NameIsAlreadyExists',
           title: 'title',
-          sources: ['NameIsAlreadyExists-source'],
+          sources: ['NameIsAlreadyExists'],
         },
         {
-          name: 'mockLayerNameExists-source',
+          name: 'mockLayerNameExists',
           title: 'title',
-          sources: ['mockLayerNameExists-source'],
+          sources: ['mockLayerNameExists'],
         },
         { name: 'mock', title: 'title', sources: ['source'] },
         { name: 'mock2', title: 'title', sources: ['source'] },
         {
-          name: 'amsterdam_5cm-source',
+          name: 'amsterdam_5cm',
           title: 'amsterdam 5m layer discription',
-          sources: ['amsterdam_5cm-source'],
+          sources: ['amsterdam_5cm'],
         },
         {
           name: 'redisExists',
-          title: 'redisExists',
-          sources: ['redisExists'],
+          title: 'redisExists-redis',
+          sources: ['redisExists-redis'],
         },
       ],
     },

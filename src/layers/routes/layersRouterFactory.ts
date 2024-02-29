@@ -7,12 +7,10 @@ const layersRouterFactory: FactoryFunction<Router> = (dependencyContainer) => {
   const controller = dependencyContainer.resolve(LayersController);
 
   router.get('/layer/:name', controller.getLayer);
+  router.get('/layer/:layerName/:cacheType', controller.getLayersCache);
   router.post('/layer', controller.addLayer);
   router.put('/layer/:name', controller.updateLayer);
   router.delete('/layer', controller.removeLayer);
-  router.post('/mosaic/:name', controller.addLayerToMosaic);
-  router.put('/mosaic/:name', controller.updateMosaic);
-
   return router;
 };
 export const LAYERS_ROUTER_SYMBOL = Symbol('layersRouterFactory');

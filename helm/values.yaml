@@ -30,7 +30,7 @@ global:
     path: '/usr/local/share/ca-certificates'
     key: 'ca.crt'
   ingress:
-    domain: 'apps.aroapp.io'       
+    domain: 'apps.aroapp.io'
 
 enabled: true
 environment: development
@@ -48,7 +48,7 @@ image:
   repository: mapproxy-api
   tag: 'latest'
 
-storage: 
+storage:
   mapproxyConfigProvider: "" #  -> 'DB' | 'FS' | 'S3'
   s3:
     endpointUrl: ""

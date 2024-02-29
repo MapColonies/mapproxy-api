@@ -119,6 +119,15 @@ export interface IRedisSource extends ICacheSource {
   default_ttl: number;
 }
 
+export interface ICacheName {
+  cacheName: string;
+}
+
+export interface ICacheObject {
+  cacheName: string;
+  cache: IRedisSource | IS3Source | IFSSource;
+}
+
 export interface IGpkgSource extends ICacheSource {
   filename: string;
   table_name: string;
@@ -149,23 +158,6 @@ export interface ILayerPostRequest {
   tilesPath: string;
   cacheType: string;
   format: TileOutputFormat;
-}
-
-export interface ILayerToMosaicRequest {
-  layerName: string;
-}
-
-export interface IMosaicLayer {
-  layers: string[];
-}
-
-export interface IMosaicLayerObject {
-  layerName: string;
-  zIndex: number;
-}
-
-export interface IUpdateMosaicRequest {
-  layers: IMosaicLayerObject[];
 }
 
 export interface IConfigProvider {

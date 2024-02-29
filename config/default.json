@@ -72,7 +72,7 @@
     "host": "raster-mapproxy-redis-master",
     "port": 6379,
     "auth": {
-      "enableRedisUser": true,
+      "enableRedisUser": false,
       "username": "",
       "password": ""
     },

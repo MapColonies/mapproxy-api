@@ -114,9 +114,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
+        '501':
+          description: Not Implemented, layer names that ends with '-redis' are not supported
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
+              examples:
+                LayerNotFound:
+                  value:
+                    message: Layer names that ends with '-redis' are not supported
   /layer/{name}:
     get:
       operationId: getLayer
+      deprecated: true
       tags:
         - Layer
       summary: get existing layer
@@ -193,107 +204,54 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/layer'
-  /mosaic/{name}:
-    post:
-      operationId: addLayerToMosaic
+  /layer/{layerName}/{cacheType}:
+    get:
+      operationId: getCache
       tags:
-        - Mosaic
-      summary: add layer to mosaic
+        - Layer
+      summary: cache from sources of layer
       parameters:
-        - name: name
+        - name: layerName
           in: path
           required: true
           schema:
             type: string
+        - name: cacheType
+          in: path
+          required: true
+          schema:
+            type: string
+            enum:
+              - s3
+              - file
+              - redis
+              - geopackage
       responses:
-        '201':
-          description: Created
+        '200':
+          description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/mosaicLayer'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error'
+                $ref: '#/components/schemas/getCacheResponse'
         '404':
-          description: Not found
+          description: Not Found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-              examples:
-                LayerNotFound:
-                  value:
-                    message: Layer name {layerName} is not exists
-                MosaicNotFound:
-                  value:
-                    message: Mosaic name {mosaicName} is not exists
+        '400':
+          description: Not valid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error'
         '500':
           description: Ineternal Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/mosaicLayer'
-    put:
-      operationId: updateMosaic
-      tags:
-        - Mosaic
-      summary: update mosaic layers
-      parameters:
-        - name: name
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/mosaic'
-        '204':
-          description: Updated
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error'
-        '404':
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error'
-              examples:
-                LayerNotFound:
-                  value:
-                    message: Layer name {layerName} is not exists
-                MosaicNotFound:
-                  value:
-                    message: Mosaic name {mosaicName} is not exists
-        '500':
-          description: Ineternal Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/error'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/mosaic'
+
 components:
   schemas:
     error:
@@ -362,6 +320,28 @@ components:
           enum:
             - image/png
             - image/jpeg
+
+    getCacheResponse:
+      type: object
+      required:
+        - cacheName
+        - cache
+      properties:
+        cacheName:
+          type: string
+        cache:
+          type: object
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum:
+                - s3
+                - file
+                - redis
+                - geopackage
+
     getConfigResponse:
       type: object
       properties:
@@ -440,37 +420,10 @@ components:
           type: object
     getConfigYamlResponse:
       type: string
-    mosaicLayer:
-      type: object
-      required:
-        - layerName
-      properties:
-        layerName:
-          type: string
-          example: amsterdam_5cm-source
-    mosaic:
-      type: object
-      required:
-        - layers
-      properties:
-        layers:
-          type: array
-          items:
-            type: object
-            required:
-              - layerName
-              - zIndex
-            properties:
-              layerName:
-                type: string
-                example: amsterdam_5cm-source
-              zIndex:
-                type: number
-                example: 1
     failedRemoveDiscreteLayers:
       type: array
       items:
         type: string
       example:
-        - amsterdam_5cm-source
-        - amsterdam_5cm-ortho-source
+        - amsterdam_5cm
+        - amsterdam_5cm-ortho

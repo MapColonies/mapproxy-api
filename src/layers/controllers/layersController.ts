@@ -3,14 +3,13 @@ import { RequestHandler } from 'express';
 import httpStatus from 'http-status-codes';
 import { injectable, inject } from 'tsyringe';
 import { SERVICES } from '../../common/constants';
-import { ILayerPostRequest, ILayerToMosaicRequest, IUpdateMosaicRequest, IMapProxyCache } from '../../common/interfaces';
+import { ICacheName, ILayerPostRequest, IMapProxyCache } from '../../common/interfaces';
 import { LayersManager } from '../models/layersManager';
 
 type CreateLayerHandler = RequestHandler<undefined, ILayerPostRequest, ILayerPostRequest>;
 type GetLayerHandler = RequestHandler<{ name: string }, IMapProxyCache, IMapProxyCache>;
-type CreateMosaicHandler = RequestHandler<{ name: string }, ILayerToMosaicRequest, ILayerToMosaicRequest>;
+type GetCacheHandler = RequestHandler<{ layerName: string; cacheType: string }, ICacheName>;
 type UpdateLayerHandler = RequestHandler<{ name: string }, ILayerPostRequest, ILayerPostRequest>;
-type PutMosaicHandler = RequestHandler<{ name: string }, IUpdateMosaicRequest, IUpdateMosaicRequest>;
 type DeleteLayerHandler = RequestHandler<undefined, string[] | void, undefined, { layerNames: string[] }>;
 @injectable()
 export class LayersController {
@@ -19,6 +18,15 @@ export class LayersController {
   public getLayer: GetLayerHandler = async (req, res, next) => {
     try {
       return res.status(httpStatus.OK).json(await this.manager.getLayer(req.params.name));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public getLayersCache: GetCacheHandler = async (req, res, next) => {
+    try {
+      const resultJson = await this.manager.getCacheByNameAndType(req.params.layerName, req.params.cacheType);
+      return res.status(httpStatus.OK).json(resultJson);
     } catch (error) {
       next(error);
     }
@@ -46,24 +54,6 @@ export class LayersController {
     try {
       const failedLayers = await this.manager.removeLayer(req.query.layerNames);
       return res.status(httpStatus.OK).send(failedLayers);
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  public addLayerToMosaic: CreateMosaicHandler = async (req, res, next) => {
-    try {
-      await this.manager.addLayerToMosaic(req.params.name, req.body);
-      return res.status(httpStatus.CREATED).send(req.body);
-    } catch (error) {
-      next(error);
-    }
-  };
-
-  public updateMosaic: PutMosaicHandler = async (req, res, next) => {
-    try {
-      await this.manager.updateMosaic(req.params.name, req.body);
-      return res.status(httpStatus.CREATED).send(req.body);
     } catch (error) {
       next(error);
     }
