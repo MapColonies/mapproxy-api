@@ -278,7 +278,7 @@ components:
           example: s3
         name:
           type: string
-          example: amsterdam_5cm-source
+          example: amsterdam_5cm
         tilesPath:
           type: string
           example: /path/to/tiles/directory/in/bucket/
@@ -425,5 +425,5 @@ components:
       items:
         type: string
       example:
-        - amsterdam_5cm-source
-        - amsterdam_5cm-ortho-source
+        - amsterdam_5cm
+        - amsterdam_5cm-ortho

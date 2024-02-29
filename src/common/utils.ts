@@ -42,16 +42,29 @@ export function getFileExtension(path: string): string {
   return extname(path);
 }
 
-export function getRedisCacheName(cacheName: string): string {
-  return `${cacheName}-redis`;
+/**
+ * Normalize layerName to his related redis cacheName
+ * @param layerName name related to mapproxy layerName
+ * @return string - layerName include suffix of redis'.
+ */
+export function getRedisCacheName(layerName: string): string {
+  return `${layerName}-redis`;
 }
 
-// reduce from cache name to layerName
-export function getRedisCacheOriginalName(cacheName: string): string {
+/**
+ * Reduce the actual layer name from cache name
+ * @param cacheName name related to redis cache layerName
+ * @return string - layer name as served from mapproxy
+ */ export function getRedisCacheOriginalName(cacheName: string): string {
   return cacheName.replace('-redis', '');
 }
 
-export function isRedisCacheLayer(layerName: string): boolean {
+/**
+ * Check if layerName contain redis suffix
+ * @param layerName name related to mapproxy layerName
+ * @return boolean - if the name include suffix '-redis'.
+ */
+export function isLayerNameSuffixRedis(layerName: string): boolean {
   return layerName.endsWith('-redis');
 }
 
