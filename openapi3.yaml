@@ -2,7 +2,7 @@ openapi: 3.0.1
 info:
   title: mapproxy-api
   description: rest api service to manage layers in mapproxy
-  version: 1.9.0
+  version: 1.10.0
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
@@ -115,7 +115,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/error'
         '501':
-          description: Not Implemented, layer names that ends with '-redis' are not supported
+          description: >-
+            Not Implemented, layer names that ends with '-redis' are not
+            supported
           content:
             application/json:
               schema:
@@ -233,14 +235,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getCacheResponse'
-        '404':
-          description: Not Found
+        '400':
+          description: Not valid request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-        '400':
-          description: Not valid request
+        '404':
+          description: Not Found
           content:
             application/json:
               schema:
@@ -251,7 +253,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/error'
-
 components:
   schemas:
     error:
@@ -320,7 +321,6 @@ components:
           enum:
             - image/png
             - image/jpeg
-
     getCacheResponse:
       type: object
       required:
@@ -341,7 +341,6 @@ components:
                 - file
                 - redis
                 - geopackage
-
     getConfigResponse:
       type: object
       properties:

@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.10.0](https://github.com/MapColonies/mapproxy-api/compare/v1.9.0...v1.10.0) (2024-02-29)
+
+
+### Features
+
+* Grid validation on insert and update (MAPCO-3975) ([#129](https://github.com/MapColonies/mapproxy-api/issues/129)) ([8d42164](https://github.com/MapColonies/mapproxy-api/commit/8d4216481fd3d2a07f974ad3a24d5c00093589a1))
+* update redis to new design (MAPCO-3769) ([#131](https://github.com/MapColonies/mapproxy-api/issues/131)) ([7013deb](https://github.com/MapColonies/mapproxy-api/commit/7013debd07c433e09457a3c1b2b0118272dcd51c))
+
+
+### Bug Fixes
+
+*  helm booleans to strings ([34da563](https://github.com/MapColonies/mapproxy-api/commit/34da563a7dd4c6e9ead6062e0007a00d2a314f06))
+
 ## [1.9.0](https://github.com/MapColonies/mapproxy-api/compare/v1.8.2...v1.9.0) (2024-02-28)
 
 
