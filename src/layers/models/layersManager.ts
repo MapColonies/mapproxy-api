@@ -27,6 +27,7 @@ import { GpkgSource } from '../../common/cacheProviders/gpkgSource';
 import { FSSource } from '../../common/cacheProviders/fsSource';
 import { SourceTypes } from '../../common/enums';
 import { RedisSource } from '../../common/cacheProviders/redisSource';
+import { ConfigsManager } from '../../configs/models/configsManager';
 import { getRedisCacheName, getRedisCacheOriginalName, isLayerNameSuffixRedis } from '../../common/utils';
 
 @injectable()
@@ -36,7 +37,8 @@ class LayersManager {
     @inject(SERVICES.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig,
     @inject(SERVICES.REDISCONFIG) private readonly redisConfig: IRedisConfig,
     @inject(SERVICES.CONFIGPROVIDER) private readonly configProvider: IConfigProvider,
-    @inject(SERVICES.TRACER) public readonly tracer: Tracer
+    @inject(SERVICES.TRACER) public readonly tracer: Tracer,
+    @inject(ConfigsManager) private readonly manager: ConfigsManager
   ) {}
 
   @withSpanAsyncV4
@@ -52,6 +54,7 @@ class LayersManager {
 
   @withSpanAsyncV4
   public async addLayer(layerRequest: ILayerPostRequest): Promise<void> {
+    await this.validateGridCorrectness();
     const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
       if (isLayerNameSuffixRedis(layerRequest.name)) {
         const errorMsg = `layer names that ends with '-redis' are not supported`;
@@ -194,6 +197,7 @@ class LayersManager {
   @withSpanAsyncV4
   public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<void> {
     this.logger.info({ msg: `Update layer: '${layerName}' request`, layerRequest });
+    await this.validateGridCorrectness();
     const tileMimeFormat = mimeLookup(layerRequest.format) as TilesMimeFormat;
     const isRedisCache = isLayerNameSuffixRedis(layerName);
     let doesHaveRedisCache = false;
@@ -370,6 +374,20 @@ class LayersManager {
     };
 
     return cache;
+  }
+
+  private async validateGridCorrectness(): Promise<void> {
+    this.logger.debug({ msg: `validate grid correctness` });
+    try {
+      const configJson = await this.manager.getConfig();
+      if (!(this.mapproxyConfig.cache.grids in configJson.grids)) {
+        const message = `grid ${this.mapproxyConfig.cache.grids} doesn't exist in mapproxy global grids list`;
+        throw new BadRequestError(message);
+      }
+    } catch (error) {
+      this.logger.error({ msg: `error in adding a layer, grid check failed. `, error });
+      throw error;
+    }
   }
 }
 

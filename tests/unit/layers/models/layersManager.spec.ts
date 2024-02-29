@@ -3,7 +3,7 @@
 import { normalize } from 'node:path';
 import { container } from 'tsyringe';
 import jsLogger from '@map-colonies/js-logger';
-import { ConflictError, NotFoundError, NotImplementedError } from '@map-colonies/error-types';
+import { BadRequestError, ConflictError, NotFoundError, NotImplementedError } from '@map-colonies/error-types';
 import { TileOutputFormat } from '@map-colonies/mc-model-types';
 import { lookup as mimeLookup, TilesMimeFormat } from '@map-colonies/types';
 import config from 'config';
@@ -16,8 +16,11 @@ import { SERVICES } from '../../../../src/common/constants';
 import { registerTestValues } from '../../../integration/testContainerConfig';
 import { init as initConfig, clear as clearConfig } from '../../../configurations/config';
 import { tracerMock } from '../../mock/tracer';
+import { ConfigsManager } from '../../../../src/configs/models/configsManager';
+import { mockData, mockFalseData } from '../../mock/mockData';
 
 let layersManager: LayersManager;
+let configManager: ConfigsManager;
 const logger = jsLogger({ enabled: false });
 
 describe('layersManager', () => {
@@ -29,7 +32,8 @@ describe('layersManager', () => {
     //defalut layerManger - redis is enabled
     const redisConfig = container.resolve<IRedisConfig>(SERVICES.REDISCONFIG);
     const mapproxyConfig = container.resolve<IMapProxyConfig>(SERVICES.MAPPROXY);
-    layersManager = new LayersManager(logger, mapproxyConfig, redisConfig, MockConfigProvider);
+    configManager = new ConfigsManager(logger, mapproxyConfig, MockConfigProvider, tracerMock);
+    layersManager = new LayersManager(logger, mapproxyConfig, redisConfig, MockConfigProvider, tracerMock, configManager);
   });
 
   afterEach(() => {
@@ -143,6 +147,7 @@ describe('layersManager', () => {
 
   describe('#addLayer', () => {
     it('should reject with conflict error', async () => {
+      jest.spyOn(configManager, 'getConfig').mockResolvedValue(mockData());
       // action
       const action = async () => {
         await layersManager.addLayer(mockLayerNameAlreadyExists);
@@ -154,6 +159,7 @@ describe('layersManager', () => {
     });
 
     it('should successfully add layer + redis cache', async () => {
+      jest.spyOn(configManager, 'getConfig').mockResolvedValue(mockData());
       // action
       expect.assertions(6);
       const action = layersManager.addLayer(mockLayerNameIsNotExists);
@@ -175,8 +181,9 @@ describe('layersManager', () => {
       container.register(SERVICES.REDISCONFIG, { useValue: redisConfigValue });
       const redisConfig = container.resolve<IRedisConfig>(SERVICES.REDISCONFIG);
       const mapproxyConfig = container.resolve<IMapProxyConfig>(SERVICES.MAPPROXY);
-      layersManager = new LayersManager(logger, mapproxyConfig, redisConfig, MockConfigProvider, tracerMock);
-
+      configManager = new ConfigsManager(logger, mapproxyConfig, MockConfigProvider, tracerMock);
+      layersManager = new LayersManager(logger, mapproxyConfig, redisConfig, MockConfigProvider, tracerMock, configManager);
+      jest.spyOn(configManager, 'getConfig').mockResolvedValue(mockData());
       // action
       expect.assertions(4);
       const action = layersManager.addLayer(mockLayerNameIsNotExists);
@@ -185,8 +192,125 @@ describe('layersManager', () => {
       await expect(action).toResolve();
 
       const resultJson = await MockConfigProvider.getJson();
-      expect(resultJson.layers).toPartiallyContain({ name: mockLayerNameIsNotExists.name, sources: [mockLayerNameIsNotExists.name] });
-      expect(resultJson.caches).not.toContainKey(`${mockLayerNameIsNotExists.name}-redis`);
+      expect(resultJson.layers).toPartiallyContain({ name: mockLayerNameIsNotExists.name, sources: [`${mockLayerNameIsNotExists.name}-source`] });
+      expect(resultJson.caches).not.toContainKey(mockLayerNameIsNotExists.name);
+      expect(updateJsonMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('should reject with bad request error', async () => {
+      jest.spyOn(configManager, 'getConfig').mockResolvedValue(mockFalseData());
+      // action
+      const action = async () => {
+        await layersManager.addLayer(mockLayerNameAlreadyExists);
+      };
+
+      // expectation
+      await expect(action).rejects.toThrow(BadRequestError);
+    });
+  });
+
+  describe('#addLayerToMosaic', () => {
+    it('should reject with not found error due layer name is not exists', async () => {
+      // mock
+      const mockMosaicName = 'mosaicMockName';
+      const mockLayerNotExistsToMosaicRequest: ILayerToMosaicRequest = {
+        layerName: 'layerNameIsNotExists',
+      };
+      // action
+      const action = async () => {
+        await layersManager.addLayerToMosaic(mockMosaicName, mockLayerNotExistsToMosaicRequest);
+      };
+      // expectation
+      await expect(action).rejects.toThrow(NotFoundError);
+      expect(updateJsonMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('should reject with not found error due mosaic name is not exists', async () => {
+      // mock
+      const mockMosaicName = 'mosaicNameIsNotExists';
+      const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
+        layerName: 'mockLayerNameExists-source',
+      };
+      // action
+      const action = async () => {
+        await layersManager.addLayerToMosaic(mockMosaicName, mockLayerToMosaicRequest);
+      };
+      // expectation
+      await expect(action).rejects.toThrow(NotFoundError);
+      expect(updateJsonMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('should successfully add layer to mosaic', async () => {
+      // mock
+      const mockMosaicName = 'existsMosaicName';
+      const mockLayerToMosaicRequest: ILayerToMosaicRequest = {
+        layerName: 'mockLayerNameExists-source',
+      };
+      // action
+      const action = async () => {
+        await layersManager.addLayerToMosaic(mockMosaicName, mockLayerToMosaicRequest);
+      };
+      // expectation
+      await expect(action()).resolves.not.toThrow();
+      expect(updateJsonMock).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('#updateMosaic', () => {
+    it('should successfully update mosaic layers by their z-index', async () => {
+      // mock
+      const mockMosaicName = 'existsMosaicName';
+      const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
+        layers: [
+          { layerName: 'amsterdam_5cm-source', zIndex: 1 },
+          { layerName: 'NameIsAlreadyExists-source', zIndex: 0 },
+        ],
+      };
+      // action
+      const action = async () => {
+        await layersManager.updateMosaic(mockMosaicName, mockUpdateMosaicRequest);
+      };
+      // expectation
+      await expect(action()).resolves.not.toThrow();
+      expect(sortArrayByZIndexStub).toHaveBeenCalledTimes(1);
+      expect(updateJsonMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('should reject with not found error due layer name is not exists', async () => {
+      // mock
+      const mockMosaicName = 'existsMosaicName';
+      const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
+        layers: [
+          { layerName: 'amsterdam_5cm-source', zIndex: 1 },
+          { layerName: 'LayerNameIsNotExists', zIndex: 0 },
+        ],
+      };
+      // action
+      const action = async () => {
+        await layersManager.updateMosaic(mockMosaicName, mockUpdateMosaicRequest);
+      };
+      // expectation
+      await expect(action).rejects.toThrow(NotFoundError);
+      expect(sortArrayByZIndexStub).toHaveBeenCalledTimes(0);
+      expect(updateJsonMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('should reject with not found error due mosaic name is not exists', async () => {
+      // mock
+      const mockMosaicName = 'NotExistsMosaicName';
+      const mockUpdateMosaicRequest: IUpdateMosaicRequest = {
+        layers: [
+          { layerName: 'amsterdam_5cm-source', zIndex: 1 },
+          { layerName: 'NameIsAlreadyExists-source', zIndex: 0 },
+        ],
+      };
+      // action
+      const action = async () => {
+        await layersManager.updateMosaic(mockMosaicName, mockUpdateMosaicRequest);
+      };
+      // expectation
+      await expect(action).rejects.toThrow(NotFoundError);
+      expect(sortArrayByZIndexStub).toHaveBeenCalledTimes(0);
       expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
   });
@@ -266,7 +390,8 @@ describe('layersManager', () => {
 
     it('should successfully update layer', async () => {
       // mock
-      const mockLayerName = 'mockLayerNameExists';
+      const mockLayerName = 'mockLayerNameExists-source';
+      jest.spyOn(configManager, 'getConfig').mockResolvedValue(mockData());
       // action
       const action = async () => {
         await layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
@@ -282,7 +407,7 @@ describe('layersManager', () => {
       const mockRedisLayerName = 'redisExists-redis';
       const expectedTileMimeFormatPng = mimeLookup(TileOutputFormat.PNG) as TilesMimeFormat;
       const expectedTileMimeFormatJpeg = mimeLookup(TileOutputFormat.JPEG) as TilesMimeFormat;
-
+      jest.spyOn(configManager, 'getConfig').mockResolvedValue(mockData());
       //check data
       const data = await MockConfigProvider.getJson();
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -307,6 +432,7 @@ describe('layersManager', () => {
     it('should reject with not found error due layer name is not exists', async () => {
       // mock
       const mockLayerName = 'mockLayerNameIsNotExists';
+      jest.spyOn(configManager, 'getConfig').mockResolvedValue(mockData());
       // action
       const action = async () => {
         await layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
@@ -315,15 +441,16 @@ describe('layersManager', () => {
       await expect(action).rejects.toThrow(NotFoundError);
     });
 
-    it('should reject with not implemented error due layer name ends with -redis', async () => {
+    it('should reject with bad request error due to grid not in global grids', async () => {
       // mock
-      const mockLayerName = 'mockLayerNameIsNotExists-redis';
+      const mockLayerName = 'mockLayerNameIsNotExists';
+      jest.spyOn(configManager, 'getConfig').mockResolvedValue(mockFalseData());
       // action
       const action = async () => {
         await layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
       };
       // expectation
-      await expect(action).rejects.toThrow(NotImplementedError);
+      await expect(action).rejects.toThrow(BadRequestError);
     });
   });
 
