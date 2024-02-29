@@ -2,7 +2,7 @@
 import { normalize } from 'node:path';
 import { container } from 'tsyringe';
 import jsLogger from '@map-colonies/js-logger';
-import { ConflictError, NotFoundError } from '@map-colonies/error-types';
+import { BadRequestError, ConflictError, NotFoundError } from '@map-colonies/error-types';
 import { TileOutputFormat } from '@map-colonies/mc-model-types';
 import { lookup as mimeLookup, TilesMimeFormat } from '@map-colonies/types';
 import config from 'config';
@@ -23,8 +23,11 @@ import { SERVICES } from '../../../../src/common/constants';
 import { registerTestValues } from '../../../integration/testContainerConfig';
 import { init as initConfig, clear as clearConfig } from '../../../configurations/config';
 import { tracerMock } from '../../mock/tracer';
+import { ConfigsManager } from '../../../../src/configs/models/configsManager';
+import { mockData, mockFalseData } from '../../mock/mockData';
 
 let layersManager: LayersManager;
+let configManager: ConfigsManager;
 let sortArrayByZIndexStub: jest.SpyInstance;
 const logger = jsLogger({ enabled: false });
 
@@ -37,7 +40,8 @@ describe('layersManager', () => {
     //defalut layerManger - redis is enabled
     const redisConfig = container.resolve<IRedisConfig>(SERVICES.REDISCONFIG);
     const mapproxyConfig = container.resolve<IMapProxyConfig>(SERVICES.MAPPROXY);
-    layersManager = new LayersManager(logger, mapproxyConfig, redisConfig, MockConfigProvider, tracerMock);
+    configManager = new ConfigsManager(logger, mapproxyConfig, MockConfigProvider, tracerMock);
+    layersManager = new LayersManager(logger, mapproxyConfig, redisConfig, MockConfigProvider, tracerMock, configManager);
     sortArrayByZIndexStub = jest.spyOn(utils, 'sortArrayByZIndex').mockReturnValueOnce(['mockLayer1', 'mockLayer2', 'mockLayer3']);
   });
 
@@ -115,6 +119,7 @@ describe('layersManager', () => {
 
   describe('#addLayer', () => {
     it('should reject with conflict error', async () => {
+      jest.spyOn(configManager, 'getConfig').mockResolvedValue(mockData());
       // action
       const action = async () => {
         await layersManager.addLayer(mockLayerNameAlreadyExists);
@@ -126,6 +131,7 @@ describe('layersManager', () => {
     });
 
     it('should successfully add layer + redis cache', async () => {
+      jest.spyOn(configManager, 'getConfig').mockResolvedValue(mockData());
       // action
       expect.assertions(5);
       const action = layersManager.addLayer(mockLayerNameIsNotExists);
@@ -146,8 +152,9 @@ describe('layersManager', () => {
       container.register(SERVICES.REDISCONFIG, { useValue: redisConfigValue });
       const redisConfig = container.resolve<IRedisConfig>(SERVICES.REDISCONFIG);
       const mapproxyConfig = container.resolve<IMapProxyConfig>(SERVICES.MAPPROXY);
-      layersManager = new LayersManager(logger, mapproxyConfig, redisConfig, MockConfigProvider, tracerMock);
-
+      configManager = new ConfigsManager(logger, mapproxyConfig, MockConfigProvider, tracerMock);
+      layersManager = new LayersManager(logger, mapproxyConfig, redisConfig, MockConfigProvider, tracerMock, configManager);
+      jest.spyOn(configManager, 'getConfig').mockResolvedValue(mockData());
       // action
       expect.assertions(4);
       const action = layersManager.addLayer(mockLayerNameIsNotExists);
@@ -159,6 +166,17 @@ describe('layersManager', () => {
       expect(resultJson.layers).toPartiallyContain({ name: mockLayerNameIsNotExists.name, sources: [`${mockLayerNameIsNotExists.name}-source`] });
       expect(resultJson.caches).not.toContainKey(mockLayerNameIsNotExists.name);
       expect(updateJsonMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('should reject with bad request error', async () => {
+      jest.spyOn(configManager, 'getConfig').mockResolvedValue(mockFalseData());
+      // action
+      const action = async () => {
+        await layersManager.addLayer(mockLayerNameAlreadyExists);
+      };
+
+      // expectation
+      await expect(action).rejects.toThrow(BadRequestError);
     });
   });
 
@@ -333,6 +351,7 @@ describe('layersManager', () => {
     it('should successfully update layer', async () => {
       // mock
       const mockLayerName = 'mockLayerNameExists-source';
+      jest.spyOn(configManager, 'getConfig').mockResolvedValue(mockData());
       // action
       const action = async () => {
         await layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
@@ -348,7 +367,7 @@ describe('layersManager', () => {
       const mockRedisLayerName = 'redisExists';
       const expectedTileMimeFormatPng = mimeLookup(TileOutputFormat.PNG) as TilesMimeFormat;
       const expectedTileMimeFormatJpeg = mimeLookup(TileOutputFormat.JPEG) as TilesMimeFormat;
-
+      jest.spyOn(configManager, 'getConfig').mockResolvedValue(mockData());
       //check data
       const data = await MockConfigProvider.getJson();
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -373,12 +392,25 @@ describe('layersManager', () => {
     it('should reject with not found error due layer name is not exists', async () => {
       // mock
       const mockLayerName = 'mockLayerNameIsNotExists';
+      jest.spyOn(configManager, 'getConfig').mockResolvedValue(mockData());
       // action
       const action = async () => {
         await layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
       };
       // expectation
       await expect(action).rejects.toThrow(NotFoundError);
+    });
+
+    it('should reject with bad request error due to grid not in global grids', async () => {
+      // mock
+      const mockLayerName = 'mockLayerNameIsNotExists';
+      jest.spyOn(configManager, 'getConfig').mockResolvedValue(mockFalseData());
+      // action
+      const action = async () => {
+        await layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
+      };
+      // expectation
+      await expect(action).rejects.toThrow(BadRequestError);
     });
   });
 
