@@ -3,6 +3,8 @@ import { container, inject, injectable } from 'tsyringe';
 import { Logger } from '@map-colonies/js-logger';
 import { BadRequestError, ConflictError, NotFoundError, NotImplementedError } from '@map-colonies/error-types';
 import { lookup as mimeLookup, TilesMimeFormat } from '@map-colonies/types';
+import { withSpanAsyncV4 } from '@map-colonies/telemetry';
+import { Tracer } from '@opentelemetry/api';
 import { SERVICES } from '../../common/constants';
 import {
   ILayerPostRequest,
@@ -33,13 +35,11 @@ class LayersManager {
     @inject(SERVICES.LOGGER) private readonly logger: Logger,
     @inject(SERVICES.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig,
     @inject(SERVICES.REDISCONFIG) private readonly redisConfig: IRedisConfig,
-    @inject(SERVICES.CONFIGPROVIDER) private readonly configProvider: IConfigProvider
+    @inject(SERVICES.CONFIGPROVIDER) private readonly configProvider: IConfigProvider,
+    @inject(SERVICES.TRACER) public readonly tracer: Tracer
   ) {}
 
-  /**
-   * @deprecated getLayer not in use and will be removed on future
-   */
-
+  @withSpanAsyncV4
   public async getLayer(layerName: string): Promise<IMapProxyCache> {
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
 
@@ -50,40 +50,7 @@ class LayersManager {
     return requestedLayer;
   }
 
-  public async getCacheByNameAndType(layerName: string, cacheType: string): Promise<ICacheObject> {
-    const configJson = await this.configProvider.getJson();
-    const requestedLayer = configJson.layers.find((layer) => layer.name === layerName);
-
-    if (!requestedLayer) {
-      const errorMsg = `${layerName} layer not found on mapproxy configuration`;
-      this.logger.warn({ msg: errorMsg, layerName, cacheType });
-      throw new NotFoundError(errorMsg);
-    }
-
-    // our current only real cache layer, other caches cases are known as the source layers
-    const cacheName = cacheType === SourceTypes.REDIS ? getRedisCacheName(layerName) : layerName;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const currentSourceCache: IMapProxyCache | undefined = configJson.caches[cacheName];
-
-    if (currentSourceCache === undefined) {
-      const errorMsg = `cache not found for ${layerName} layer`;
-      this.logger.warn({ msg: errorMsg, layerName, cacheType });
-      throw new NotFoundError(errorMsg);
-    }
-    if (currentSourceCache.cache.type !== cacheType) {
-      const errorMsg = `${layerName} layer cache not found with requested cache type: ${cacheType}`;
-      this.logger.warn({ msg: errorMsg, layerName, cacheType });
-      throw new BadRequestError(errorMsg);
-    }
-
-    type AvailableSources = IRedisSource | IS3Source | IFSSource;
-
-    return {
-      cacheName: cacheName,
-      cache: currentSourceCache.cache as AvailableSources,
-    };
-  }
-
+  @withSpanAsyncV4
   public async addLayer(layerRequest: ILayerPostRequest): Promise<void> {
     const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
       if (isLayerNameSuffixRedis(layerRequest.name)) {
@@ -98,6 +65,40 @@ class LayersManager {
     };
 
     await this.configProvider.updateJson(editJson);
+  }
+
+  public async getCacheByNameAndType(layerName: string, cacheType: string): Promise<ICacheObject> {
+    const configJson = await this.configProvider.getJson();
+    const requestedLayer = configJson.layers.find((layer) => layer.name === layerName);
+    
+    if (!requestedLayer) {
+      const errorMsg = `${layerName} layer not found on mapproxy configuration`;
+      this.logger.warn({ msg: errorMsg, layerName, cacheType });
+      throw new NotFoundError(errorMsg);
+    }
+
+    // our current only real cache layer, other caches cases are known as the source layers
+    const cacheName = cacheType === SourceTypes.REDIS ? getRedisCacheName(layerName) : layerName;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const currentSourceCache: IMapProxyCache | undefined = configJson.caches[cacheName];
+    
+    if (currentSourceCache === undefined) {
+      const errorMsg = `cache not found for ${layerName} layer`;
+      this.logger.warn({ msg: errorMsg, layerName, cacheType });
+      throw new NotFoundError(errorMsg);
+    }
+    if (currentSourceCache.cache.type !== cacheType) {
+      const errorMsg = `${layerName} layer cache not found with requested cache type: ${cacheType}`;
+      this.logger.warn({ msg: errorMsg, layerName, cacheType });
+      throw new BadRequestError(errorMsg);
+    }
+    
+    type AvailableSources = IRedisSource | IS3Source | IFSSource;
+    
+    return {
+      cacheName: cacheName,
+      cache: currentSourceCache.cache as AvailableSources,
+    };
   }
 
   public getAllLayerLinkedCaches(baseCacheNames: string[], mapproxyConfiguration: IMapProxyJsonDocument): string[] {
@@ -123,6 +124,7 @@ class LayersManager {
     return linkedCaches;
   }
 
+  @withSpanAsyncV4
   public async removeLayer(layersName: string[]): Promise<string[] | void> {
     this.logger.info({ msg: `Remove layers request for: [${layersName.join(',')}]`, layersName });
     const errorMessage = 'no valid layers to delete';
@@ -189,6 +191,7 @@ class LayersManager {
     return failedLayers;
   }
 
+  @withSpanAsyncV4
   public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<void> {
     this.logger.info({ msg: `Update layer: '${layerName}' request`, layerRequest });
     const tileMimeFormat = mimeLookup(layerRequest.format) as TilesMimeFormat;
@@ -226,6 +229,29 @@ class LayersManager {
 
     await this.configProvider.updateJson(editJson);
     this.logger.info(`Successfully updated layer '${layerName}'`);
+  }
+
+  public getAllLinkedCaches(baseCacheNames: string[], mapproxyConfiguration: IMapProxyJsonDocument): string[] {
+    const linkedCaches: string[] = [];
+    const baseCacheNamesDuplicate: string[] = [...baseCacheNames];
+
+    baseCacheNamesDuplicate.forEach((currentCache) => {
+      const sourceName = currentCache.endsWith('-source') ? currentCache : `${currentCache}-source`;
+      const redisSourceName = currentCache.endsWith('-source') ? currentCache.replace('-source', '') : currentCache;
+
+      if (mapproxyConfiguration.caches[sourceName] != undefined) {
+        if (!linkedCaches.includes(sourceName)) {
+          linkedCaches.push(sourceName);
+        }
+      }
+
+      if (mapproxyConfiguration.caches[redisSourceName] != undefined) {
+        if (!linkedCaches.includes(redisSourceName)) {
+          linkedCaches.push(redisSourceName);
+        }
+      }
+    });
+    return linkedCaches;
   }
 
   public getCacheValues(cacheSource: string, sourcePath: string, format: string): IMapProxyCache {
@@ -309,7 +335,6 @@ class LayersManager {
 
   private addNewLayer(layerName: string, jsonDocument: IMapProxyJsonDocument, sourceCacheTitle?: string): void {
     this.logger.info(`adding ${layerName} to layer list`);
-
     const newLayer: IMapProxyLayer = this.getLayerValues(layerName, sourceCacheTitle);
     jsonDocument.layers.push(newLayer);
   }
