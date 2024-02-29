@@ -3,6 +3,8 @@ import { container, inject, injectable } from 'tsyringe';
 import { Logger } from '@map-colonies/js-logger';
 import { BadRequestError, ConflictError, NotFoundError, NotImplementedError } from '@map-colonies/error-types';
 import { lookup as mimeLookup, TilesMimeFormat } from '@map-colonies/types';
+import { withSpanAsyncV4 } from '@map-colonies/telemetry';
+import { Tracer } from '@opentelemetry/api';
 import { SERVICES } from '../../common/constants';
 import {
   ILayerPostRequest,
@@ -25,6 +27,7 @@ import { GpkgSource } from '../../common/cacheProviders/gpkgSource';
 import { FSSource } from '../../common/cacheProviders/fsSource';
 import { SourceTypes } from '../../common/enums';
 import { RedisSource } from '../../common/cacheProviders/redisSource';
+import { ConfigsManager } from '../../configs/models/configsManager';
 import { getRedisCacheName, getRedisCacheOriginalName, isLayerNameSuffixRedis } from '../../common/utils';
 
 @injectable()
@@ -33,13 +36,12 @@ class LayersManager {
     @inject(SERVICES.LOGGER) private readonly logger: Logger,
     @inject(SERVICES.MAPPROXY) private readonly mapproxyConfig: IMapProxyConfig,
     @inject(SERVICES.REDISCONFIG) private readonly redisConfig: IRedisConfig,
-    @inject(SERVICES.CONFIGPROVIDER) private readonly configProvider: IConfigProvider
+    @inject(SERVICES.CONFIGPROVIDER) private readonly configProvider: IConfigProvider,
+    @inject(SERVICES.TRACER) public readonly tracer: Tracer,
+    @inject(ConfigsManager) private readonly manager: ConfigsManager
   ) {}
 
-  /**
-   * @deprecated getLayer not in use and will be removed on future
-   */
-
+  @withSpanAsyncV4
   public async getLayer(layerName: string): Promise<IMapProxyCache> {
     const jsonDocument: IMapProxyJsonDocument = await this.configProvider.getJson();
 
@@ -50,6 +52,7 @@ class LayersManager {
     return requestedLayer;
   }
 
+  @withSpanAsyncV4
   public async getCacheByNameAndType(layerName: string, cacheType: string): Promise<ICacheObject> {
     const configJson = await this.configProvider.getJson();
     const requestedLayer = configJson.layers.find((layer) => layer.name === layerName);
@@ -84,7 +87,9 @@ class LayersManager {
     };
   }
 
+  @withSpanAsyncV4
   public async addLayer(layerRequest: ILayerPostRequest): Promise<void> {
+    await this.validateGridCorrectness();
     const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
       if (isLayerNameSuffixRedis(layerRequest.name)) {
         const errorMsg = `layer names that ends with '-redis' are not supported`;
@@ -100,29 +105,7 @@ class LayersManager {
     await this.configProvider.updateJson(editJson);
   }
 
-  public getAllLayerLinkedCaches(baseCacheNames: string[], mapproxyConfiguration: IMapProxyJsonDocument): string[] {
-    const linkedCaches: string[] = [];
-    const baseCacheNamesDuplicate: string[] = [...baseCacheNames];
-
-    baseCacheNamesDuplicate.forEach((currentCache) => {
-      const mainCacheName = isLayerNameSuffixRedis(currentCache) ? getRedisCacheOriginalName(currentCache) : currentCache;
-      const redisCacheName = getRedisCacheName(mainCacheName);
-
-      if (mapproxyConfiguration.caches[mainCacheName] != undefined) {
-        if (!linkedCaches.includes(mainCacheName)) {
-          linkedCaches.push(mainCacheName);
-        }
-      }
-
-      if (mapproxyConfiguration.caches[redisCacheName] != undefined) {
-        if (!linkedCaches.includes(redisCacheName)) {
-          linkedCaches.push(redisCacheName);
-        }
-      }
-    });
-    return linkedCaches;
-  }
-
+  @withSpanAsyncV4
   public async removeLayer(layersName: string[]): Promise<string[] | void> {
     this.logger.info({ msg: `Remove layers request for: [${layersName.join(',')}]`, layersName });
     const errorMessage = 'no valid layers to delete';
@@ -189,8 +172,10 @@ class LayersManager {
     return failedLayers;
   }
 
+  @withSpanAsyncV4
   public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<void> {
     this.logger.info({ msg: `Update layer: '${layerName}' request`, layerRequest });
+    await this.validateGridCorrectness();
     const tileMimeFormat = mimeLookup(layerRequest.format) as TilesMimeFormat;
     const isRedisCache = isLayerNameSuffixRedis(layerName);
     let doesHaveRedisCache = false;
@@ -226,6 +211,29 @@ class LayersManager {
 
     await this.configProvider.updateJson(editJson);
     this.logger.info(`Successfully updated layer '${layerName}'`);
+  }
+
+  public getAllLayerLinkedCaches(baseCacheNames: string[], mapproxyConfiguration: IMapProxyJsonDocument): string[] {
+    const linkedCaches: string[] = [];
+    const baseCacheNamesDuplicate: string[] = [...baseCacheNames];
+
+    baseCacheNamesDuplicate.forEach((currentCache) => {
+      const mainCacheName = isLayerNameSuffixRedis(currentCache) ? getRedisCacheOriginalName(currentCache) : currentCache;
+      const redisCacheName = getRedisCacheName(mainCacheName);
+
+      if (mapproxyConfiguration.caches[mainCacheName] != undefined) {
+        if (!linkedCaches.includes(mainCacheName)) {
+          linkedCaches.push(mainCacheName);
+        }
+      }
+
+      if (mapproxyConfiguration.caches[redisCacheName] != undefined) {
+        if (!linkedCaches.includes(redisCacheName)) {
+          linkedCaches.push(redisCacheName);
+        }
+      }
+    });
+    return linkedCaches;
   }
 
   public getCacheValues(cacheSource: string, sourcePath: string, format: string): IMapProxyCache {
@@ -309,7 +317,6 @@ class LayersManager {
 
   private addNewLayer(layerName: string, jsonDocument: IMapProxyJsonDocument, sourceCacheTitle?: string): void {
     this.logger.info(`adding ${layerName} to layer list`);
-
     const newLayer: IMapProxyLayer = this.getLayerValues(layerName, sourceCacheTitle);
     jsonDocument.layers.push(newLayer);
   }
@@ -345,6 +352,20 @@ class LayersManager {
     };
 
     return cache;
+  }
+
+  private async validateGridCorrectness(): Promise<void> {
+    this.logger.debug({ msg: `validate grid correctness` });
+    try {
+      const configJson = await this.manager.getConfig();
+      if (!(this.mapproxyConfig.cache.grids in configJson.grids)) {
+        const message = `grid ${this.mapproxyConfig.cache.grids} doesn't exist in mapproxy global grids list`;
+        throw new BadRequestError(message);
+      }
+    } catch (error) {
+      this.logger.error({ msg: `error in adding a layer, grid check failed. `, error });
+      throw error;
+    }
   }
 }
 

@@ -7,6 +7,7 @@ import { MockConfigProvider, getJsonMock, init as initConfigProvider } from '../
 import { SERVICES } from '../../../../src/common/constants';
 import { registerTestValues } from '../../../integration/testContainerConfig';
 import { mockData } from '../../mock/mockData';
+import { tracerMock } from '../../mock/tracer';
 
 let configManager: ConfigsManager;
 const logger = jsLogger({ enabled: false });
@@ -17,7 +18,7 @@ describe('layersManager', () => {
     registerTestValues();
     initConfigProvider();
     const mapproxyConfig = container.resolve<IMapProxyConfig>(SERVICES.MAPPROXY);
-    configManager = new ConfigsManager(logger, mapproxyConfig, MockConfigProvider);
+    configManager = new ConfigsManager(logger, mapproxyConfig, MockConfigProvider, tracerMock);
   });
 
   afterEach(() => {
