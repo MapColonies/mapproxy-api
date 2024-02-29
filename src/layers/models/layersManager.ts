@@ -52,15 +52,7 @@ class LayersManager {
 
   @withSpanAsyncV4
   public async addLayer(layerRequest: ILayerPostRequest): Promise<void> {
-    try {
-      await this.checkGrids();
-    } catch (error) {
-      if (error instanceof BadRequestError) {
-        throw new BadRequestError(error.message);
-      } else {
-        throw error;
-      }
-    }
+    await this.validateGridCorrectness();
     const editJson = (jsonDocument: IMapProxyJsonDocument): IMapProxyJsonDocument => {
       this.addNewCache(jsonDocument, layerRequest);
 
@@ -162,15 +154,7 @@ class LayersManager {
   @withSpanAsyncV4
   public async updateLayer(layerName: string, layerRequest: ILayerPostRequest): Promise<void> {
     this.logger.info({ msg: `Update layer: '${layerName}' request`, layerRequest });
-    try {
-      await this.checkGrids();
-    } catch (error) {
-      if (error instanceof BadRequestError) {
-        throw new BadRequestError(error.message);
-      } else {
-        throw error;
-      }
-    }
+    await this.validateGridCorrectness();
     const tileMimeFormat = mimeLookup(layerRequest.format) as TilesMimeFormat;
     const isRedisCache = !layerName.endsWith('-source');
     let doesHaveRedisCache = false;
@@ -347,11 +331,22 @@ class LayersManager {
     return cache;
   }
 
-  private async checkGrids(): Promise<void> {
-    this.logger.info(`checking grids`);
-    const configJson = await this.manager.getConfig();
-    if (!(this.mapproxyConfig.cache.grids in configJson.grids)) {
-      throw new BadRequestError(`grid ${this.mapproxyConfig.cache.grids} doesn't exist in mapproxy global grids list`);
+  private async validateGridCorrectness(): Promise<void> {
+    this.logger.debug(`validate grid correctness`);
+    try {
+      const configJson = await this.manager.getConfig();
+      if (!(this.mapproxyConfig.cache.grids in configJson.grids)) {
+        const message = `grid ${this.mapproxyConfig.cache.grids} doesn't exist in mapproxy global grids list`;
+        this.logger.error(message);
+        throw new BadRequestError(message);
+      }
+    } catch (error) {
+      this.logger.error(`error in adding a layer, grid check failed. error message: ${(error as Error).message}`);
+      if (error instanceof BadRequestError) {
+        throw new BadRequestError(error.message);
+      } else {
+        throw error;
+      }
     }
   }
 }
