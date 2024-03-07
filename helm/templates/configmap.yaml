@@ -3,7 +3,6 @@
 {{- $storage := (include "common.storage.merged" .) | fromYaml }}
 {{- $tracing := (include "common.tracing.merged" .) | fromYaml }}
 {{- $metrics := (include "common.metrics.merged" .) | fromYaml }}
-{{- $redis := (include "common.redis.merged" .) | fromYaml }}
 
 {{- if .Values.enabled -}}
 apiVersion: v1
@@ -27,21 +26,21 @@ data:
   MAPPROXY_CACHE_GRIDS: {{ quote .Values.env.mapproxyCache.grids }}
   MAPPROXY_CACHE_UPSCALE_TILES: {{ quote .Values.env.mapproxyCache.upscaleTiles }}
   MAPPROXY_CACHE_DIRECTORY_LAYOUT: {{ quote .Values.env.mapproxyCache.directoryLayout }}
-  REDIS_ENABLED: {{ quote $redis.enabled }}
-  {{ if $redis.enabled }}
-  REDIS_HOST: {{ quote $redis.host }}
-  REDIS_PORT: {{ quote $redis.port }}
-  REDIS_USER_ENABLED: {{ quote $redis.auth.enableRedisUser }}
-  {{ if $redis.auth.enableRedisUser }}
-  REDIS_USERNAME: {{ quote $redis.auth.username }}
-  REDIS_PASSWORD: {{ quote $redis.auth.password }}
+  REDIS_ENABLED: {{ quote .Values.redis.enabled }}
+  {{ if .Values.redis.enabled }}
+  REDIS_HOST: {{ quote .Values.redis.host }}
+  REDIS_PORT: {{ quote .Values.redis.port }}
+  REDIS_USER_ENABLED: {{ quote .Values.redis.auth.enableRedisUser }}
+  {{ if .Values.redis.auth.enableRedisUser }}
+  REDIS_USERNAME: {{ quote .Values.redis.auth.username }}
+  REDIS_PASSWORD: {{ quote .Values.redis.auth.password }}
   {{ end }}
-  REDIS_PREFIX_ENABLED: {{ quote $redis.prefix.enablePrefix }}
-  {{ if $redis.prefix.enablePrefix }}
-  REDIS_PREFIX: {{ quote $redis.prefix.prefix }}
+  REDIS_PREFIX_ENABLED: {{ quote .Values.redis.prefix.enablePrefix }}
+  {{ if .Values.redis.prefix.enablePrefix }}
+  REDIS_PREFIX: {{ quote .Values.redis.prefix.prefix }}
   {{ end }}
-  REDIS_TYPE: {{ quote $redis.type }}
-  REDIS_DEFAULT_TTL: {{ quote $redis.default_ttl }}
+  REDIS_TYPE: {{ quote .Values.redis.type }}
+  REDIS_DEFAULT_TTL: {{ quote .Values.redis.default_ttl }}
   {{ end }}
   {{- if eq (upper $storage.mapproxyConfigProvider) "S3" }}
   {{- $s3 := (include "common.s3.merged" .) | fromYaml }}

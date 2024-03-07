@@ -68,7 +68,3 @@ Custom definitions
 {{- define "common.metrics.merged" -}}
 {{- include "common.tplvalues.merge" ( dict "values" ( list .Values.metrics .Values.global.metrics ) "context" . ) }}
 {{- end -}}
-
-{{- define "common.redis.merged" -}}
-{{- include "common.tplvalues.merge" ( dict "values" ( list .Values.redis .Values.global.redis ) "context" . ) }}
-{{- end -}}

@@ -31,7 +31,6 @@ global:
     key: 'ca.crt'
   ingress:
     domain: 'apps.aroapp.io'
-  redis: {}
 
 enabled: true
 environment: development
