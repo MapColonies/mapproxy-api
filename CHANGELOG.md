@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.10.1](https://github.com/MapColonies/mapproxy-api/compare/v1.10.0...v1.10.1) (2024-03-07)
+
+
+### Bug Fixes
+
+* make redis yaml values supported on global scope ([4bbb0c6](https://github.com/MapColonies/mapproxy-api/commit/4bbb0c60c1588b4112f43b21ab9e8f7a21f4a192))
+* support global scope for redis values ([#132](https://github.com/MapColonies/mapproxy-api/issues/132)) ([af0a07d](https://github.com/MapColonies/mapproxy-api/commit/af0a07da395b7aa60360e5f5a7a779a2b4ca484a))
+
 ## [1.10.0](https://github.com/MapColonies/mapproxy-api/compare/v1.9.0...v1.10.0) (2024-02-29)
 
 
