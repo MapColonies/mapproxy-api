@@ -43,7 +43,10 @@
         }
       },
       "paletted": false
-    }
+    },
+    "tiles": {
+        "expires_hours": 1
+      }
   },
   "sources": {
     "osm_wms": {
