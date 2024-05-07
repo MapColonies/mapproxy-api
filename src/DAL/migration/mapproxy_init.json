@@ -52,11 +52,6 @@
         "layers": "osm"
       },
       "type": "wms"
-    },
-    "timeout_wms": {
-      "url": "https://time-out-raster-dev.apps.j1lk3njp.eastus.aroapp.io/wms",
-      "grid": "WorldCRS84",
-      "type": "tile"
     }
   },
   "services": {
