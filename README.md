@@ -135,10 +135,14 @@ default to false
 
 <br>
 
-**DB Migration**
+**DB first installation**
 
 To create clean initialized table including first mapproxy configuration:
 
 copy json data from src/DAL/migration/mapproxy_init.json into src/DAL/migration/fullSchema.sql inside insertion line (change the value string)
-  * do not forget change bucket_name parameter to relevant environment
-  * run the sql query
+```sql
+INSERT INTO config values(DEFAULT,'/CHANGE/THIS/TO/JSON/CONTENT/FROM/mapproxy_init.json/',DEFAULT);
+```
+> [!NOTE]  
+> Do not forget change bucket_name parameter to relevant environment.
+> Run the sql query.
