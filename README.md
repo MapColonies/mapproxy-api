@@ -146,5 +146,4 @@ INSERT INTO config values(DEFAULT,'/CHANGE/THIS/TO/JSON/CONTENT/FROM/mapproxy_in
 > [!NOTE]  
 > Do not forget change bucket_name parameter to relevant environment.
 
-> [!NOTE]  
-> Run the sql query.
+*** Run the sql query.
