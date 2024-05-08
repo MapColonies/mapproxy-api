@@ -131,3 +131,14 @@ default to false
 `DB_SSL_KEY` set the path to the KEY file
 
 `DB_SSL_CERT` set the path to the CERT file
+
+
+<br>
+
+**DB Migration**
+
+To create clean initialized table including first mapproxy configuration:
+
+copy json data from src/DAL/migration/mapproxy_init.json into src/DAL/migration/fullSchema.sql inside insertion line (change the value string)
+  * do not forget change bucket_name parameter to relevant environment
+  * run the sql query
