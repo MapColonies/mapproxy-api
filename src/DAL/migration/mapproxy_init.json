@@ -26,23 +26,22 @@
   ],
   "globals": {
     "cache": {
+      "s3": {
+        "bucket_name": "bucket-name",
+        "endpoint_url": "http://url-to-object-storage"
+      },
       "base_dir": "/mapproxy/cache_data",
       "lock_dir": "/mapproxy/cache_data/locks",
       "tile_lock_dir": "/mapproxy/cache_data/tile_locks"
     },
     "image": {
       "format": {
-        "image/png": {
-          "resampling_method": "nearest"
-        },
         "image/jpeg": {
           "encoding_options": {
             "jpeg_quality": 75
-          },
-          "resampling_method": "nearest"
+          }
         }
-      },
-      "paletted": false
+      }
     },
     "tiles": {
       "expires_hours": 1
