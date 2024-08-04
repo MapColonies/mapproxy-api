@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        required: false
+        required: true
         type: string
 env:
   HELM_EXPERIMENTAL_OCI: 1
@@ -19,71 +19,13 @@ permissions:
 
 jobs:
   build_and_push_docker:
-    name: Build and publish docker image to ACR
-    runs-on: ubuntu-latest
-    env:
-      Docker_Repository: ${{ secrets.ACR_URL }}/${{ github.event.repository.name }}:${{ github.ref_name }}
-    steps:
-      - name: Checkout repository from latest commit
-        uses: actions/checkout@v2
-
-      - name: Login to ACR using helm
-        uses: azure/docker-login@v1
-        with:
-          login-server: ${{ secrets.ACR_URL }}
-          username: ${{ secrets.ACR_PUSH_USER }}
-          password: ${{ secrets.ACR_PUSH_TOKEN }}
-
-      - name: Downcase repository name
-        run: |
-          echo "Docker_Repository=${Docker_Repository,,}" >>${GITHUB_ENV}
-
-      - name: Build docker image
-        run: docker build . -t ${{ env.Docker_Repository }}
-
-      - name: Push docker image
-        run: docker push ${{ env.Docker_Repository }}
+      uses: MapColonies/shared-workflows/.github/workflows/build-and-push-docker.yaml@v2
+      secrets: inherit
+      with:
+        scope: raster
 
   build_and_push_helm:
-    name: Build and publish helm package to ACR
-    runs-on: ubuntu-latest
-    steps:    
-      - name: Checkout repository from latest commit
-        uses: actions/checkout@v2
-
-      - name: Set up Helm
-        uses: azure/setup-helm@v3.5
-        with:
-          version: v3.12.0
-
-      - name: Login to ACR using helm
-        run: |
-          helm registry login ${{ secrets.ACR_URL }} --username ${{ secrets.ACR_PUSH_USER }} --password ${{ secrets.ACR_PUSH_TOKEN }} 
-
-      - name: Get chart's name
-        run: |
-          export "CHART=$(cat Chart.yaml | grep name | awk '{print $2; exit}')"
-          echo "CHART=$CHART" >> $GITHUB_ENV
-        working-directory: ./helm
-
-      - name: Get chart's version 
-        run: |
-          export "VER=$(cat Chart.yaml | grep version | awk '{print $2; exit}')"
-          echo "VER=$VER" >> $GITHUB_ENV
-        working-directory: ./helm
-
-      - name: Update chart's dependencies
-        run: |
-          helm dependency update
-        working-directory: ./helm        
-
-      - name: Package chart into tgz file
-        run: |
-          helm package . --dependency-update 
-        working-directory: ./helm
-
-      - name: Publish chart to ACR
-        run: |
-          helm push ${{ env.CHART }}-${{ env.VER }}.tgz oci://${{ secrets.ACR_URL }}/helm
-        working-directory: ./helm
-        
+      uses: MapColonies/shared-workflows/.github/workflows/build-and-push-helm.yaml@v2
+      secrets: inherit
+      with:
+        scope: raster
