@@ -10,8 +10,6 @@ on:
       version:
         required: true
         type: string
-env:
-  HELM_EXPERIMENTAL_OCI: 1
 
 permissions:
   contents: write
