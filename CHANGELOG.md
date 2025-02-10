@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.10.4](https://github.com/MapColonies/mapproxy-api/compare/v1.10.3...v1.10.4) (2025-02-10)
+
+
+### Bug Fixes
+
+* add s3 config to globals ([#134](https://github.com/MapColonies/mapproxy-api/issues/134)) ([a29db8c](https://github.com/MapColonies/mapproxy-api/commit/a29db8c2140a2ec8cc6c1b75fa30c1507a4f23f2))
+* **mapproxy_init.json:** add globals.image.paletted: false ([#136](https://github.com/MapColonies/mapproxy-api/issues/136)) ([00f844a](https://github.com/MapColonies/mapproxy-api/commit/00f844a93a2a08edf83b84b543cf4db2ec1ab11f))
+
 ### [1.10.3](https://github.com/MapColonies/mapproxy-api/compare/v1.10.2...v1.10.3) (2024-05-08)
 
 
