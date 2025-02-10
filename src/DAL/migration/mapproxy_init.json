@@ -41,7 +41,8 @@
             "jpeg_quality": 75
           }
         }
-      }
+      },
+      "paletted": false
     },
     "tiles": {
       "expires_hours": 1
