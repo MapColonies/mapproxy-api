@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.10.5](https://github.com/MapColonies/mapproxy-api/compare/v1.10.4...v1.10.5) (2025-02-24)
+
+
+### Bug Fixes
+
+* removing max_old_space_size from Dockerfile ([#137](https://github.com/MapColonies/mapproxy-api/issues/137)) ([ed1d6f9](https://github.com/MapColonies/mapproxy-api/commit/ed1d6f912ef125dc0312520493255c148aab2dda))
+
 ### [1.10.4](https://github.com/MapColonies/mapproxy-api/compare/v1.10.3...v1.10.4) (2025-02-10)
 
 
