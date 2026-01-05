@@ -33,6 +33,16 @@ global:
     domain: 'apps.aroapp.io'
   redis: {}
 
+mclabels:
+  #environment: development
+  component: backend
+  partof: ingestion
+  owner: raster
+  gisDomain: raster
+  prometheus:
+    enabled: true
+    port: 8080
+
 enabled: true
 environment: development
 replicaCount: 1

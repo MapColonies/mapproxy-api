@@ -37,6 +37,7 @@ helm.sh/chart: {{ include "mapproxy-api.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{ include "mclabels.labels" . }}
 {{- end }}
 
 {{/*
@@ -52,6 +53,7 @@ Selector labels
 {{- define "mapproxy-api.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "mapproxy-api.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+{{ include "mclabels.selectorLabels" . }}
 {{- end }}
 
 {{/*
