@@ -32,11 +32,11 @@ Common labels
 */}}
 {{- define "mapproxy-api.labels" -}}
 helm.sh/chart: {{ include "mapproxy-api.chart" . }}
-{{ include "mapproxy-api.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{ include "mclabels.labels" . }}
 {{- end }}
 
 {{/*
@@ -52,6 +52,7 @@ Selector labels
 {{- define "mapproxy-api.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "mapproxy-api.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+{{ include "mclabels.selectorLabels" . }}
 {{- end }}
 
 {{/*

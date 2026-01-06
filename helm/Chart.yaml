@@ -4,3 +4,8 @@ description: A Helm chart for mapproxy-api service
 type: application
 version: 1.10.5
 appVersion: 1.10.5
+dependencies:
+  - name: mclabels
+    version: 1.0.1
+    repository: oci://acrarolibotnonprod.azurecr.io/helm/infra
+
