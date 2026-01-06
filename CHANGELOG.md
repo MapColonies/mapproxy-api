@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### [1.10.6](https://github.com/MapColonies/mapproxy-api/compare/v1.10.5...v1.10.6) (2026-01-06)
 
+### [1.10.6](https://github.com/MapColonies/mapproxy-api/compare/v1.10.5...v1.10.6) (2026-01-06)
+
 ### [1.10.5](https://github.com/MapColonies/mapproxy-api/compare/v1.10.4...v1.10.5) (2025-02-24)
 
 
