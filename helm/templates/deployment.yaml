@@ -105,11 +105,11 @@ spec:
             {{- if eq (upper $storage.mapproxyConfigProvider) "FS" }}
             - name: MAPPROXY_YAML_FILE_PATH  
               value: /configSource/mapproxy.yaml
-            - name: SUB_TILES_PATH
-              value: {{ $fs.internalPvc.tilesSubPath }}
             {{- end }} 
             - name: INTERNAL_MOUNT_DIR
               value: {{ .Values.env.internalMountDir }}
+            - name: SUB_TILES_PATH
+              value: {{ $fs.internalPvc.tilesSubPath }}
             {{- if eq (upper $storage.mapproxyConfigProvider) "DB" }}
             - name: DB_USER
               valueFrom:
