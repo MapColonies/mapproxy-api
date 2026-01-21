@@ -4,26 +4,56 @@ on:
   push:
     tags:
       - 'v*'
-
   workflow_dispatch:
-    inputs:
-      version:
-        required: true
-        type: string
-
-permissions:
-  contents: write
-  pull-requests: write
 
 jobs:
-  build_and_push_docker:
-      uses: MapColonies/shared-workflows/.github/workflows/build-and-push-docker.yaml@v2
-      secrets: inherit
-      with:
-        scope: raster
+  build_and_push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Artifactory Login
+        uses: MapColonies/shared-workflows/actions/artifactory-login@artifactory-login-v1.0.0
+        with:
+          registry: ${{ secrets.ACR_URL }}
+          username: ${{ secrets.ACR_PUSH_USER }}
+          password: ${{ secrets.ACR_PUSH_TOKEN }}
 
-  build_and_push_helm:
-      uses: MapColonies/shared-workflows/.github/workflows/build-and-push-helm.yaml@v2
-      secrets: inherit
-      with:
-        scope: raster
+      - name: Build Docker Image
+        id: build
+        uses: MapColonies/shared-workflows/actions/build-docker@build-docker-v1.1.0
+        with:
+          domain: raster
+          registry: ${{ secrets.ACR_URL }}
+
+      - name: Push Docker Image
+        uses: MapColonies/shared-workflows/actions/push-docker@push-docker-v1.0.1
+        with:
+          image_name: ${{ steps.build.outputs.docker_image_full_name }}
+          image_tag: ${{ steps.build.outputs.docker_image_tag }}
+
+      - name: Build and Push Helm Chart
+        uses: MapColonies/shared-workflows/actions/build-and-push-helm@build-and-push-helm-v1.0.1
+        with:
+
+          context: ./helm
+          domain: raster
+          registry: ${{ secrets.ACR_URL }}
+
+      - name: Update Artifacts File- Docker
+        uses: MapColonies/shared-workflows/actions/update-artifacts-file@update-artifacts-file-v1.1.1
+        with:
+          domain: raster
+          artifact_name: ${{ github.event.repository.name }}
+          artifact_tag: ${{ github.ref_name }}
+          type: docker
+          registry: ${{ secrets.ACR_URL }}
+          github_token: ${{ secrets.GH_PAT }}
+
+      - name: Update Artifacts File- Helm
+        uses: MapColonies/shared-workflows/actions/update-artifacts-file@update-artifacts-file-v1.1.1
+        with:
+          domain: raster
+          artifact_name: ${{ github.event.repository.name }}
+          artifact_tag: ${{ github.ref_name }}
+          type: helm
+          registry: ${{ secrets.ACR_URL }}
+          github_token: ${{ secrets.GH_PAT }}

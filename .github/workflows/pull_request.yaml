@@ -1,10 +1,75 @@
 name: pull_request
-
 on: [pull_request]
 
 jobs:
-  pull_request:
-    uses: MapColonies/shared-workflows/.github/workflows/pull_request.yaml@v2
-    secrets: inherit
-    with:
-      enableOpenApiCheck: false
+  eslint:
+    name: Run TS Project eslint
+    runs-on: ubuntu-latest
+    strategy: &node-strategy
+      matrix:
+        node: [24.x]
+
+    steps:
+      - name: Run TS Project linters
+        uses: MapColonies/shared-workflows/actions/eslint@eslint-v1.0.1
+        with: 
+          node_version: ${{ matrix.node }}
+
+  helm-lint:
+    name: Run Helm lint Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out TS Project Git repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Helm Lint Checks
+        uses: MapColonies/shared-workflows/actions/helm-lint@helm-lint-v1
+
+  openapi-lint:
+    name: Run OpenAPI lint Check
+    runs-on: ubuntu-latest
+
+    strategy: *node-strategy
+
+    steps:
+
+      - name: openapi-lint
+        uses: MapColonies/shared-workflows/actions/openapi-lint@openapi-lint-v1.0.0
+        with:
+          node_version: ${{ matrix.node }}
+          openapi_file: "./openapi3.yaml"
+
+
+  tests:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    strategy: *node-strategy
+
+    steps:
+      - name: Check out TS Project Git repository
+        uses: actions/checkout@v6
+
+
+      - name: Init Nodejs
+        uses: MapColonies/shared-workflows/actions/init-npm@init-npm-v1
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Run tests
+        run: npm run test
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: Test Reporters ${{ matrix.node }}
+          path: ./reports/**
+
+  build_docker_image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build and Push Docker image
+        uses: docker/build-push-action@v6
+
