@@ -2,12 +2,11 @@ openapi: 3.0.1
 info:
   title: mapproxy-api
   description: rest api service to manage layers in mapproxy
-  version: 1.10.6
+  version: 1.2.0
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
 security: []
-
 paths:
   /config:
     get:
