@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.10.7](https://github.com/MapColonies/mapproxy-api/compare/v1.10.6...v1.10.7) (2026-01-25)
+
+
+### Bug Fixes
+
+* **deployment:** standardize PVC name from 'sources-storage' to 'internal-storage' ([#152](https://github.com/MapColonies/mapproxy-api/issues/152)) ([6d5844f](https://github.com/MapColonies/mapproxy-api/commit/6d5844f914eeabd620a441351d3a774a2eac5d89))
+
 ## [1.11.0](https://github.com/MapColonies/mapproxy-api/compare/v1.10.6...v1.11.0) (2026-01-22)
 
 ## [1.2.0](https://github.com/MapColonies/mapproxy-api/compare/v1.10.6...v1.2.0) (2026-01-22)
