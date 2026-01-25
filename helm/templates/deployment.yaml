@@ -79,7 +79,7 @@ spec:
             {{- end }}
             {{- if  eq (upper $storage.mapproxyConfigProvider) "FS" }}
             - mountPath: /configSource
-              name: sources-storage
+              name: internal-storage
               subPath: {{ $fs.internalPvc.configSubPath }}
             {{- end }}
           env:
@@ -154,7 +154,7 @@ spec:
             secretName: {{ .Values.global.ca.secretName }}
         {{- end }}
         {{- if  eq (upper $storage.mapproxyConfigProvider) "FS" }}
-        - name: sources-storage
+        - name: internal-storage
           persistentVolumeClaim:
             claimName: {{ $fs.internalPvc.name }}
         {{- end }}
