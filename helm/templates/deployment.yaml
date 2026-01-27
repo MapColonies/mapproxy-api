@@ -110,7 +110,7 @@ spec:
               value: {{ $fs.internalPvc.tilesSubPath }}
             {{- end }} 
             - name: INTERNAL_MOUNT_DIR
-              value: {{ .Values.env.internalMountDir }}
+              value: {{ $fs.internalPvc.mountPath }}
             {{- if eq (upper $storage.mapproxyConfigProvider) "DB" }}
             - name: DB_USER
               valueFrom:

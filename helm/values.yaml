@@ -13,6 +13,7 @@ global:
     fs:
       internalPvc:
         name: ""
+        mountPath: ""
         tilesSubPath: ""
         configSubPath: ""
   db:
@@ -69,6 +70,7 @@ storage:
   fs:
     internalPvc:
       name: ""
+      mountPath: ""
       tilesSubPath: ""
       configSubPath: ""
 db:
@@ -105,7 +107,6 @@ env:
   logPrettyPrintEnabled: false
   responseCompressionEnabled: true
   requestPayloadLimit: 1mb
-  internalMountDir: /layerSources
   mapproxyCache:
     grids: WorldCRS84
     upscaleTiles: 18
