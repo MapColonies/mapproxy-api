@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.11.3](https://github.com/MapColonies/mapproxy-api/compare/v1.11.2...v1.11.3) (2026-01-27)
+
+
+### Bug Fixes
+
+* **deployment:** update INTERNAL_MOUNT_DIR to use fs.internalPvc.mountPath ([#156](https://github.com/MapColonies/mapproxy-api/issues/156)) ([78df8e5](https://github.com/MapColonies/mapproxy-api/commit/78df8e53d0d6eea8e6db5aff054edb783fb181a1))
+
 ## [1.11.2](https://github.com/MapColonies/mapproxy-api/compare/v1.11.1...v1.11.2) (2026-01-26)
 
 
