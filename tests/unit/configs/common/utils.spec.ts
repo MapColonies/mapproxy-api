@@ -56,6 +56,26 @@ describe('utils', () => {
       expect(typeof convertedYaml).toBe('string');
       expect(safeDumpStub).toHaveBeenCalledTimes(1);
     });
+
+    it('should output numeric values without quotes (noCompatMode)', function () {
+      // mock - json document with numeric values, a YAML 1.1 boolean-like string, and a numeric string key
+      const jsonDoc = { '404': { test: 'value' }, minZoom: 0, maxZoom: 18, epsg: 4326, status: 'yes' } as unknown as IMapProxyJsonDocument;
+      // action
+      const convertedYaml: string = utils.convertJsonToYaml(jsonDoc);
+      // expectation - numeric string key '404' must appear unquoted
+      expect(convertedYaml).toMatch(/404:/);
+      expect(convertedYaml).not.toMatch(/['"]404['"]\s*:/);
+      // expectation - numeric values must appear as plain scalars (no quotes)
+      expect(convertedYaml).toMatch(/minZoom: 0/);
+      expect(convertedYaml).toMatch(/maxZoom: 18/);
+      expect(convertedYaml).toMatch(/epsg: 4326/);
+      expect(convertedYaml).not.toMatch(/minZoom: ['"](\d+)['"]/);
+      expect(convertedYaml).not.toMatch(/maxZoom: ['"](\d+)['"]/);
+      expect(convertedYaml).not.toMatch(/epsg: ['"](\d+)['"]/);
+      // expectation - YAML 1.1 boolean alias 'yes' must not be quoted (noCompatMode: true)
+      expect(convertedYaml).toMatch(/status: yes/);
+      expect(convertedYaml).not.toMatch(/status: ['"](yes)['"]/);
+    });
   });
 
   describe('#replaceYamlFileContent', () => {
