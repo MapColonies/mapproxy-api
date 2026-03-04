@@ -22,8 +22,9 @@ export function convertYamlToJson(yamlContent: string): IMapProxyJsonDocument {
 
 // read json object and convert it into a yaml content
 export function convertJsonToYaml(jsonDocument: IMapProxyJsonDocument): string {
-  const yamlContent: string = safeDump(jsonDocument, { noArrayIndent: true });
-  return yamlContent;
+  const yamlContent: string = safeDump(jsonDocument, { noArrayIndent: true, noCompatMode: true });
+  // post-process: unquote numeric-looking string keys (e.g. '404': → 404:)
+  return yamlContent.replace(/^(\s*)['"](\d+)['"]\s*:/gm, '$1$2:');
 }
 
 // write new content in mapproxy yaml config file
