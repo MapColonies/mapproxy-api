@@ -7,7 +7,7 @@ import { BadRequestError, ConflictError, NotFoundError, NotImplementedError } fr
 import { TileOutputFormat } from '@map-colonies/mc-model-types';
 import { lookup as mimeLookup, TilesMimeFormat } from '@map-colonies/types';
 import config from 'config';
-import { ILayerPostRequest, IMapProxyCache, IMapProxyConfig, IRedisConfig } from '../../../../src/common/interfaces';
+import { ILayerPostRequest, IMapProxyCache, IMapProxyConfig, IRedisConfig, IS3Config } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExists';
 import { mockLayerNameIsNotExists } from '../../mock/mockLayerNameIsNotExists';
@@ -207,6 +207,42 @@ describe('layersManager', () => {
       // expectation
       await expect(action).rejects.toThrow(BadRequestError);
     });
+
+    it('should successfully add layer with use_http_get set to true', async () => {
+      const s3ConfigWithHttpGet: IS3Config = { ...config.get<IS3Config>('S3'), useHttpGet: true };
+      container.register(SERVICES.S3, { useValue: s3ConfigWithHttpGet });
+      const mapproxyConfig = container.resolve<IMapProxyConfig>(SERVICES.MAPPROXY);
+      const redisConfig = container.resolve<IRedisConfig>(SERVICES.REDISCONFIG);
+      configManager = new ConfigsManager(logger, mapproxyConfig, MockConfigProvider, tracerMock);
+      layersManager = new LayersManager(logger, mapproxyConfig, redisConfig, MockConfigProvider, tracerMock, configManager);
+      jest.spyOn(configManager, 'getConfig').mockResolvedValue(mockData());
+
+      expect.assertions(3);
+      await expect(layersManager.addLayer(mockLayerNameIsNotExists)).toResolve();
+
+      const resultJson = await MockConfigProvider.getJson();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(resultJson.caches[mockLayerNameIsNotExists.name].cache.use_http_get).toBe(true);
+      expect(updateJsonMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('should successfully add layer with use_http_get set to false', async () => {
+      const s3ConfigWithoutHttpGet: IS3Config = { ...config.get<IS3Config>('S3'), useHttpGet: false };
+      container.register(SERVICES.S3, { useValue: s3ConfigWithoutHttpGet });
+      const mapproxyConfig = container.resolve<IMapProxyConfig>(SERVICES.MAPPROXY);
+      const redisConfig = container.resolve<IRedisConfig>(SERVICES.REDISCONFIG);
+      configManager = new ConfigsManager(logger, mapproxyConfig, MockConfigProvider, tracerMock);
+      layersManager = new LayersManager(logger, mapproxyConfig, redisConfig, MockConfigProvider, tracerMock, configManager);
+      jest.spyOn(configManager, 'getConfig').mockResolvedValue(mockData());
+
+      expect.assertions(3);
+      await expect(layersManager.addLayer(mockLayerNameIsNotExists)).toResolve();
+
+      const resultJson = await MockConfigProvider.getJson();
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(resultJson.caches[mockLayerNameIsNotExists.name].cache.use_http_get).toBe(false);
+      expect(updateJsonMock).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('#removeLayer', () => {
@@ -367,7 +403,7 @@ describe('layersManager', () => {
     it('should provide s3 cache as source', () => {
       const cacheType = 's3';
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      const expectedResult = { type: cacheType, directory: mockTilesPath, directory_layout: directoryLayout };
+      const expectedResult = { type: cacheType, directory: mockTilesPath, directory_layout: directoryLayout, use_http_get: false };
       // mock
       jest.mock('../../../../src/common/cacheProviders/S3Source');
       // action

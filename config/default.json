@@ -45,7 +45,8 @@
     "endpointUrl": "http://localhost:9000",
     "bucket": "",
     "objectKey": "mapproxy.yaml",
-    "sslEnabled": false
+    "sslEnabled": false,
+    "useHttpGet": true
   },
   "DB": {
     "host": "localhost",

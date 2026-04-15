@@ -10,6 +10,7 @@ global:
       tilesBucket: ""
       sslEnabled: false
       secretName: ""
+      useHttpGet: false
     fs:
       internalPvc:
         name: ""
@@ -67,6 +68,7 @@ storage:
     tilesBucket: ""
     sslEnabled: false
     secretName: ""
+    useHttpGet: false
   fs:
     internalPvc:
       name: ""
@@ -91,10 +93,9 @@ metrics:
 tracing:
   enabled: false
   url: ''
-
-# add pod annotations
-# example:
-# podAnnotations:
+  # add pod annotations
+  # example:
+  # podAnnotations:
   # annotation1: annotation-value-1
   # annotation2: annotation-value-2
 podAnnotations: {}
@@ -153,7 +154,8 @@ ingress:
     origin: '*'
   annotations: {}
 
-local: # for local stand alone deployment, external pvc and secrets should be used for full deployment
+local:
+  # for local stand alone deployment, external pvc and secrets should be used for full deployment
   fs:
     createComponents: false
     storageClass: hostPath
