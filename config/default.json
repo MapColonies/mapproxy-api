@@ -31,7 +31,8 @@
       "grids": "WorldCRS84",
       "upscaleTiles": 18,
       "directoryLayout": "tms",
-      "gpkgExt": ".gpkg"
+      "gpkgExt": ".gpkg",
+      "useHttpGet": true
     }
   },
   "FS": {
@@ -45,8 +46,7 @@
     "endpointUrl": "http://localhost:9000",
     "bucket": "",
     "objectKey": "mapproxy.yaml",
-    "sslEnabled": false,
-    "useHttpGet": true
+    "sslEnabled": false
   },
   "DB": {
     "host": "localhost",

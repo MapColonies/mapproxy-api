@@ -48,6 +48,7 @@ export interface IMapProxyConfig {
     upscaleTiles: number;
     directoryLayout: string;
     gpkgExt: string;
+    useHttpGet: boolean;
   };
 }
 
@@ -64,7 +65,6 @@ export interface IS3Config {
   bucket: string;
   objectKey: string;
   sslEnabled: boolean;
-  useHttpGet: boolean;
 }
 
 export interface IRedisConfig {
@@ -135,7 +135,7 @@ export interface IGpkgSource extends ICacheSource {
   table_name: string;
 }
 
-export interface IFSSource extends IS3Source {}
+export interface IFSSource extends IS3Source { }
 
 export interface IMapProxyCache {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

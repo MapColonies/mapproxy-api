@@ -7,7 +7,7 @@ import { BadRequestError, ConflictError, NotFoundError, NotImplementedError } fr
 import { TileOutputFormat } from '@map-colonies/mc-model-types';
 import { lookup as mimeLookup, TilesMimeFormat } from '@map-colonies/types';
 import config from 'config';
-import { ILayerPostRequest, IMapProxyCache, IMapProxyConfig, IRedisConfig, IS3Config } from '../../../../src/common/interfaces';
+import { ILayerPostRequest, IMapProxyCache, IMapProxyConfig, IRedisConfig } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExists';
 import { mockLayerNameIsNotExists } from '../../mock/mockLayerNameIsNotExists';
@@ -209,12 +209,11 @@ describe('layersManager', () => {
     });
 
     it('should successfully add layer with use_http_get set to true', async () => {
-      const s3ConfigWithHttpGet: IS3Config = { ...config.get<IS3Config>('S3'), useHttpGet: true };
-      container.register(SERVICES.S3, { useValue: s3ConfigWithHttpGet });
-      const mapproxyConfig = container.resolve<IMapProxyConfig>(SERVICES.MAPPROXY);
+      const mapproxyConfigWithHttpGet: IMapProxyConfig = { ...config.get<IMapProxyConfig>('mapproxy'), cache: { ...config.get<IMapProxyConfig>('mapproxy').cache, useHttpGet: true } };
+      container.register(SERVICES.MAPPROXY, { useValue: mapproxyConfigWithHttpGet });
       const redisConfig = container.resolve<IRedisConfig>(SERVICES.REDISCONFIG);
-      configManager = new ConfigsManager(logger, mapproxyConfig, MockConfigProvider, tracerMock);
-      layersManager = new LayersManager(logger, mapproxyConfig, redisConfig, MockConfigProvider, tracerMock, configManager);
+      configManager = new ConfigsManager(logger, mapproxyConfigWithHttpGet, MockConfigProvider, tracerMock);
+      layersManager = new LayersManager(logger, mapproxyConfigWithHttpGet, redisConfig, MockConfigProvider, tracerMock, configManager);
       jest.spyOn(configManager, 'getConfig').mockResolvedValue(mockData());
 
       expect.assertions(3);
@@ -227,12 +226,11 @@ describe('layersManager', () => {
     });
 
     it('should successfully add layer with use_http_get set to false', async () => {
-      const s3ConfigWithoutHttpGet: IS3Config = { ...config.get<IS3Config>('S3'), useHttpGet: false };
-      container.register(SERVICES.S3, { useValue: s3ConfigWithoutHttpGet });
-      const mapproxyConfig = container.resolve<IMapProxyConfig>(SERVICES.MAPPROXY);
+      const mapproxyConfigWithoutHttpGet: IMapProxyConfig = { ...config.get<IMapProxyConfig>('mapproxy'), cache: { ...config.get<IMapProxyConfig>('mapproxy').cache, useHttpGet: false } };
+      container.register(SERVICES.MAPPROXY, { useValue: mapproxyConfigWithoutHttpGet });
       const redisConfig = container.resolve<IRedisConfig>(SERVICES.REDISCONFIG);
-      configManager = new ConfigsManager(logger, mapproxyConfig, MockConfigProvider, tracerMock);
-      layersManager = new LayersManager(logger, mapproxyConfig, redisConfig, MockConfigProvider, tracerMock, configManager);
+      configManager = new ConfigsManager(logger, mapproxyConfigWithoutHttpGet, MockConfigProvider, tracerMock);
+      layersManager = new LayersManager(logger, mapproxyConfigWithoutHttpGet, redisConfig, MockConfigProvider, tracerMock, configManager);
       jest.spyOn(configManager, 'getConfig').mockResolvedValue(mockData());
 
       expect.assertions(3);

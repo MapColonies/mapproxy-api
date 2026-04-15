@@ -10,7 +10,6 @@ global:
       tilesBucket: ""
       sslEnabled: false
       secretName: ""
-      useHttpGet: false
     fs:
       internalPvc:
         name: ""
@@ -68,7 +67,6 @@ storage:
     tilesBucket: ""
     sslEnabled: false
     secretName: ""
-    useHttpGet: false
   fs:
     internalPvc:
       name: ""
@@ -112,6 +110,7 @@ env:
     grids: WorldCRS84
     upscaleTiles: 18
     directoryLayout: tms
+    useHttpGet: false
 
 resources:
   enabled: true

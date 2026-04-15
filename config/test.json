@@ -17,7 +17,8 @@
       "grids": "epsg4326dir",
       "upscale_tiles": 18,
       "type": "s3",
-      "directory_layout": "tms"
+      "directory_layout": "tms",
+      "useHttpGet": false
     }
   },
   "redis": {
@@ -58,7 +59,6 @@
     "endpointUrl": "http://localhost:9000",
     "bucket": "",
     "objectKey": "mapproxy.yaml",
-    "sslEnabled": false,
-    "useHttpGet": false
+    "sslEnabled": false
   }
 }

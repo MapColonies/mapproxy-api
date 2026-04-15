@@ -47,7 +47,11 @@
         "__name": "MAPPROXY_CACHE_UPSCALE_TILES",
         "__format": "number"
       },
-      "directoryLayout": "MAPPROXY_CACHE_DIRECTORY_LAYOUT"
+      "directoryLayout": "MAPPROXY_CACHE_DIRECTORY_LAYOUT",
+      "useHttpGet": {
+        "__name": "MAPPROXY_CACHE_USE_HTTP_GET",
+        "__format": "boolean"
+      }
     }
   },
   "FS": {
@@ -60,11 +64,7 @@
     "secretAccessKey": "S3_SECRET_ACCESS_KEY",
     "endpointUrl": "S3_ENDPOINT_URL",
     "bucket": "S3_BUCKET",
-    "sslEnabled": "S3_SSL_ENABLED",
-    "useHttpGet": {
-      "__name": "S3_USE_HTTP_GET",
-      "__format": "boolean"
-    }
+    "sslEnabled": "S3_SSL_ENABLED"
   },
   "DB": {
     "host": "DB_HOST",

@@ -2,16 +2,14 @@
 import { DependencyContainer } from 'tsyringe';
 import { SourceTypes } from '../enums';
 import { SERVICES } from '../constants';
-import { ICacheProvider, IMapProxyConfig, IS3Config, IS3Source } from '../interfaces';
+import { ICacheProvider, IMapProxyConfig, IS3Source } from '../interfaces';
 import { adjustTilesPath } from '../utils';
 
 class S3Source implements ICacheProvider {
   private readonly mapproxyConfig: IMapProxyConfig;
-  private readonly s3Config: IS3Config;
 
   public constructor(container: DependencyContainer) {
     this.mapproxyConfig = container.resolve(SERVICES.MAPPROXY);
-    this.s3Config = container.resolve(SERVICES.S3);
   }
 
   public getCacheSource(sourcePath: string): IS3Source {
@@ -20,7 +18,7 @@ class S3Source implements ICacheProvider {
       type: sourceCacheType,
       directory: adjustTilesPath(sourcePath, sourceCacheType),
       directory_layout: this.mapproxyConfig.cache.directoryLayout,
-      use_http_get: this.s3Config.useHttpGet,
+      use_http_get: this.mapproxyConfig.cache.useHttpGet,
     };
 
     return s3Source;
