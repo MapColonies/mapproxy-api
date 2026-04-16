@@ -135,7 +135,7 @@ export interface IGpkgSource extends ICacheSource {
   table_name: string;
 }
 
-export interface IFSSource extends IS3Source { }
+export interface IFSSource extends IS3Source {}
 
 export interface IMapProxyCache {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
