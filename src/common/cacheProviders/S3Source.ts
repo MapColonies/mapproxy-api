@@ -18,6 +18,7 @@ class S3Source implements ICacheProvider {
       type: sourceCacheType,
       directory: adjustTilesPath(sourcePath, sourceCacheType),
       directory_layout: this.mapproxyConfig.cache.directoryLayout,
+      use_http_get: this.mapproxyConfig.cache.useHttpGet,
     };
 
     return s3Source;

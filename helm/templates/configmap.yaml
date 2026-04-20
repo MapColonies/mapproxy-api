@@ -27,6 +27,7 @@ data:
   MAPPROXY_CACHE_GRIDS: {{ quote .Values.env.mapproxyCache.grids }}
   MAPPROXY_CACHE_UPSCALE_TILES: {{ quote .Values.env.mapproxyCache.upscaleTiles }}
   MAPPROXY_CACHE_DIRECTORY_LAYOUT: {{ quote .Values.env.mapproxyCache.directoryLayout }}
+  MAPPROXY_CACHE_USE_HTTP_GET: {{ .Values.env.mapproxyCache.useHttpGet | quote }}
   REDIS_ENABLED: {{ quote $redis.enabled }}
   {{ if $redis.enabled }}
   REDIS_HOST: {{ quote $redis.host }}

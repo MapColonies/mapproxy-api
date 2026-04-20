@@ -91,10 +91,9 @@ metrics:
 tracing:
   enabled: false
   url: ''
-
-# add pod annotations
-# example:
-# podAnnotations:
+  # add pod annotations
+  # example:
+  # podAnnotations:
   # annotation1: annotation-value-1
   # annotation2: annotation-value-2
 podAnnotations: {}
@@ -111,6 +110,7 @@ env:
     grids: WorldCRS84
     upscaleTiles: 18
     directoryLayout: tms
+    useHttpGet: true
 
 resources:
   enabled: true
@@ -153,7 +153,8 @@ ingress:
     origin: '*'
   annotations: {}
 
-local: # for local stand alone deployment, external pvc and secrets should be used for full deployment
+local:
+  # for local stand alone deployment, external pvc and secrets should be used for full deployment
   fs:
     createComponents: false
     storageClass: hostPath

@@ -31,7 +31,8 @@
       "grids": "WorldCRS84",
       "upscaleTiles": 18,
       "directoryLayout": "tms",
-      "gpkgExt": ".gpkg"
+      "gpkgExt": ".gpkg",
+      "useHttpGet": true
     }
   },
   "FS": {

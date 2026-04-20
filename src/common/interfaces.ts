@@ -48,6 +48,7 @@ export interface IMapProxyConfig {
     upscaleTiles: number;
     directoryLayout: string;
     gpkgExt: string;
+    useHttpGet: boolean;
   };
 }
 
@@ -107,6 +108,7 @@ export interface ICacheSource {
 export interface IS3Source extends ICacheSource {
   directory: string;
   directory_layout: string;
+  use_http_get?: boolean;
 }
 
 export interface IRedisSource extends ICacheSource {
