@@ -110,7 +110,7 @@ env:
     grids: WorldCRS84
     upscaleTiles: 18
     directoryLayout: tms
-    useHttpGet: false
+    useHttpGet: true
 
 resources:
   enabled: true

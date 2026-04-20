@@ -407,7 +407,7 @@ describe('layersManager', () => {
     it('should provide s3 cache as source', () => {
       const cacheType = 's3';
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      const expectedResult = { type: cacheType, directory: mockTilesPath, directory_layout: directoryLayout, use_http_get: false };
+      const expectedResult = { type: cacheType, directory: mockTilesPath, directory_layout: directoryLayout, use_http_get: true };
       // mock
       jest.mock('../../../../src/common/cacheProviders/S3Source');
       // action
