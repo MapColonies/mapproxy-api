@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.12.0](https://github.com/MapColonies/mapproxy-api/compare/v1.11.3...v1.12.0) (2026-04-20)
+
+
+### Features
+
+* add useHttpGet flag to S3 configuration  ([#166](https://github.com/MapColonies/mapproxy-api/issues/166)) ([c219a4b](https://github.com/MapColonies/mapproxy-api/commit/c219a4bbf5bb219efcd4f09184fe6cd0c805f8ce))
+
 ## [1.11.3](https://github.com/MapColonies/mapproxy-api/compare/v1.11.2...v1.11.3) (2026-01-27)
 
 
