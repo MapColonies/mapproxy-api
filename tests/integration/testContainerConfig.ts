@@ -1,7 +1,7 @@
 import { container } from 'tsyringe';
 import config from 'config';
 import { SERVICES } from '../../src/common/constants';
-import { IConfigProvider, IFSConfig, IMapProxyConfig, IRedisConfig, IS3Config } from '../../src/common/interfaces';
+import { IConfigProvider, IFSConfig, IMapProxyConfig, IRedisConfig } from '../../src/common/interfaces';
 import { MockConfigProvider, init } from '../unit/mock/mockConfigProvider';
 
 function registerTestValues(): void {
