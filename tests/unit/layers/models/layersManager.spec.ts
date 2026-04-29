@@ -2,7 +2,7 @@
 /// <reference types="jest-extended" />
 import { normalize } from 'node:path';
 import { container } from 'tsyringe';
-import { jsLogger , type Logger } from '@map-colonies/js-logger';
+import { jsLogger, type Logger } from '@map-colonies/js-logger';
 import { BadRequestError, ConflictError, NotFoundError, NotImplementedError } from '@map-colonies/error-types';
 import { lookup as mimeLookup, TilesMimeFormat } from '@map-colonies/types';
 import { ILayerPostRequest, IMapProxyCache, IMapProxyConfig, IRedisConfig } from '../../../../src/common/interfaces';
@@ -24,12 +24,12 @@ const TILE_OUTPUT_FORMAT_PNG = 'PNG';
 const TILE_OUTPUT_FORMAT_JPEG = 'JPEG';
 
 describe('layersManager', () => {
-  
   let logger: Logger;
   beforeAll(async () => {
     logger = await jsLogger({ enabled: false });
   });
-  beforeEach(async () => {    // stub util functions
+  beforeEach(async () => {
+    // stub util functions
     registerTestValues();
     initConfigProvider();
     //defalut layerManger - redis is enabled

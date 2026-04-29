@@ -11,7 +11,10 @@ import { convertJsonToYaml } from '../../common/utils';
 type GetConfigHandler = RequestHandler<undefined, IMapProxyJsonDocument | string, undefined>;
 @injectable()
 export class ConfigsController {
-  public constructor(@inject(SERVICES.LOGGER) private readonly logger: Logger, @inject(ConfigsManager) private readonly manager: ConfigsManager) {}
+  public constructor(
+    @inject(SERVICES.LOGGER) private readonly logger: Logger,
+    @inject(ConfigsManager) private readonly manager: ConfigsManager
+  ) {}
 
   public getConfig: GetConfigHandler = async (req, res, next) => {
     try {

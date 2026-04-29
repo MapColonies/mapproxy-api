@@ -148,4 +148,3 @@ const registerDefaultConfig = (): void => {
 };
 
 export { configMock, getMock, hasMock, init, setValue, clear, registerDefaultConfig };
-

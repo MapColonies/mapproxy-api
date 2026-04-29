@@ -1,9 +1,9 @@
 {
-    "$schema": "https://swc.rs/schema.json",
-    "jsc": {
-      "parser": {
-        "syntax": "typescript",
-        "decorators": true
-      }
+  "$schema": "https://swc.rs/schema.json",
+  "jsc": {
+    "parser": {
+      "syntax": "typescript",
+      "decorators": true
     }
   }
+}
