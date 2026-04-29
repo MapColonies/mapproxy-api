@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { inject, injectable } from 'tsyringe';
-import { Logger } from '@map-colonies/js-logger';
+import type { Logger } from '@map-colonies/js-logger';
 import { withSpanAsyncV4 } from '@map-colonies/telemetry';
-import { Tracer } from '@opentelemetry/api';
+import type { Tracer } from '@opentelemetry/api';
 import { SERVICES } from '../../common/constants';
-import { IMapProxyJsonDocument, IMapProxyConfig, IConfigProvider } from '../../common/interfaces';
+import type { IConfigProvider, IMapProxyConfig, IMapProxyJsonDocument } from '../../common/interfaces';
 
 @injectable()
 class ConfigsManager {

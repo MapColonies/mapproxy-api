@@ -5,11 +5,6 @@ import { TileOutputFormat } from '@map-colonies/mc-model-types';
 import { TilesMimeFormat } from '@map-colonies/types';
 import { Providers } from './enums';
 
-export interface IConfig {
-  get: <T>(setting: string) => T;
-  has: (setting: string) => boolean;
-}
-
 export interface OpenApiConfig {
   filePath: string;
   basePath: string;

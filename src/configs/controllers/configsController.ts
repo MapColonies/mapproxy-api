@@ -1,9 +1,10 @@
-import { Logger } from '@map-colonies/js-logger';
-import { RequestHandler } from 'express';
+import type { Logger } from '@map-colonies/js-logger';
+import type { RequestHandler } from 'express';
 import httpStatus from 'http-status-codes';
 import { injectable, inject } from 'tsyringe';
 import { SERVICES } from '../../common/constants';
-import { IMapProxyJsonDocument, SchemaType } from '../../common/interfaces';
+import type { IMapProxyJsonDocument } from '../../common/interfaces';
+import { SchemaType } from '../../common/interfaces';
 import { ConfigsManager } from '../models/configsManager';
 import { convertJsonToYaml } from '../../common/utils';
 

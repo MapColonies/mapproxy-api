@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { DependencyContainer } from 'tsyringe';
-import { Logger } from '@map-colonies/js-logger';
+import type { Logger } from '@map-colonies/js-logger';
 import { SERVICES } from '../constants';
 import { ICacheProvider, IMapProxyConfig, IRedisConfig, IRedisSource } from '../interfaces';
 import { SourceTypes } from '../enums';

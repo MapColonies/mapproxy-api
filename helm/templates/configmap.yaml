@@ -2,7 +2,7 @@
 {{- $configmapName := include "configmap.fullname" . }}
 {{- $storage := (include "common.storage.merged" .) | fromYaml }}
 {{- $tracing := (include "common.tracing.merged" .) | fromYaml }}
-{{- $metrics := (include "common.metrics.merged" .) | fromYaml }}
+{{- $openTelemetryOptions := (include "common.openTelemetryOptions.merged" .) | fromYaml }}
 {{- $redis := (include "common.redis.merged" .) | fromYaml }}
 
 {{- if .Values.enabled -}}
@@ -15,13 +15,16 @@ data:
   RESPONSE_COMPRESSION_ENABLED: {{ .Values.env.responseCompressionEnabled | quote }}
   LOG_LEVEL: {{ .Values.env.logLevel | quote }}
   LOG_PRETTY_PRINT_ENABLED: {{ .Values.env.logPrettyPrintEnabled | quote }}
+  {{- with $openTelemetryOptions }}
+  OPENTELEMETRY_LOGGING_ENABLED: {{ .enabled | quote }}
+  {{ if .enabled }}
+  OPENTELEMETRY_LOGGING_URL: {{ .url | quote }}
+  OPENTELEMETRY_RESOURCE_ATTRIBUTES: {{ .resourceAttributes | toJson | quote }}
+  {{- end }}
+  {{- end }}
   TELEMETRY_TRACING_ENABLED: {{ $tracing.enabled | quote }}
   {{ if $tracing.enabled }}
   TELEMETRY_TRACING_URL: {{ $tracing.url }}
-  {{ end }}
-  TELEMETRY_METRICS_ENABLED: {{ $metrics.enabled | quote }}
-  {{ if $metrics.enabled }}
-  TELEMETRY_METRICS_URL: {{ $metrics.url }}
   {{ end }}
   MAPPROXY_CONFIG_PROVIDER: {{ quote $storage.mapproxyConfigProvider }}
   MAPPROXY_CACHE_GRIDS: {{ quote .Values.env.mapproxyCache.grids }}
@@ -59,5 +62,12 @@ data:
   DB_SCHEMA: {{ $db.schema }}
   DB_SSL_REJECT_UNAUTHORIZED: {{ $db.dbRejectUnauthorized | quote  }}
   PGAPPNAME: {{ $chartName }}
+  {{- end }}
+
+  {{- with .Values.configManagement }}
+  CONFIG_NAME: {{ .name | quote }}
+  CONFIG_VERSION: {{ .version | quote }}
+  CONFIG_OFFLINE_MODE: {{ .offlineMode | quote }}
+  CONFIG_SERVER_URL: {{ .serverUrl | quote }}
   {{- end }}
 {{- end }}

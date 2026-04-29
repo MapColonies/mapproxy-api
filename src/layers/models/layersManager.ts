@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { container, inject, injectable } from 'tsyringe';
-import { Logger } from '@map-colonies/js-logger';
+import type { Logger } from '@map-colonies/js-logger';
 import { BadRequestError, ConflictError, NotFoundError, NotImplementedError } from '@map-colonies/error-types';
-import { lookup as mimeLookup, TilesMimeFormat } from '@map-colonies/types';
+import { lookup as mimeLookup } from '@map-colonies/types';
+import type { TilesMimeFormat } from '@map-colonies/types';
 import { withSpanAsyncV4 } from '@map-colonies/telemetry';
-import { Tracer } from '@opentelemetry/api';
+import type { Tracer } from '@opentelemetry/api';
 import { SERVICES } from '../../common/constants';
-import {
+import type {
   ILayerPostRequest,
   IMapProxyCache,
   IMapProxyJsonDocument,
@@ -164,7 +165,7 @@ class LayersManager {
     await this.configProvider.updateJson(editJson).catch((err) => {
       const error = err as Error;
       if (error.message !== errorMessage) {
-        this.logger.error({ msg: error.message, error });
+        this.logger.error({ msg: error.message, err: error });
         throw error;
       }
     });
@@ -363,7 +364,7 @@ class LayersManager {
         throw new BadRequestError(message);
       }
     } catch (error) {
-      this.logger.error({ msg: `error in adding a layer, grid check failed. `, error });
+      this.logger.error({ msg: `error in adding a layer, grid check failed. `, err: error });
       throw error;
     }
   }

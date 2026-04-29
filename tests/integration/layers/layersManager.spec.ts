@@ -1,11 +1,7 @@
 /* eslint-disable jest/no-commented-out-tests */
 import httpStatusCodes from 'http-status-codes';
-import jsLogger from '@map-colonies/js-logger';
-import { trace } from '@opentelemetry/api';
-import config from 'config';
 import { container } from 'tsyringe';
-import { TileOutputFormat } from '@map-colonies/mc-model-types';
-import { ICacheName, IFSConfig, ILayerPostRequest, IMapProxyCache, IMapProxyConfig, IS3Config } from '../../../src/common/interfaces';
+import { ICacheName, ILayerPostRequest, IMapProxyCache } from '../../../src/common/interfaces';
 import { mockLayerNameIsNotExists } from '../../unit/mock/mockLayerNameIsNotExists';
 import { mockLayerNameAlreadyExists } from '../../unit/mock/mockLayerNameAlreadyExists';
 import { MockConfigProvider, init as configProviderInit, updateJsonMock } from '../../unit/mock/mockConfigProvider';
@@ -16,34 +12,21 @@ import { layersRouterFactory, LAYERS_ROUTER_SYMBOL } from '../../../src/layers/r
 import { LayersRequestSender } from '../layers/helpers/requestSender';
 import { mockData, mockFalseData } from '../../unit/mock/mockData';
 import { ConfigsManager } from '../../../src/configs/models/configsManager';
+import { initConfig as initBoilerplateConfig } from '../../../src/common/config';
+import { getTestContainerConfig } from '../testContainerConfig';
 
 let requestSender: LayersRequestSender;
 
 describe('layerManager', () => {
-  beforeEach(() => {
-    const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
-    const fsConfig = config.get<IFSConfig>('FS');
-    const s3Config = config.get<IS3Config>('S3');
-    const redisConfig = config.get<IMapProxyConfig>('redis');
+  beforeEach(async () => {
+    await initBoilerplateConfig(true);
     configProviderInit();
     /* eslint-disable-next-line @typescript-eslint/naming-convention*/
-    const app = getApp({
-      override: [
-        { token: SERVICES.MAPPROXY, provider: { useValue: mapproxyConfig } },
-        { token: SERVICES.LOGGER, provider: { useValue: jsLogger({ enabled: false }) } },
-        { token: SERVICES.TRACER, provider: { useValue: trace.getTracer('testTracer') } },
-        { token: SERVICES.CONFIG, provider: { useValue: config } },
+    const [app] = await getApp({
+      override: await getTestContainerConfig([
         { token: LAYERS_ROUTER_SYMBOL, provider: { useFactory: layersRouterFactory } },
-        { token: SERVICES.FS, provider: { useValue: fsConfig } },
-        { token: SERVICES.S3, provider: { useValue: s3Config } },
-        { token: SERVICES.REDISCONFIG, provider: { useValue: redisConfig } },
-        {
-          token: SERVICES.CONFIGPROVIDER,
-          provider: {
-            useValue: MockConfigProvider,
-          },
-        },
-      ],
+        { token: SERVICES.CONFIGPROVIDER, provider: { useValue: MockConfigProvider } },
+      ]),
       useChild: false,
     });
     //container.resolve<ServerBuilder>(ServerBuilder);
@@ -161,7 +144,8 @@ describe('layerManager', () => {
       name: 'amsterdam_5cm',
       tilesPath: '/path/to/tiles/directory/in/my/bucket/',
       cacheType: 's3',
-      format: TileOutputFormat.JPEG,
+      // Runtime tests only need the underlying mime string value.
+      format: 'JPEG' as unknown as ILayerPostRequest['format'],
     };
 
     it('Happy Path - should return status 202', async () => {

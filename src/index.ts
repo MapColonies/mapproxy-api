@@ -3,27 +3,27 @@
 import 'reflect-metadata';
 import { createServer } from 'http';
 import { createTerminus } from '@godaddy/terminus';
-import { Logger } from '@map-colonies/js-logger';
-import { container } from 'tsyringe';
-import config from 'config';
-import { DEFAULT_SERVER_PORT, SERVICES } from './common/constants';
-
+import type { Logger } from '@map-colonies/js-logger';
 import { getApp } from './app';
+import type { ConfigType } from './common/config';
+import { SERVICES } from './common/constants';
 
-interface IServerConfig {
-  port: string;
-}
+void getApp()
+  .then(([app, container]) => {
+    const logger = container.resolve<Logger>(SERVICES.LOGGER);
+    const config = container.resolve<ConfigType>(SERVICES.CONFIG);
 
-const serverConfig = config.get<IServerConfig>('server');
-const port: number = parseInt(serverConfig.port) || DEFAULT_SERVER_PORT;
+    const port = config.get('server.port') as unknown as number;
+    const stubHealthCheck = async (): Promise<void> => Promise.resolve();
 
-const app = getApp();
+    const server = createTerminus(createServer(app), { healthChecks: { '/liveness': stubHealthCheck }, onSignal: container.resolve('onSignal') });
 
-const logger = container.resolve<Logger>(SERVICES.LOGGER);
-const stubHealthcheck = async (): Promise<void> => Promise.resolve();
-// eslint-disable-next-line @typescript-eslint/naming-convention
-const server = createTerminus(createServer(app), { healthChecks: { '/liveness': stubHealthcheck, onSignal: container.resolve('onSignal') } });
-
-server.listen(port, () => {
-  logger.info(`app started on port ${port}`);
-});
+    server.listen(port, () => {
+      logger.info(`app started on port ${port}`);
+    });
+  })
+  .catch((error: Error) => {
+    console.error('😢 - failed initializing the server');
+    console.error(error);
+    process.exit(1);
+  });

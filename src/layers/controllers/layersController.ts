@@ -1,9 +1,9 @@
-import { Logger } from '@map-colonies/js-logger';
-import { RequestHandler } from 'express';
+import type { Logger } from '@map-colonies/js-logger';
+import type { RequestHandler } from 'express';
 import httpStatus from 'http-status-codes';
 import { injectable, inject } from 'tsyringe';
 import { SERVICES } from '../../common/constants';
-import { ICacheName, ILayerPostRequest, IMapProxyCache } from '../../common/interfaces';
+import type { ICacheName, ILayerPostRequest, IMapProxyCache } from '../../common/interfaces';
 import { LayersManager } from '../models/layersManager';
 
 type CreateLayerHandler = RequestHandler<undefined, ILayerPostRequest, ILayerPostRequest>;

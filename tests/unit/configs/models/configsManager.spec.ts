@@ -1,5 +1,5 @@
 import { container } from 'tsyringe';
-import jsLogger from '@map-colonies/js-logger';
+import { jsLogger, type Logger } from '@map-colonies/js-logger';
 import { NotFoundError } from '@map-colonies/error-types';
 import { IMapProxyConfig, IMapProxyJsonDocument } from '../../../../src/common/interfaces';
 import { ConfigsManager } from '../../../../src/configs/models/configsManager';
@@ -10,10 +10,11 @@ import { mockData } from '../../mock/mockData';
 import { tracerMock } from '../../mock/tracer';
 
 let configManager: ConfigsManager;
-const logger = jsLogger({ enabled: false });
+let logger: Logger;
 
 describe('layersManager', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    logger = await jsLogger({ enabled: false });
     // stub util functions
     registerTestValues();
     initConfigProvider();

@@ -1,20 +1,19 @@
 import { readFileSync } from 'node:fs';
-import { Logger } from '@map-colonies/js-logger';
+import type { Logger } from '@map-colonies/js-logger';
 import { Pool, PoolClient, PoolConfig } from 'pg';
 import { container } from 'tsyringe';
 import { SERVICES } from '../constants';
-import { IConfigProvider, IDBConfig, IConfig, IMapProxyJsonDocument } from '../interfaces';
+import type { IConfigProvider, IDBConfig, IMapProxyJsonDocument } from '../interfaces';
+import type { ConfigType } from '@src/common/config';
 
 export class DBProvider implements IConfigProvider {
-  private readonly config: IConfig;
   private readonly dbConfig: IDBConfig;
   private readonly logger: Logger;
   private readonly pool: Pool;
   public constructor() {
     this.logger = container.resolve(SERVICES.LOGGER);
-    this.config = container.resolve(SERVICES.CONFIG);
-    const config: IConfig = container.resolve(SERVICES.CONFIG);
-    this.dbConfig = config.get<IDBConfig>('DB');
+    const config = container.resolve<ConfigType>(SERVICES.CONFIG);
+    this.dbConfig = config.get('DB') as IDBConfig;
     const pgClientConfig: PoolConfig = {
       host: this.dbConfig.host,
       user: this.dbConfig.user,
@@ -40,7 +39,11 @@ export class DBProvider implements IConfigProvider {
       await client.query(`BEGIN; LOCK TABLE ${this.dbConfig.table} IN SHARE UPDATE EXCLUSIVE MODE;`);
       let query = `SELECT ${this.dbConfig.columns.data} FROM ${this.dbConfig.table} ORDER BY ${this.dbConfig.columns.updatedTime} DESC limit 1`;
       const result = await client.query<{ data: string }>(query);
-      const jsonContent = result.rows[0].data as unknown as IMapProxyJsonDocument;
+      const row = result.rows[0];
+      if (row === undefined) {
+        throw new Error('Failed to update database: no config row found');
+      }
+      const jsonContent = row.data as unknown as IMapProxyJsonDocument;
       let rawData: IMapProxyJsonDocument;
       try {
         rawData = editJson(jsonContent);
@@ -68,7 +71,11 @@ export class DBProvider implements IConfigProvider {
     try {
       const query = `SELECT ${this.dbConfig.columns.data} FROM ${this.dbConfig.table} ORDER BY ${this.dbConfig.columns.updatedTime} DESC limit 1`;
       const result = await client.query<{ data: string }>(query);
-      const jsonContent = result.rows[0].data as unknown as IMapProxyJsonDocument;
+      const row = result.rows[0];
+      if (row === undefined) {
+        throw new Error('Failed to provide json from database: no config row found');
+      }
+      const jsonContent = row.data as unknown as IMapProxyJsonDocument;
       return jsonContent;
     } catch (error) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions

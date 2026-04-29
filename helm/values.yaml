@@ -1,8 +1,7 @@
 global:
   cloudProvider: {}
   tracing: {}
-  metrics: {}
-  environment: ""
+  openTelemetryOptions: {}  environment: ""
   storage:
     mapproxyConfigProvider: "" #  -> 'DB' | 'FS' | 'S3'
     s3:
@@ -84,9 +83,11 @@ db:
     useExternal: false
     externalSecretName: ""
 
-metrics:
-  enabled: false
-  url: ''
+configManagement:
+  offlineMode: false
+  name: 'mapproxy-api'
+  version: 'latest'
+  serverUrl: 'http://localhost:8080/api'
 
 tracing:
   enabled: false
@@ -98,12 +99,23 @@ tracing:
   # annotation2: annotation-value-2
 podAnnotations: {}
 
+# Used by `@map-colonies/config` to fetch the service configuration.
+configManagement:
+  offlineMode: false
+  name: 'mapproxy-api'
+  version: 'latest'
+  serverUrl: 'http://localhost:8080/api'
+
 env:
   port: 80
   targetPort: 8080
   protocol: TCP
   logLevel: warn
   logPrettyPrintEnabled: false
+  openTelemetryOptions:
+    enabled: false
+    url: ''
+    resourceAttributes: {}
   responseCompressionEnabled: true
   requestPayloadLimit: 1mb
   mapproxyCache:

@@ -8,11 +8,18 @@
   "telemetry": {
     "logger": {
       "level": "info",
-      "prettyPrint": false
+      "prettyPrint": false,
+      "opentelemetryOptions": {
+        "enabled": false
+      }
+    },
+    "shared": {},
+    "tracing": {
+      "isEnabled": false
     }
   },
   "server": {
-    "port": "8080",
+    "port": 8080,
     "request": {
       "payload": {
         "limit": "1mb"

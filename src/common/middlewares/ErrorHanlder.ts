@@ -3,7 +3,7 @@ import { inject, injectable } from 'tsyringe';
 import { BadRequest } from 'express-openapi-validator/dist/framework/types';
 import { HttpError, ConflictError, NoContentError, ServiceUnavailableError } from '@map-colonies/error-types';
 import { StatusCodes } from 'http-status-codes';
-import { Logger } from '@map-colonies/js-logger';
+import type { Logger } from '@map-colonies/js-logger';
 import { SERVICES } from '../constants';
 
 @injectable()

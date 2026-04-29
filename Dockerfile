@@ -15,6 +15,7 @@ RUN apk add dumb-init
 
 ENV NODE_ENV=production
 ENV SERVER_PORT=8080
+ENV CONFIG_OFFLINE_MODE=true
 
 
 WORKDIR /usr/src/app
@@ -29,4 +30,4 @@ COPY --chown=node:node ./config ./config
 
 USER node
 EXPOSE 8080
-CMD ["dumb-init", "node",  "./index.js"]
+CMD ["dumb-init", "node", "--import", "./instrumentation.mjs", "./index.js"]

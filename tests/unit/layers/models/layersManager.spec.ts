@@ -2,11 +2,9 @@
 /// <reference types="jest-extended" />
 import { normalize } from 'node:path';
 import { container } from 'tsyringe';
-import jsLogger from '@map-colonies/js-logger';
+import { jsLogger , type Logger } from '@map-colonies/js-logger';
 import { BadRequestError, ConflictError, NotFoundError, NotImplementedError } from '@map-colonies/error-types';
-import { TileOutputFormat } from '@map-colonies/mc-model-types';
 import { lookup as mimeLookup, TilesMimeFormat } from '@map-colonies/types';
-import config from 'config';
 import { ILayerPostRequest, IMapProxyCache, IMapProxyConfig, IRedisConfig } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExists';
@@ -14,19 +12,24 @@ import { mockLayerNameIsNotExists } from '../../mock/mockLayerNameIsNotExists';
 import { MockConfigProvider, getJsonMock, updateJsonMock, init as initConfigProvider } from '../../mock/mockConfigProvider';
 import { SERVICES } from '../../../../src/common/constants';
 import { registerTestValues } from '../../../integration/testContainerConfig';
-import { init as initConfig, clear as clearConfig } from '../../../configurations/config';
 import { tracerMock } from '../../mock/tracer';
 import { ConfigsManager } from '../../../../src/configs/models/configsManager';
 import { mockData, mockFalseData } from '../../mock/mockData';
+import { configMock } from '../../../mocks/configMock';
 
 let layersManager: LayersManager;
 let configManager: ConfigsManager;
-const logger = jsLogger({ enabled: false });
+// Runtime tests only need the underlying mime strings (avoid importing ESM-only deps in Jest).
+const TILE_OUTPUT_FORMAT_PNG = 'PNG';
+const TILE_OUTPUT_FORMAT_JPEG = 'JPEG';
 
 describe('layersManager', () => {
-  beforeEach(() => {
-    // stub util functions
-    initConfig();
+  
+  let logger: Logger;
+  beforeAll(async () => {
+    logger = await jsLogger({ enabled: false });
+  });
+  beforeEach(async () => {    // stub util functions
     registerTestValues();
     initConfigProvider();
     //defalut layerManger - redis is enabled
@@ -37,7 +40,6 @@ describe('layersManager', () => {
   });
 
   afterEach(() => {
-    clearConfig();
     container.reset();
     container.clearInstances();
     jest.clearAllMocks();
@@ -177,7 +179,7 @@ describe('layersManager', () => {
 
     it('should successfully add layer without redis cache', async () => {
       //config test
-      const redisConfigValue = config.get<IRedisConfig>('redisDisabled');
+      const redisConfigValue = configMock.get('redisDisabled') as IRedisConfig;
       container.register(SERVICES.REDISCONFIG, { useValue: redisConfigValue });
       const redisConfig = container.resolve<IRedisConfig>(SERVICES.REDISCONFIG);
       const mapproxyConfig = container.resolve<IMapProxyConfig>(SERVICES.MAPPROXY);
@@ -208,10 +210,33 @@ describe('layersManager', () => {
       await expect(action).rejects.toThrow(BadRequestError);
     });
 
+    it('should reject when layer name ends with -redis', async () => {
+      jest.spyOn(configManager, 'getConfig').mockResolvedValue(mockData());
+
+      const request: ILayerPostRequest = {
+        ...mockLayerNameIsNotExists,
+        name: 'some-layer-redis',
+        format: TILE_OUTPUT_FORMAT_JPEG as unknown as ILayerPostRequest['format'],
+      };
+
+      await expect(layersManager.addLayer(request)).rejects.toThrow(NotImplementedError);
+    });
+
+    it("should reject when grid is missing from mapproxy's global grids", async () => {
+      jest.spyOn(configManager, 'getConfig').mockResolvedValue({ grids: {} } as never);
+
+      const request: ILayerPostRequest = {
+        ...mockLayerNameIsNotExists,
+        format: TILE_OUTPUT_FORMAT_JPEG as unknown as ILayerPostRequest['format'],
+      };
+
+      await expect(layersManager.addLayer(request)).rejects.toThrow(BadRequestError);
+    });
+
     it('should successfully add layer with use_http_get set to true', async () => {
       const mapproxyConfigWithHttpGet: IMapProxyConfig = {
-        ...config.get<IMapProxyConfig>('mapproxy'),
-        cache: { ...config.get<IMapProxyConfig>('mapproxy').cache, useHttpGet: true },
+        ...(configMock.get('mapproxy') as IMapProxyConfig),
+        cache: { ...(configMock.get('mapproxy') as IMapProxyConfig).cache, useHttpGet: true },
       };
       container.register(SERVICES.MAPPROXY, { useValue: mapproxyConfigWithHttpGet });
       const redisConfig = container.resolve<IRedisConfig>(SERVICES.REDISCONFIG);
@@ -230,8 +255,8 @@ describe('layersManager', () => {
 
     it('should successfully add layer with use_http_get set to false', async () => {
       const mapproxyConfigWithoutHttpGet: IMapProxyConfig = {
-        ...config.get<IMapProxyConfig>('mapproxy'),
-        cache: { ...config.get<IMapProxyConfig>('mapproxy').cache, useHttpGet: false },
+        ...(configMock.get('mapproxy') as IMapProxyConfig),
+        cache: { ...(configMock.get('mapproxy') as IMapProxyConfig).cache, useHttpGet: false },
       };
       container.register(SERVICES.MAPPROXY, { useValue: mapproxyConfigWithoutHttpGet });
       const redisConfig = container.resolve<IRedisConfig>(SERVICES.REDISCONFIG);
@@ -319,7 +344,7 @@ describe('layersManager', () => {
       name: 'amsterdam_5cm-source',
       tilesPath: '/path/to/tiles/directory/in/my/bucket/',
       cacheType: 's3',
-      format: TileOutputFormat.JPEG,
+      format: TILE_OUTPUT_FORMAT_JPEG as unknown as ILayerPostRequest['format'],
     };
 
     it('should successfully update layer', async () => {
@@ -339,8 +364,8 @@ describe('layersManager', () => {
       // mock
       const mockLayerName = 'redisExists';
       const mockRedisLayerName = 'redisExists-redis';
-      const expectedTileMimeFormatPng = mimeLookup(TileOutputFormat.PNG) as TilesMimeFormat;
-      const expectedTileMimeFormatJpeg = mimeLookup(TileOutputFormat.JPEG) as TilesMimeFormat;
+      const expectedTileMimeFormatPng = mimeLookup(TILE_OUTPUT_FORMAT_PNG) as TilesMimeFormat;
+      const expectedTileMimeFormatJpeg = mimeLookup(TILE_OUTPUT_FORMAT_JPEG) as TilesMimeFormat;
       jest.spyOn(configManager, 'getConfig').mockResolvedValue(mockData());
       //check data
       const data = await MockConfigProvider.getJson();
@@ -452,6 +477,11 @@ describe('layersManager', () => {
       // expectation
       const msg = `Invalid cache source: ${cacheType} has been provided , available values: "geopackage", "s3", "file", "redis"`;
       expect(action).toThrow(Error(msg));
+    });
+
+    it('isCacheTypeValid should return false for unknown types', () => {
+      expect(layersManager.isCacheTypeValid('not-valid')).toBe(false);
+      expect(layersManager.isCacheTypeValid('s3')).toBe(true);
     });
   });
 });

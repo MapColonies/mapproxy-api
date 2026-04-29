@@ -16,3 +16,4 @@ commitlint.config.json
 dist
 build
 reports
+local.json
