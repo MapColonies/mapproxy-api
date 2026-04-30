@@ -32,6 +32,7 @@ const clear = (): void => {
 };
 
 const registerDefaultConfig = (): void => {
+  /* eslint-disable @typescript-eslint/naming-convention */
   const cfg = {
     openapiConfig: {
       filePath: './openapi3.yaml',
@@ -142,8 +143,9 @@ const registerDefaultConfig = (): void => {
       default_ttl: 86400,
     },
   };
+  /* eslint-enable @typescript-eslint/naming-convention */
 
-  mockConfig = cfg as unknown as Record<string, unknown>;
+  mockConfig = cfg;
   init();
 };
 

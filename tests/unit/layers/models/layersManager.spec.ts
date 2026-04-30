@@ -1,4 +1,3 @@
-/* eslint-disable jest/no-commented-out-tests */
 /// <reference types="jest-extended" />
 import { normalize } from 'node:path';
 import { container } from 'tsyringe';
@@ -28,7 +27,7 @@ describe('layersManager', () => {
   beforeAll(async () => {
     logger = await jsLogger({ enabled: false });
   });
-  beforeEach(async () => {
+  beforeEach(() => {
     // stub util functions
     registerTestValues();
     initConfigProvider();
@@ -216,7 +215,7 @@ describe('layersManager', () => {
       const request: ILayerPostRequest = {
         ...mockLayerNameIsNotExists,
         name: 'some-layer-redis',
-        format: TILE_OUTPUT_FORMAT_JPEG as unknown as ILayerPostRequest['format'],
+        format: TILE_OUTPUT_FORMAT_JPEG,
       };
 
       await expect(layersManager.addLayer(request)).rejects.toThrow(NotImplementedError);
@@ -227,7 +226,7 @@ describe('layersManager', () => {
 
       const request: ILayerPostRequest = {
         ...mockLayerNameIsNotExists,
-        format: TILE_OUTPUT_FORMAT_JPEG as unknown as ILayerPostRequest['format'],
+        format: TILE_OUTPUT_FORMAT_JPEG,
       };
 
       await expect(layersManager.addLayer(request)).rejects.toThrow(BadRequestError);
@@ -344,7 +343,7 @@ describe('layersManager', () => {
       name: 'amsterdam_5cm-source',
       tilesPath: '/path/to/tiles/directory/in/my/bucket/',
       cacheType: 's3',
-      format: TILE_OUTPUT_FORMAT_JPEG as unknown as ILayerPostRequest['format'],
+      format: TILE_OUTPUT_FORMAT_JPEG,
     };
 
     it('should successfully update layer', async () => {

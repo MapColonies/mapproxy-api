@@ -130,6 +130,9 @@ export interface IGpkgSource extends ICacheSource {
   table_name: string;
 }
 
+// FS cache source has the same shape as S3 cache source (directory + layout).
+// We keep a dedicated interface for semantic clarity in call-sites.
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface IFSSource extends IS3Source {}
 
 export interface IMapProxyCache {

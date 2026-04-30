@@ -1,5 +1,3 @@
-/* eslint-disable import/first */
-// this import must be called before the first import of tsyring
 import 'reflect-metadata';
 import { createServer } from 'http';
 import { createTerminus } from '@godaddy/terminus';
@@ -13,7 +11,7 @@ void getApp()
     const logger = container.resolve<Logger>(SERVICES.LOGGER);
     const config = container.resolve<ConfigType>(SERVICES.CONFIG);
 
-    const port = config.get('server.port') as unknown as number;
+    const port = config.get('server.port');
     const stubHealthCheck = async (): Promise<void> => Promise.resolve();
 
     const server = createTerminus(createServer(app), { healthChecks: { '/liveness': stubHealthCheck }, onSignal: container.resolve('onSignal') });

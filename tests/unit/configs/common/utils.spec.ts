@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+/* eslint-disable import-x/no-named-as-default-member */
 import jsyaml, { YAMLException } from 'js-yaml';
 import * as utils from '../../../../src/common/utils';
 import { IMapProxyJsonDocument, IMapProxyLayer } from '../../../../src/common/interfaces';

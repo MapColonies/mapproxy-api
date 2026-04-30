@@ -1,6 +1,7 @@
 import httpStatusCodes from 'http-status-codes';
 import { container } from 'tsyringe';
 import { NotFoundError } from '@map-colonies/error-types';
+import * as supertest from 'supertest';
 import { IMapProxyJsonDocument } from '../../../src/common/interfaces';
 import { MockConfigProvider, init as configProviderInit, getJsonMock } from '../../unit/mock/mockConfigProvider';
 import * as utils from '../../../src/common/utils';
@@ -11,7 +12,6 @@ import { ConfigsRequestSender } from '../configs/helpers/requestSender';
 import { mockData } from '../../unit/mock/mockData';
 import { initConfig as initBoilerplateConfig } from '../../../src/common/config';
 import { getTestContainerConfig } from '../testContainerConfig';
-import * as supertest from 'supertest';
 
 let requestSender: ConfigsRequestSender;
 let app: Express.Application;
@@ -19,7 +19,7 @@ describe('configManager', () => {
   beforeEach(async () => {
     await initBoilerplateConfig(true);
     configProviderInit();
-    /* eslint-disable-next-line @typescript-eslint/naming-convention*/
+
     [app] = await getApp({
       override: await getTestContainerConfig([
         { token: CONFIGS_ROUTER_SYMBOL, provider: { useFactory: configsRouterFactory } },

@@ -39,10 +39,10 @@ export class ServerBuilder {
   private buildDocsRoutes(): void {
     const openapiRouter = new OpenapiViewerRouter({
       ...(this.config.get('openapiConfig') as unknown as OpenapiRouterConfig),
-      filePathOrSpec: this.config.get('openapiConfig.filePath') as string,
+      filePathOrSpec: this.config.get('openapiConfig.filePath'),
     });
     openapiRouter.setup();
-    this.serverInstance.use(this.config.get('openapiConfig.basePath') as string, openapiRouter.getRouter());
+    this.serverInstance.use(this.config.get('openapiConfig.basePath'), openapiRouter.getRouter());
   }
 
   private buildRoutes(): void {
@@ -55,14 +55,14 @@ export class ServerBuilder {
     this.serverInstance.use(collectMetricsExpressMiddleware({ registry: this.metricsRegistry }));
     this.serverInstance.use(httpLogger({ logger: this.logger, ignorePaths: ['/metrics'] }));
 
-    if (this.config.get('server.response.compression.enabled') as boolean) {
+    if (this.config.get('server.response.compression.enabled')) {
       this.serverInstance.use(compression(this.config.get('server.response.compression.options') as unknown as compression.CompressionFilter));
     }
 
     this.serverInstance.use(bodyParser.json(this.config.get('server.request.payload') as unknown as bodyParser.Options));
 
-    const ignorePathRegex = new RegExp(`^${this.config.get('openapiConfig.basePath') as string}/.*`, 'i');
-    const apiSpecPath = this.config.get('openapiConfig.filePath') as string;
+    const ignorePathRegex = new RegExp(`^${this.config.get('openapiConfig.basePath')}/.*`, 'i');
+    const apiSpecPath = this.config.get('openapiConfig.filePath');
     this.serverInstance.use(OpenApiMiddleware({ apiSpec: apiSpecPath, validateRequests: true, ignorePaths: ignorePathRegex }));
   }
 

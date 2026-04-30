@@ -7,5 +7,5 @@ export const mockLayerNameAlreadyExists: ILayerPostRequest = {
   tilesPath: '/path/to/s3/directory/tile',
   cacheType: 's3',
   // Runtime code only needs the underlying string value.
-  format: 'JPEG' as unknown as ILayerPostRequest['format'],
+  format: 'JPEG',
 };

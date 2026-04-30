@@ -2,9 +2,9 @@ import { readFileSync } from 'node:fs';
 import type { Logger } from '@map-colonies/js-logger';
 import { Pool, PoolClient, PoolConfig } from 'pg';
 import { container } from 'tsyringe';
+import type { ConfigType } from '@src/common/config';
 import { SERVICES } from '../constants';
 import type { IConfigProvider, IDBConfig, IMapProxyJsonDocument } from '../interfaces';
-import type { ConfigType } from '@src/common/config';
 
 export class DBProvider implements IConfigProvider {
   private readonly dbConfig: IDBConfig;

@@ -1,4 +1,3 @@
-/* eslint-disable jest/no-commented-out-tests */
 import httpStatusCodes from 'http-status-codes';
 import { container } from 'tsyringe';
 import { ICacheName, ILayerPostRequest, IMapProxyCache } from '../../../src/common/interfaces';
@@ -21,7 +20,7 @@ describe('layerManager', () => {
   beforeEach(async () => {
     await initBoilerplateConfig(true);
     configProviderInit();
-    /* eslint-disable-next-line @typescript-eslint/naming-convention*/
+
     const [app] = await getApp({
       override: await getTestContainerConfig([
         { token: LAYERS_ROUTER_SYMBOL, provider: { useFactory: layersRouterFactory } },
@@ -145,7 +144,7 @@ describe('layerManager', () => {
       tilesPath: '/path/to/tiles/directory/in/my/bucket/',
       cacheType: 's3',
       // Runtime tests only need the underlying mime string value.
-      format: 'JPEG' as unknown as ILayerPostRequest['format'],
+      format: 'JPEG',
     };
 
     it('Happy Path - should return status 202', async () => {

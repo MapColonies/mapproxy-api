@@ -2,7 +2,6 @@ import { jsLogger } from '@map-colonies/js-logger';
 import { trace } from '@opentelemetry/api';
 import { Registry } from 'prom-client';
 import { container } from 'tsyringe';
-import type { ConfigType } from '@src/common/config';
 import { SERVICES } from '../../src/common/constants';
 import type { IConfigProvider, IFSConfig, IMapProxyConfig, IRedisConfig, IS3Config } from '../../src/common/interfaces';
 import type { InjectionObject } from '../../src/common/dependencyRegistration';
@@ -20,7 +19,7 @@ async function getTestContainerConfig(extra?: InjectionObject<unknown>[]): Promi
 
   return [
     { token: SERVICES.LOGGER, provider: { useValue: await jsLogger({ enabled: false }) } },
-    { token: SERVICES.CONFIG, provider: { useValue: configMock as unknown as ConfigType } },
+    { token: SERVICES.CONFIG, provider: { useValue: configMock } },
     { token: SERVICES.TRACER, provider: { useValue: trace.getTracer('testTracer') } },
     { token: SERVICES.METRICS, provider: { useValue: new Registry() } },
     { token: SERVICES.MAPPROXY, provider: { useValue: mapproxyConfig } },

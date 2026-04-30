@@ -1,9 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { Pool, PoolClient, PoolConfig } from 'pg';
 import { container, injectable } from 'tsyringe';
+import type { ConfigType } from '@src/common/config';
 import { SERVICES } from '../../common/constants';
 import type { IDBConfig } from '../../common/interfaces';
-import type { ConfigType } from '@src/common/config';
 
 @injectable()
 export class PGClient {

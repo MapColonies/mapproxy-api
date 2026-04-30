@@ -75,7 +75,7 @@ const registerDefaultConfig = (): void => {
       default_ttl: 86400,
     },
   };
-  mockConfig = config as unknown as Record<string, unknown>;
+  mockConfig = config;
   setConfigValues(config);
 };
 
