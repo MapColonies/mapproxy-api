@@ -20,7 +20,6 @@ import type {
   ICacheObject,
   IRedisSource,
   IS3Source,
-  IS3Source,
   IFSSource,
 } from '../../common/interfaces';
 import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
