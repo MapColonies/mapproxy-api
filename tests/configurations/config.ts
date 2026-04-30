@@ -12,7 +12,7 @@ const configMock = {
 
 const init = (): void => {
   getMock.mockImplementation((key: string): unknown => {
-    return (get as (object: Record<string, unknown>, path: string) => unknown)(mockConfig, key);
+    return get(mockConfig, key);
   });
 };
 
@@ -30,8 +30,7 @@ const clear = (): void => {
 
 const setConfigValues = (values: Record<string, unknown>): void => {
   getMock.mockImplementation((key: string) => {
-    const value: unknown = (get as (object: Record<string, unknown>, path: string) => unknown)(values, key);
-    return value;
+    return get(values, key);
   });
 };
 
