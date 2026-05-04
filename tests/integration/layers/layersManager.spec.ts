@@ -1,10 +1,10 @@
+import { promises as fsp } from 'node:fs';
 import httpStatusCodes from 'http-status-codes';
 import { container } from 'tsyringe';
 import { ICacheName, ILayerPostRequest, IMapProxyCache } from '../../../src/common/interfaces';
 import { mockLayerNameIsNotExists } from '../../unit/mock/mockLayerNameIsNotExists';
 import { mockLayerNameAlreadyExists } from '../../unit/mock/mockLayerNameAlreadyExists';
 import { MockConfigProvider, init as configProviderInit, updateJsonMock } from '../../unit/mock/mockConfigProvider';
-import * as utils from '../../../src/common/utils';
 import { getApp } from '../../../src/app';
 import { SERVICES } from '../../../src/common/constants';
 import { layersRouterFactory, LAYERS_ROUTER_SYMBOL } from '../../../src/layers/routes/layersRouterFactory';
@@ -30,7 +30,7 @@ describe('layerManager', () => {
     });
     //container.resolve<ServerBuilder>(ServerBuilder);
     requestSender = new LayersRequestSender(app);
-    jest.spyOn(utils, 'replaceYamlFileContent').mockResolvedValue(undefined);
+    jest.spyOn(fsp, 'writeFile').mockResolvedValue(undefined);
   });
 
   afterEach(() => {

@@ -4,7 +4,6 @@ import { NotFoundError } from '@map-colonies/error-types';
 import * as supertest from 'supertest';
 import { IMapProxyJsonDocument } from '../../../src/common/interfaces';
 import { MockConfigProvider, init as configProviderInit, getJsonMock } from '../../unit/mock/mockConfigProvider';
-import * as utils from '../../../src/common/utils';
 import { getApp } from '../../../src/app';
 import { SERVICES } from '../../../src/common/constants';
 import { configsRouterFactory, CONFIGS_ROUTER_SYMBOL } from '../../../src/configs/routes/configsRouterFactory';
@@ -12,6 +11,7 @@ import { ConfigsRequestSender } from '../configs/helpers/requestSender';
 import { mockData } from '../../unit/mock/mockData';
 import { initConfig as initBoilerplateConfig } from '../../../src/common/config';
 import { getTestContainerConfig } from '../testContainerConfig';
+import { convertJsonToYaml } from '../../../src/common/utils';
 
 let requestSender: ConfigsRequestSender;
 let app: Express.Application;
@@ -28,7 +28,6 @@ describe('configManager', () => {
       useChild: false,
     });
     requestSender = new ConfigsRequestSender(app);
-    // jest.spyOn(utils, 'replaceYamlFileContent').mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -70,7 +69,7 @@ describe('configManager', () => {
       expect(response.status).toBe(httpStatusCodes.OK);
       const resource = response.text;
       expect(response).toSatisfyApiSpec();
-      expect(resource).toEqual(utils.convertJsonToYaml(mockMapproxyConfig));
+      expect(resource).toEqual(convertJsonToYaml(mockMapproxyConfig));
     });
 
     it('Sad Path - should fail with response status 404 Not Found and config not exists', async () => {

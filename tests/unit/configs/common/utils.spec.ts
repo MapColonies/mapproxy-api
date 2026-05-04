@@ -1,19 +1,19 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, promises as fsp } from 'node:fs';
 /* eslint-disable import-x/no-named-as-default-member */
 import jsyaml, { YAMLException } from 'js-yaml';
-import * as utils from '../../../../src/common/utils';
+import { convertJsonToYaml, convertYamlToJson, getFileExtension, replaceYamlFileContent } from '../../../../src/common/utils';
 import { IMapProxyJsonDocument, IMapProxyLayer } from '../../../../src/common/interfaces';
 
 let safeLoadStub: jest.SpyInstance;
 let safeDumpStub: jest.SpyInstance;
-let replaceYamlFileContentStub: jest.SpyInstance;
+let writeFileStub: jest.SpyInstance;
 
 describe('utils', () => {
   beforeEach(function () {
     // stub util functions
     safeLoadStub = jest.spyOn(jsyaml, 'safeLoad');
     safeDumpStub = jest.spyOn(jsyaml, 'safeDump');
-    replaceYamlFileContentStub = jest.spyOn(utils, 'replaceYamlFileContent');
+    writeFileStub = jest.spyOn(fsp, 'writeFile');
   });
 
   afterEach(() => {
@@ -27,7 +27,7 @@ describe('utils', () => {
       const mockYamlFile = 'tests/unit/mock/mockContent.yaml';
       const yamlContent = readFileSync(mockYamlFile, { encoding: 'utf8' });
       // action
-      const action = () => utils.convertYamlToJson(yamlContent);
+      const action = () => convertYamlToJson(yamlContent);
       // expectation
       expect(typeof action()).toBe('object');
       expect(safeLoadStub).toHaveBeenCalledTimes(1);
@@ -38,7 +38,7 @@ describe('utils', () => {
       const invalidYamlSyntaxFile = 'tests/unit/mock/mockInvalidYamlSyntax.yaml';
       const yamlContent = readFileSync(invalidYamlSyntaxFile, { encoding: 'utf8' });
       // action
-      const action = () => utils.convertYamlToJson(yamlContent);
+      const action = () => convertYamlToJson(yamlContent);
       // expectation
       expect(action).toThrow(YAMLException);
       expect(safeLoadStub).toHaveBeenCalledTimes(1);
@@ -50,9 +50,9 @@ describe('utils', () => {
       // mock
       const mockYamlFile = 'tests/unit/mock/mockContent.yaml';
       const yamlContent = readFileSync(mockYamlFile, { encoding: 'utf8' });
-      const mockConvertedJson: IMapProxyJsonDocument = utils.convertYamlToJson(yamlContent);
+      const mockConvertedJson: IMapProxyJsonDocument = convertYamlToJson(yamlContent);
       // action
-      const convertedYaml: string = utils.convertJsonToYaml(mockConvertedJson);
+      const convertedYaml: string = convertJsonToYaml(mockConvertedJson);
       // expectation
       expect(typeof convertedYaml).toBe('string');
       expect(safeDumpStub).toHaveBeenCalledTimes(1);
@@ -60,11 +60,11 @@ describe('utils', () => {
   });
 
   describe('#replaceYamlFileContent', () => {
-    it('should replace file content with the requested yaml content', function () {
+    it('should replace file content with the requested yaml content', async function () {
       // mock
       const mockYamlFile = 'tests/unit/mock/mockContent.yaml';
       const yamlContent = readFileSync(mockYamlFile, { encoding: 'utf8' });
-      const mockConvertedJson: IMapProxyJsonDocument = utils.convertYamlToJson(yamlContent);
+      const mockConvertedJson: IMapProxyJsonDocument = convertYamlToJson(yamlContent);
       const mockLayer: IMapProxyLayer = {
         name: 'mockLayer',
         sources: ['mockSource'],
@@ -74,13 +74,14 @@ describe('utils', () => {
       mockConvertedJson.layers.push(mockLayer);
 
       // action
-      const convertedYaml: string = utils.convertJsonToYaml(mockConvertedJson);
-      const newConvertedJson: IMapProxyJsonDocument = jsyaml.safeLoad(convertedYaml) as IMapProxyJsonDocument;
-      replaceYamlFileContentStub.mockResolvedValue(undefined);
-      const action = async () => utils.replaceYamlFileContent(mockYamlFile, convertedYaml);
+      const convertedYaml: string = convertJsonToYaml(mockConvertedJson);
+      const newConvertedJson = jsyaml.safeLoad(convertedYaml) as IMapProxyJsonDocument;
+      writeFileStub.mockResolvedValue(undefined);
+      const action = async () => replaceYamlFileContent(mockYamlFile, convertedYaml);
 
       // expectation
-      expect(action).not.toThrow();
+      await expect(action()).resolves.toBeUndefined();
+      expect(writeFileStub).toHaveBeenCalledWith(mockYamlFile, convertedYaml, 'utf8');
       expect(typeof convertedYaml).toBe('string');
       expect(newConvertedJson.layers).toContainEqual(mockLayer);
     });
@@ -91,7 +92,7 @@ describe('utils', () => {
       // mock
       const path = '/path/to/file.gpkg';
       // action
-      const result: string = utils.getFileExtension(path);
+      const result: string = getFileExtension(path);
 
       // expectation
       expect(result).toBe('.gpkg');
@@ -101,7 +102,7 @@ describe('utils', () => {
       // mock
       const path = '/path/to/dir/';
       // action
-      const result = utils.getFileExtension(path);
+      const result = getFileExtension(path);
 
       // expectation
       expect(result).toBe('');

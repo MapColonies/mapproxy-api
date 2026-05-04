@@ -1,10 +1,11 @@
+const { pathsToModuleNameMapper } = require('ts-jest');
+const { compilerOptions } = require('../../../tsconfig.json');
+
 module.exports = {
   transform: {
-    '^.+\\.ts$': 'ts-jest',
+    '^.+\\.ts$': ['@swc/jest'],
   },
-  transform: {
-    '^.+\\.ts$': ['ts-jest', { tsconfig: 'tsconfig.test.json' }],
-  },
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' }),
   setupFiles: ['<rootDir>/tests/configurations/jest.setup.ts'],
   modulePathIgnorePatterns: ['<rootDir>/dist/'],
   coverageReporters: ['text', 'html'],
@@ -28,9 +29,9 @@ module.exports = {
   ],
   rootDir: '../../../.',
   setupFilesAfterEnv: ['jest-openapi', '<rootDir>/tests/configurations/initJestOpenapi.setup.ts'],
-  preset: 'ts-jest',
   testMatch: ['<rootDir>/tests/integration/**/*.spec.ts'],
   testEnvironment: 'node',
+  preset: 'ts-jest',
   moduleDirectories: ['node_modules', 'src'],
   coverageThreshold: {
     global: {

@@ -4,6 +4,10 @@
     "parser": {
       "syntax": "typescript",
       "decorators": true
-    }
+    },
+    "target": "es2021"
+  },
+  "module": {
+    "type": "commonjs"
   }
 }
