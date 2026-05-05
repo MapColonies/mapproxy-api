@@ -4,9 +4,8 @@ import { container } from 'tsyringe';
 import { ICacheName, ILayerPostRequest, IMapProxyCache } from '../../../src/common/interfaces';
 import { mockLayerNameIsNotExists } from '../../unit/mock/mockLayerNameIsNotExists';
 import { mockLayerNameAlreadyExists } from '../../unit/mock/mockLayerNameAlreadyExists';
-import { MockConfigProvider, init as configProviderInit, updateJsonMock } from '../../unit/mock/mockConfigProvider';
+import { init as configProviderInit, updateJsonMock } from '../../unit/mock/mockConfigProvider';
 import { getApp } from '../../../src/app';
-import { SERVICES } from '../../../src/common/constants';
 import { layersRouterFactory, LAYERS_ROUTER_SYMBOL } from '../../../src/layers/routes/layersRouterFactory';
 import { LayersRequestSender } from '../layers/helpers/requestSender';
 import { mockData, mockFalseData } from '../../unit/mock/mockData';
@@ -22,10 +21,7 @@ describe('layerManager', () => {
     configProviderInit();
 
     const [app] = await getApp({
-      override: await getTestContainerConfig([
-        { token: LAYERS_ROUTER_SYMBOL, provider: { useFactory: layersRouterFactory } },
-        { token: SERVICES.CONFIGPROVIDER, provider: { useValue: MockConfigProvider } },
-      ]),
+      override: await getTestContainerConfig([{ token: LAYERS_ROUTER_SYMBOL, provider: { useFactory: layersRouterFactory } }]),
       useChild: false,
     });
     //container.resolve<ServerBuilder>(ServerBuilder);
@@ -143,7 +139,6 @@ describe('layerManager', () => {
       name: 'amsterdam_5cm',
       tilesPath: '/path/to/tiles/directory/in/my/bucket/',
       cacheType: 's3',
-      // Runtime tests only need the underlying mime string value.
       format: 'JPEG',
     };
 

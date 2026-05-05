@@ -3,9 +3,8 @@ import { container } from 'tsyringe';
 import { NotFoundError } from '@map-colonies/error-types';
 import * as supertest from 'supertest';
 import { IMapProxyJsonDocument } from '../../../src/common/interfaces';
-import { MockConfigProvider, init as configProviderInit, getJsonMock } from '../../unit/mock/mockConfigProvider';
+import { init as configProviderInit, getJsonMock } from '../../unit/mock/mockConfigProvider';
 import { getApp } from '../../../src/app';
-import { SERVICES } from '../../../src/common/constants';
 import { configsRouterFactory, CONFIGS_ROUTER_SYMBOL } from '../../../src/configs/routes/configsRouterFactory';
 import { ConfigsRequestSender } from '../configs/helpers/requestSender';
 import { mockData } from '../../unit/mock/mockData';
@@ -21,10 +20,7 @@ describe('configManager', () => {
     configProviderInit();
 
     [app] = await getApp({
-      override: await getTestContainerConfig([
-        { token: CONFIGS_ROUTER_SYMBOL, provider: { useFactory: configsRouterFactory } },
-        { token: SERVICES.CONFIGPROVIDER, provider: { useValue: MockConfigProvider } },
-      ]),
+      override: await getTestContainerConfig([{ token: CONFIGS_ROUTER_SYMBOL, provider: { useFactory: configsRouterFactory } }]),
       useChild: false,
     });
     requestSender = new ConfigsRequestSender(app);

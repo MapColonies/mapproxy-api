@@ -1,7 +1,8 @@
 global:
   cloudProvider: {}
   tracing: {}
-  openTelemetryOptions: {}  environment: ""
+  openTelemetryOptions: {}  
+  environment: ""
   storage:
     mapproxyConfigProvider: "" #  -> 'DB' | 'FS' | 'S3'
     s3:
@@ -99,7 +100,6 @@ tracing:
   # annotation2: annotation-value-2
 podAnnotations: {}
 
-# Used by `@map-colonies/config` to fetch the service configuration.
 configManagement:
   offlineMode: false
   name: 'mapproxy-api'

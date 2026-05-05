@@ -26,7 +26,7 @@ import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
 import { S3Source } from '../../common/cacheProviders/S3Source';
 import { GpkgSource } from '../../common/cacheProviders/gpkgSource';
 import { FSSource } from '../../common/cacheProviders/fsSource';
-import { SourceTypes } from '../../common/enums';
+import { isSourceType, SourceTypes } from '../../common/enums';
 import { RedisSource } from '../../common/cacheProviders/redisSource';
 import { ConfigsManager } from '../../configs/models/configsManager';
 import { getRedisCacheName, getRedisCacheOriginalName, isLayerNameSuffixRedis } from '../../common/utils';
@@ -65,8 +65,7 @@ class LayersManager {
     }
 
     // our current only real cache layer, other caches cases are known as the source layers
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-    const cacheName = cacheType === SourceTypes.REDIS ? getRedisCacheName(layerName) : layerName;
+    const cacheName = isSourceType(cacheType) && cacheType === SourceTypes.REDIS ? getRedisCacheName(layerName) : layerName;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const currentSourceCache: IMapProxyCache | undefined = configJson.caches[cacheName];
 
@@ -268,7 +267,10 @@ class LayersManager {
   public getCacheType(cacheSource: string, sourcePath: string): ICacheSource {
     let sourceProvider: ICacheProvider;
 
-    /* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
+    if (!isSourceType(cacheSource)) {
+      throw new Error(`Invalid cache source: ${cacheSource} has been provided , available values: "geopackage", "s3", "file", "redis"`);
+    }
+
     switch (cacheSource) {
       case SourceTypes.GPKG:
         sourceProvider = new GpkgSource();
@@ -282,18 +284,13 @@ class LayersManager {
       case SourceTypes.REDIS:
         sourceProvider = new RedisSource(container);
         break;
-      default:
-        throw new Error(`Invalid cache source: ${cacheSource} has been provided , available values: "geopackage", "s3", "file", "redis"`);
     }
-    /* eslint-enable @typescript-eslint/no-unsafe-enum-comparison */
 
     return sourceProvider.getCacheSource(sourcePath);
   }
 
   public isCacheTypeValid(cacheType: string): boolean {
-    const SourceTypesArray = Object.values(SourceTypes);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison, @typescript-eslint/strict-boolean-expressions
-    return SourceTypesArray.find((currentCacheType) => currentCacheType === cacheType) ? true : false;
+    return isSourceType(cacheType);
   }
 
   private addNewCache(jsonDocument: IMapProxyJsonDocument, layerRequest: ILayerPostRequest): void {

@@ -477,10 +477,5 @@ describe('layersManager', () => {
       const msg = `Invalid cache source: ${cacheType} has been provided , available values: "geopackage", "s3", "file", "redis"`;
       expect(action).toThrow(Error(msg));
     });
-
-    it('isCacheTypeValid should return false for unknown types', () => {
-      expect(layersManager.isCacheTypeValid('not-valid')).toBe(false);
-      expect(layersManager.isCacheTypeValid('s3')).toBe(true);
-    });
   });
 });

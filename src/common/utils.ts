@@ -75,8 +75,6 @@ export function adjustTilesPath(tilesPath: string, cacheSource: SourceTypes): st
     case SourceTypes.GPKG:
     case SourceTypes.REDIS:
       throw new Error(`Invalid cache source: ${cacheSource} has been provided`);
-    default:
-      throw new Error('Invalid cache source has been provided');
   }
   return tilesPath;
 }
