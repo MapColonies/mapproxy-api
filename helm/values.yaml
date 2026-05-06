@@ -100,12 +100,6 @@ tracing:
   # annotation2: annotation-value-2
 podAnnotations: {}
 
-configManagement:
-  offlineMode: false
-  name: 'mapproxy-api'
-  version: 'latest'
-  serverUrl: 'http://localhost:8080/api'
-
 env:
   port: 80
   targetPort: 8080
