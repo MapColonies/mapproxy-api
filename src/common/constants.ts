@@ -12,7 +12,6 @@ export const SERVICES = {
   CONFIG: Symbol('Config'),
   TRACER: Symbol('Tracer'),
   METRICS: Symbol('Metrics'),
-  METER: Symbol('Meter'),
   MAPPROXY: Symbol('MapProxyConfig'),
   REDISCONFIG: Symbol('RedisConfig'),
   CONFIGPROVIDER: Symbol('ConfigProvider'),
