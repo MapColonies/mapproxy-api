@@ -33,7 +33,7 @@ const clear = (): void => {
 
 const registerDefaultConfig = (): void => {
   /* eslint-disable @typescript-eslint/naming-convention */
-  const cfg = {
+  const config = {
     openapiConfig: {
       filePath: './openapi3.yaml',
       basePath: '/docs',
@@ -145,7 +145,7 @@ const registerDefaultConfig = (): void => {
   };
   /* eslint-enable @typescript-eslint/naming-convention */
 
-  mockConfig = cfg;
+  mockConfig = config;
   init();
 };
 
