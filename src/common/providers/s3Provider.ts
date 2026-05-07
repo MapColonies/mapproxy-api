@@ -3,7 +3,7 @@ import { container } from 'tsyringe';
 import S3 from 'aws-sdk/clients/s3';
 import * as AWS from 'aws-sdk';
 import { CredentialsOptions } from 'aws-sdk/lib/credentials';
-import { Logger } from '@map-colonies/js-logger';
+import type { Logger } from '@map-colonies/js-logger';
 import { IConfigProvider, IMapProxyJsonDocument, IS3Config } from '../interfaces';
 import { SERVICES } from '../constants';
 import { convertJsonToYaml, convertYamlToJson } from '../utils';
@@ -23,7 +23,7 @@ export class S3Provider implements IConfigProvider {
     const awsCredentials = new AWS.Credentials(credentials);
     const endpoint = this.s3Config.endpointUrl;
     const sslEnabled = this.s3Config.sslEnabled;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
     this.s3 = new S3({
       credentials: awsCredentials,
       endpoint: endpoint,
@@ -47,7 +47,6 @@ export class S3Provider implements IConfigProvider {
       await this.s3.upload(params).promise();
       this.logger.info(`File uploaded successfully.`);
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       this.logger.info(`Failed to upload file: ${(error as Error).message}`);
       throw error;
     }
@@ -67,7 +66,6 @@ export class S3Provider implements IConfigProvider {
       this.logger.info(`Successfully read the file`);
       return jsonContent;
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       this.logger.error(`Failed to read file: ${(error as Error).message}`);
       throw error;
     }

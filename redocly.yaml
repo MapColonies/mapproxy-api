@@ -1,5 +1,4 @@
-plugins:
-  []
+plugins: []
 
   # This section is where you can import local plugins.
 
@@ -18,8 +17,7 @@ extends:
 
   - recommended # This is the default (and built in) configuration. If it is too strict, try `minimal`.
 
-resolve:
-  {}
+resolve: {}
 
   # Use this when you have external links in your definition that are not publicly accessible.
 
@@ -27,8 +25,7 @@ resolve:
 
   # We recommend using environment variables for when possible.
 
-preprocessors:
-  {}
+preprocessors: {}
 
   # Preprocessors are rarely indicated -- avoid if possible.
 
@@ -45,11 +42,13 @@ rules:
 
   no-empty-servers: off
 
+  # Due to warning from mc-model-type on the openapi linter - should be removed once fixed
+  no-required-schema-properties-undefined: off
+
   no-invalid-media-type-examples:
     severity: error
 
-decorators:
-  {}
+decorators: {}
 
   # Decorators modify the the definition after validation is complete, only in the bundling process.
 

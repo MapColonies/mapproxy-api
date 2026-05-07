@@ -1,7 +1,7 @@
 global:
   cloudProvider: {}
   tracing: {}
-  metrics: {}
+  openTelemetryOptions: {}  
   environment: ""
   storage:
     mapproxyConfigProvider: "" #  -> 'DB' | 'FS' | 'S3'
@@ -84,9 +84,11 @@ db:
     useExternal: false
     externalSecretName: ""
 
-metrics:
-  enabled: false
-  url: ''
+configManagement:
+  offlineMode: false
+  name: 'mapproxy-api'
+  version: 'latest'
+  serverUrl: 'http://localhost:8080/api'
 
 tracing:
   enabled: false
@@ -104,6 +106,10 @@ env:
   protocol: TCP
   logLevel: warn
   logPrettyPrintEnabled: false
+  openTelemetryOptions:
+    enabled: false
+    url: ''
+    resourceAttributes: {}
   responseCompressionEnabled: true
   requestPayloadLimit: 1mb
   mapproxyCache:

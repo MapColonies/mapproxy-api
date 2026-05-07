@@ -1,4 +1,4 @@
-import { Logger } from '@map-colonies/js-logger';
+import type { Logger } from '@map-colonies/js-logger';
 import { Request, Response, NextFunction, Handler } from 'express';
 import { inject, injectable } from 'tsyringe';
 import { SERVICES } from '../constants';

@@ -1,9 +1,9 @@
-import { Logger } from '@map-colonies/js-logger';
-import { RequestHandler } from 'express';
+import type { Logger } from '@map-colonies/js-logger';
+import type { RequestHandler } from 'express';
 import httpStatus from 'http-status-codes';
 import { injectable, inject } from 'tsyringe';
 import { SERVICES } from '../../common/constants';
-import { ICacheName, ILayerPostRequest, IMapProxyCache } from '../../common/interfaces';
+import type { ICacheName, ILayerPostRequest, IMapProxyCache } from '../../common/interfaces';
 import { LayersManager } from '../models/layersManager';
 
 type CreateLayerHandler = RequestHandler<undefined, ILayerPostRequest, ILayerPostRequest>;
@@ -13,7 +13,10 @@ type UpdateLayerHandler = RequestHandler<{ name: string }, ILayerPostRequest, IL
 type DeleteLayerHandler = RequestHandler<undefined, string[] | void, undefined, { layerNames: string[] }>;
 @injectable()
 export class LayersController {
-  public constructor(@inject(SERVICES.LOGGER) private readonly logger: Logger, @inject(LayersManager) private readonly manager: LayersManager) {}
+  public constructor(
+    @inject(SERVICES.LOGGER) private readonly logger: Logger,
+    @inject(LayersManager) private readonly manager: LayersManager
+  ) {}
 
   public getLayer: GetLayerHandler = async (req, res, next) => {
     try {

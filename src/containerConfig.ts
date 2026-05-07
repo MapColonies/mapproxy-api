@@ -1,36 +1,41 @@
-import config from 'config';
-import { getOtelMixin } from '@map-colonies/telemetry';
+import { getOtelMixin } from '@map-colonies/tracing-utils';
 import { trace } from '@opentelemetry/api';
 import { DependencyContainer } from 'tsyringe/dist/typings/types';
-import jsLogger, { LoggerOptions } from '@map-colonies/js-logger';
+import { jsLogger } from '@map-colonies/js-logger';
+import { Registry } from 'prom-client';
 import { SERVICES, SERVICE_NAME } from './common/constants';
-import { tracing } from './common/tracing';
+import { getTracing } from './common/tracing';
 import { InjectionObject, registerDependencies } from './common/dependencyRegistration';
 import { layersRouterFactory, LAYERS_ROUTER_SYMBOL } from './layers/routes/layersRouterFactory';
 import { configsRouterFactory, CONFIGS_ROUTER_SYMBOL } from './configs/routes/configsRouterFactory';
 import { IConfigProvider, IFSConfig, IMapProxyConfig, IRedisConfig, IS3Config } from './common/interfaces';
 import { getProvider } from './getProvider';
+import { getConfig } from './common/config';
 
 export interface RegisterOptions {
   override?: InjectionObject<unknown>[];
   useChild?: boolean;
 }
 
-export const registerExternalValues = (options?: RegisterOptions): DependencyContainer => {
-  const loggerConfig = config.get<LoggerOptions>('telemetry.logger');
-  const fsConfig = config.get<IFSConfig>('FS');
-  const s3Config = config.get<IS3Config>('S3');
-  const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
-  const redisConfig = config.get<IRedisConfig>('redis');
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-  const logger = jsLogger({ ...loggerConfig, prettyPrint: loggerConfig.prettyPrint, mixin: getOtelMixin() });
+export const registerExternalValues = async (options?: RegisterOptions): Promise<DependencyContainer> => {
+  const configInstance = getConfig();
 
-  tracing.start();
+  const loggerConfig = configInstance.get('telemetry.logger');
+  const fsConfig = configInstance.get('FS') as IFSConfig;
+  const s3Config = configInstance.get('S3') as IS3Config;
+  const mapproxyConfig = configInstance.get('mapproxy') as IMapProxyConfig;
+  const redisConfig = configInstance.get('redis') as IRedisConfig;
+
+  const logger = await jsLogger({ ...loggerConfig, prettyPrint: loggerConfig.prettyPrint, mixin: getOtelMixin() });
+
   const tracer = trace.getTracer(SERVICE_NAME);
+  const metricsRegistry = new Registry();
+
   const dependencies: InjectionObject<unknown>[] = [
-    { token: SERVICES.CONFIG, provider: { useValue: config } },
+    { token: SERVICES.CONFIG, provider: { useValue: configInstance } },
     { token: SERVICES.LOGGER, provider: { useValue: logger } },
     { token: SERVICES.TRACER, provider: { useValue: tracer } },
+    { token: SERVICES.METRICS, provider: { useValue: metricsRegistry } },
     { token: LAYERS_ROUTER_SYMBOL, provider: { useFactory: layersRouterFactory } },
     { token: CONFIGS_ROUTER_SYMBOL, provider: { useFactory: configsRouterFactory } },
     { token: SERVICES.MAPPROXY, provider: { useValue: mapproxyConfig } },
@@ -50,7 +55,7 @@ export const registerExternalValues = (options?: RegisterOptions): DependencyCon
       provider: {
         useValue: {
           useValue: async (): Promise<void> => {
-            await Promise.all([tracing.stop()]);
+            await Promise.all([getTracing().stop()]);
           },
         },
       },

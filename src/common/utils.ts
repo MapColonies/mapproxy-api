@@ -12,7 +12,6 @@ export function convertYamlToJson(yamlContent: string): IMapProxyJsonDocument {
     const jsonDocument: IMapProxyJsonDocument = safeLoad(yamlContent) as IMapProxyJsonDocument;
     return jsonDocument;
   } catch (error) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (error instanceof YAMLException) {
       throw new YAMLException('Invalid YAML syntax error');
     }
@@ -62,7 +61,7 @@ export function isLayerNameSuffixRedis(layerName: string): boolean {
   return layerName.endsWith('-redis');
 }
 
-export function adjustTilesPath(tilesPath: string, cacheSource: string): string {
+export function adjustTilesPath(tilesPath: string, cacheSource: SourceTypes): string {
   const fsConfig = container.resolve<IFSConfig>(SERVICES.FS);
   switch (cacheSource) {
     case SourceTypes.FS:
@@ -73,7 +72,8 @@ export function adjustTilesPath(tilesPath: string, cacheSource: string): string 
       tilesPath = tilesPath.startsWith('/') ? tilesPath : `/${tilesPath}`;
       tilesPath = tilesPath.endsWith('/') ? tilesPath : `${tilesPath}/`;
       break;
-    default:
+    case SourceTypes.GPKG:
+    case SourceTypes.REDIS:
       throw new Error(`Invalid cache source: ${cacheSource} has been provided`);
   }
   return tilesPath;

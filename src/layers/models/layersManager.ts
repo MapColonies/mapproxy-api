@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { container, inject, injectable } from 'tsyringe';
-import { Logger } from '@map-colonies/js-logger';
+import type { Logger } from '@map-colonies/js-logger';
 import { BadRequestError, ConflictError, NotFoundError, NotImplementedError } from '@map-colonies/error-types';
-import { lookup as mimeLookup, TilesMimeFormat } from '@map-colonies/types';
+import { lookup as mimeLookup } from '@map-colonies/types';
+import type { TilesMimeFormat } from '@map-colonies/types';
 import { withSpanAsyncV4 } from '@map-colonies/telemetry';
-import { Tracer } from '@opentelemetry/api';
+import type { Tracer } from '@opentelemetry/api';
 import { SERVICES } from '../../common/constants';
-import {
+import type {
   ILayerPostRequest,
   IMapProxyCache,
   IMapProxyJsonDocument,
@@ -25,7 +26,7 @@ import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
 import { S3Source } from '../../common/cacheProviders/S3Source';
 import { GpkgSource } from '../../common/cacheProviders/gpkgSource';
 import { FSSource } from '../../common/cacheProviders/fsSource';
-import { SourceTypes } from '../../common/enums';
+import { isSourceType, SourceTypes, sourceTypeValues } from '../../common/enums';
 import { RedisSource } from '../../common/cacheProviders/redisSource';
 import { ConfigsManager } from '../../configs/models/configsManager';
 import { getRedisCacheName, getRedisCacheOriginalName, isLayerNameSuffixRedis } from '../../common/utils';
@@ -64,7 +65,7 @@ class LayersManager {
     }
 
     // our current only real cache layer, other caches cases are known as the source layers
-    const cacheName = cacheType === SourceTypes.REDIS ? getRedisCacheName(layerName) : layerName;
+    const cacheName = isSourceType(cacheType) && cacheType === SourceTypes.REDIS ? getRedisCacheName(layerName) : layerName;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const currentSourceCache: IMapProxyCache | undefined = configJson.caches[cacheName];
 
@@ -164,7 +165,7 @@ class LayersManager {
     await this.configProvider.updateJson(editJson).catch((err) => {
       const error = err as Error;
       if (error.message !== errorMessage) {
-        this.logger.error({ msg: error.message, error });
+        this.logger.error({ msg: error.message, err: error });
         throw error;
       }
     });
@@ -266,6 +267,11 @@ class LayersManager {
   public getCacheType(cacheSource: string, sourcePath: string): ICacheSource {
     let sourceProvider: ICacheProvider;
 
+    if (!isSourceType(cacheSource)) {
+      const allowedValues = sourceTypeValues.map((currentSourceType) => `"${currentSourceType}"`).join(', ');
+      throw new Error(`Invalid cache source: ${cacheSource} has been provided , available values: ${allowedValues}`);
+    }
+
     switch (cacheSource) {
       case SourceTypes.GPKG:
         sourceProvider = new GpkgSource();
@@ -279,16 +285,9 @@ class LayersManager {
       case SourceTypes.REDIS:
         sourceProvider = new RedisSource(container);
         break;
-      default:
-        throw new Error(`Invalid cache source: ${cacheSource} has been provided , available values: "geopackage", "s3", "file", "redis"`);
     }
 
     return sourceProvider.getCacheSource(sourcePath);
-  }
-
-  public isCacheTypeValid(cacheType: string): boolean {
-    const SourceTypesArray = Object.values(SourceTypes);
-    return SourceTypesArray.find((currentCacheType) => currentCacheType === cacheType) ? true : false;
   }
 
   private addNewCache(jsonDocument: IMapProxyJsonDocument, layerRequest: ILayerPostRequest): void {
@@ -363,7 +362,7 @@ class LayersManager {
         throw new BadRequestError(message);
       }
     } catch (error) {
-      this.logger.error({ msg: `error in adding a layer, grid check failed. `, error });
+      this.logger.error({ msg: `error in adding a layer, grid check failed. `, err: error });
       throw error;
     }
   }

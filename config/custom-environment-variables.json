@@ -11,10 +11,24 @@
       "prettyPrint": {
         "__name": "LOG_PRETTY_PRINT_ENABLED",
         "__format": "boolean"
+      },
+      "opentelemetryOptions": {
+        "enabled": {
+          "__name": "OPENTELEMETRY_LOGGING_ENABLED",
+          "__format": "boolean"
+        },
+        "url": "OPENTELEMETRY_LOGGING_URL",
+        "resourceAttributes": {
+          "__name": "OPENTELEMETRY_RESOURCE_ATTRIBUTES",
+          "__format": "json"
+        }
       }
     },
     "tracing": {
-      "enabled": "TELEMETRY_TRACING_ENABLED",
+      "isEnabled": {
+        "__name": "TELEMETRY_TRACING_ENABLED",
+        "__format": "boolean"
+      },
       "url": "TELEMETRY_TRACING_URL"
     },
     "metrics": {
@@ -24,7 +38,10 @@
     }
   },
   "server": {
-    "port": "SERVER_PORT",
+    "port": {
+      "__name": "SERVER_PORT",
+      "__format": "number"
+    },
     "request": {
       "payload": {
         "limit": "REQUEST_PAYLOAD_LIMIT"

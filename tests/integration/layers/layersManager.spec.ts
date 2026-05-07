@@ -1,54 +1,32 @@
-/* eslint-disable jest/no-commented-out-tests */
+import { promises as fsp } from 'node:fs';
 import httpStatusCodes from 'http-status-codes';
-import jsLogger from '@map-colonies/js-logger';
-import { trace } from '@opentelemetry/api';
-import config from 'config';
 import { container } from 'tsyringe';
-import { TileOutputFormat } from '@map-colonies/mc-model-types';
-import { ICacheName, IFSConfig, ILayerPostRequest, IMapProxyCache, IMapProxyConfig, IS3Config } from '../../../src/common/interfaces';
+import { ICacheName, ILayerPostRequest, IMapProxyCache } from '../../../src/common/interfaces';
 import { mockLayerNameIsNotExists } from '../../unit/mock/mockLayerNameIsNotExists';
 import { mockLayerNameAlreadyExists } from '../../unit/mock/mockLayerNameAlreadyExists';
-import { MockConfigProvider, init as configProviderInit, updateJsonMock } from '../../unit/mock/mockConfigProvider';
-import * as utils from '../../../src/common/utils';
+import { init as configProviderInit, updateJsonMock } from '../../unit/mock/mockConfigProvider';
 import { getApp } from '../../../src/app';
-import { SERVICES } from '../../../src/common/constants';
 import { layersRouterFactory, LAYERS_ROUTER_SYMBOL } from '../../../src/layers/routes/layersRouterFactory';
 import { LayersRequestSender } from '../layers/helpers/requestSender';
 import { mockData, mockFalseData } from '../../unit/mock/mockData';
 import { ConfigsManager } from '../../../src/configs/models/configsManager';
+import { initConfig as initBoilerplateConfig } from '../../../src/common/config';
+import { getTestContainerConfig } from '../testContainerConfig';
 
 let requestSender: LayersRequestSender;
 
 describe('layerManager', () => {
-  beforeEach(() => {
-    const mapproxyConfig = config.get<IMapProxyConfig>('mapproxy');
-    const fsConfig = config.get<IFSConfig>('FS');
-    const s3Config = config.get<IS3Config>('S3');
-    const redisConfig = config.get<IMapProxyConfig>('redis');
+  beforeEach(async () => {
+    await initBoilerplateConfig(true);
     configProviderInit();
-    /* eslint-disable-next-line @typescript-eslint/naming-convention*/
-    const app = getApp({
-      override: [
-        { token: SERVICES.MAPPROXY, provider: { useValue: mapproxyConfig } },
-        { token: SERVICES.LOGGER, provider: { useValue: jsLogger({ enabled: false }) } },
-        { token: SERVICES.TRACER, provider: { useValue: trace.getTracer('testTracer') } },
-        { token: SERVICES.CONFIG, provider: { useValue: config } },
-        { token: LAYERS_ROUTER_SYMBOL, provider: { useFactory: layersRouterFactory } },
-        { token: SERVICES.FS, provider: { useValue: fsConfig } },
-        { token: SERVICES.S3, provider: { useValue: s3Config } },
-        { token: SERVICES.REDISCONFIG, provider: { useValue: redisConfig } },
-        {
-          token: SERVICES.CONFIGPROVIDER,
-          provider: {
-            useValue: MockConfigProvider,
-          },
-        },
-      ],
+
+    const [app] = await getApp({
+      override: await getTestContainerConfig([{ token: LAYERS_ROUTER_SYMBOL, provider: { useFactory: layersRouterFactory } }]),
       useChild: false,
     });
     //container.resolve<ServerBuilder>(ServerBuilder);
     requestSender = new LayersRequestSender(app);
-    jest.spyOn(utils, 'replaceYamlFileContent').mockResolvedValue(undefined);
+    jest.spyOn(fsp, 'writeFile').mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -161,7 +139,7 @@ describe('layerManager', () => {
       name: 'amsterdam_5cm',
       tilesPath: '/path/to/tiles/directory/in/my/bucket/',
       cacheType: 's3',
-      format: TileOutputFormat.JPEG,
+      format: 'JPEG',
     };
 
     it('Happy Path - should return status 202', async () => {

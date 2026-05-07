@@ -1,5 +1,5 @@
 import { promises as fsp } from 'fs';
-import { Logger } from '@map-colonies/js-logger';
+import type { Logger } from '@map-colonies/js-logger';
 import { container } from 'tsyringe';
 import { SERVICES } from '../constants';
 import { IConfigProvider, IFSConfig, IMapProxyJsonDocument } from '../interfaces';
@@ -28,7 +28,7 @@ export class FSProvider implements IConfigProvider {
   public async getJson(): Promise<IMapProxyJsonDocument> {
     try {
       const yamlContent = await fsp.readFile(this.fsConfig.yamlFilePath, { encoding: 'utf8' });
-      const jsonContent = convertYamlToJson(yamlContent) as unknown as IMapProxyJsonDocument;
+      const jsonContent = convertYamlToJson(yamlContent);
       return jsonContent;
     } catch (error) {
       this.logger.error(`Failed to provide json from file: ${(error as Error).message}`);
