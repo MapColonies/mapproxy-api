@@ -26,7 +26,7 @@ import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
 import { S3Source } from '../../common/cacheProviders/S3Source';
 import { GpkgSource } from '../../common/cacheProviders/gpkgSource';
 import { FSSource } from '../../common/cacheProviders/fsSource';
-import { isSourceType, SourceTypes } from '../../common/enums';
+import { isSourceType, SourceTypes, sourceTypeValues } from '../../common/enums';
 import { RedisSource } from '../../common/cacheProviders/redisSource';
 import { ConfigsManager } from '../../configs/models/configsManager';
 import { getRedisCacheName, getRedisCacheOriginalName, isLayerNameSuffixRedis } from '../../common/utils';
@@ -268,7 +268,8 @@ class LayersManager {
     let sourceProvider: ICacheProvider;
 
     if (!isSourceType(cacheSource)) {
-      throw new Error(`Invalid cache source: ${cacheSource} has been provided , available values: "geopackage", "s3", "file", "redis"`);
+      const allowedValues = sourceTypeValues.map((v) => `"${v}"`).join(', ');
+      throw new Error(`Invalid cache source: ${cacheSource} has been provided , available values: ${allowedValues}`);
     }
 
     switch (cacheSource) {
@@ -287,10 +288,6 @@ class LayersManager {
     }
 
     return sourceProvider.getCacheSource(sourcePath);
-  }
-
-  public isCacheTypeValid(cacheType: string): boolean {
-    return isSourceType(cacheType);
   }
 
   private addNewCache(jsonDocument: IMapProxyJsonDocument, layerRequest: ILayerPostRequest): void {

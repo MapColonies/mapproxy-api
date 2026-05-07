@@ -17,4 +17,4 @@ const isSourceType = (value: unknown): value is SourceTypes => {
   return typeof value === 'string' && sourceTypeValues.includes(value as SourceTypes);
 };
 
-export { isSourceType, Providers, SourceTypes };
+export { isSourceType, Providers, SourceTypes, sourceTypeValues };
