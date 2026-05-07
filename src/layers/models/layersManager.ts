@@ -268,7 +268,7 @@ class LayersManager {
     let sourceProvider: ICacheProvider;
 
     if (!isSourceType(cacheSource)) {
-      const allowedValues = sourceTypeValues.map((v) => `"${v}"`).join(', ');
+      const allowedValues = sourceTypeValues.map((currentSourceType) => `"${currentSourceType}"`).join(', ');
       throw new Error(`Invalid cache source: ${cacheSource} has been provided , available values: ${allowedValues}`);
     }
 
