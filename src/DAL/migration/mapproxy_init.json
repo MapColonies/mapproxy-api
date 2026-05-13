@@ -11,6 +11,9 @@
       "base": "GLOBAL_WEBMERCATOR"
     }
   },
+  "http": {
+    "access_control_allow_origin": ""
+  },
   "caches": {
     "osm_cache": {
       "grids": ["webmercator"],
