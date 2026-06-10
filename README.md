@@ -1,15 +1,15 @@
 # Map Colonies - MapProxy API Service
 
-This is an API service to manage layers provided by [MapProxy](https://mapproxy.org/) 
+This is an API service to manage layers provided by [MapProxy](https://mapproxy.org/)
 
 
 
-### Uasage:
+### Usage:
 
 1. `git clone https://github.com/MapColonies/mapproxy-api.git`.
 2. run `npm install`.
 3. set service configurations - **see below**
-4. run `npm run start`.
+4. run `npm run start` or `npm run start:dev` (if running locally without external configs).
 5. open browser in `http://localhost:{port}/docs/api` for swagger ui
 
 
@@ -22,11 +22,10 @@ This is an API service to manage layers provided by [MapProxy](https://mapproxy.
 
 ## Docker Usage
 
-build the image: 
-(from root)
+build the image (from root):
 
 ```
- docker build --no-cache -t mapproxy-api:latest . 
+ docker build --no-cache -t mapproxy-api:latest .
 ```
 
 run the image:
@@ -52,9 +51,9 @@ docker run -e ENV=VALUE mapproxy-api:latest
 
 `MAPPROXY_CONFIG_PROVIDER` **available values: 'fs', 's3' or 'db'.**
 
- determined where the mapproxy.yaml file is stored. no default value
- 
-  **if set to 'fs'** - changes will apply directly 
+ determined where the mapproxy.yaml file is stored. defaults to **'fs'**
+
+  **if set to 'fs'** - changes will apply directly
 to yaml file that declared in `MAPPROXY_YAML_FILEPATH`.
 
  **if set to 's3'** -  changes will directly apply to yaml file that is stored in s3 defined bucket.
