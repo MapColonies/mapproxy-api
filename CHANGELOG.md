@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.13.0](https://github.com/MapColonies/mapproxy-api/compare/v1.12.0...v1.13.0) (2026-07-01)
+
+
+### Features
+
+* boilerplate maintenance ([#168](https://github.com/MapColonies/mapproxy-api/issues/168)) ([16ff142](https://github.com/MapColonies/mapproxy-api/commit/16ff14259b2c83fab852dbbccbb70fc63a734058))
+
+
+### Bug Fixes
+
+* init config values ([#170](https://github.com/MapColonies/mapproxy-api/issues/170)) ([e868086](https://github.com/MapColonies/mapproxy-api/commit/e8680867f024e99428c5db14d65538d76ec98217))
+
 ## [1.12.0](https://github.com/MapColonies/mapproxy-api/compare/v1.11.3...v1.12.0) (2026-04-20)
 
 
