@@ -5,11 +5,14 @@
       "bbox": [-180, -90, 180, 90],
       "origin": "ll",
       "min_res": 0.703125,
-      "num_levels": 21
+      "num_levels": 22
     },
     "webmercator": {
       "base": "GLOBAL_WEBMERCATOR"
     }
+  },
+  "http": {
+    "access_control_allow_origin": ""
   },
   "caches": {
     "osm_cache": {
