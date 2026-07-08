@@ -236,6 +236,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/getCacheResponse'
+              examples:
+                file:
+                  summary: file cache
+                  value:
+                    cacheName: example-layer
+                    cache:
+                      type: file
+                      directory: /f9f92153-96e1-46fb-a44b-5c1b0955639c/c67ef7fb-a08c-41f8-ba4b-f2ba9a4b9a2a/
+                      directory_layout: tms
+                s3:
+                  summary: s3 cache
+                  value:
+                    cacheName: example-layer
+                    cache:
+                      type: s3
+                      directory: /5eedfc75-861c-42fc-81a9-ab2c0b95c274/d8527f15-5377-4a28-b5ce-92891d897aec/
+                      directory_layout: tms
+                redis:
+                  summary: redis cache
+                  value:
+                    cacheName: example-layer-redis
+                    cache:
+                      host: mapproxy-redis-master
+                      port: 6379
+                      type: redis
+                      password: password
+                      username: ''
+                      default_ttl: 86400
         '400':
           description: Not valid request
           content:
@@ -322,6 +350,71 @@ components:
           enum:
             - image/png
             - image/jpeg
+    fileCache:
+      type: object
+      required:
+        - type
+        - directory
+        - directory_layout
+      properties:
+        type:
+          type: string
+          enum:
+            - file
+        directory:
+          type: string
+          example: /f9f92153-96e1-46fb-a44b-5c1b0955639c/c67ef7fb-a08c-41f8-ba4b-f2ba9a4b9a2a/
+        directory_layout:
+          type: string
+          example: tms
+    s3Cache:
+      type: object
+      required:
+        - type
+        - directory
+        - directory_layout
+      properties:
+        type:
+          type: string
+          enum:
+            - s3
+        directory:
+          type: string
+          example: /5eedfc75-861c-42fc-81a9-ab2c0b95c274/d8527f15-5377-4a28-b5ce-92891d897aec/
+        directory_layout:
+          type: string
+          example: tms
+        use_http_get:
+          type: boolean
+    redisCache:
+      type: object
+      required:
+        - type
+        - host
+        - port
+        - default_ttl
+      properties:
+        type:
+          type: string
+          enum:
+            - redis
+        host:
+          type: string
+          example: mapproxy-redis-master
+        port:
+          type: integer
+          example: 6379
+        username:
+          type: string
+          example: ''
+        password:
+          type: string
+          example: password
+        prefix:
+          type: string
+        default_ttl:
+          type: integer
+          example: 86400
     getCacheResponse:
       type: object
       required:
@@ -331,17 +424,16 @@ components:
         cacheName:
           type: string
         cache:
-          type: object
-          required:
-            - type
-          properties:
-            type:
-              type: string
-              enum:
-                - s3
-                - file
-                - redis
-                - geopackage
+          oneOf:
+            - $ref: '#/components/schemas/fileCache'
+            - $ref: '#/components/schemas/s3Cache'
+            - $ref: '#/components/schemas/redisCache'
+          discriminator:
+            propertyName: type
+            mapping:
+              file: '#/components/schemas/fileCache'
+              s3: '#/components/schemas/s3Cache'
+              redis: '#/components/schemas/redisCache'
     getConfigResponse:
       type: object
       properties:
