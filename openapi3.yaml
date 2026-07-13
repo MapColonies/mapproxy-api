@@ -253,6 +253,7 @@ paths:
                       type: s3
                       directory: /5eedfc75-861c-42fc-81a9-ab2c0b95c274/d8527f15-5377-4a28-b5ce-92891d897aec/
                       directory_layout: tms
+                      bucket_name: bucket-name
                 redis:
                   summary: redis cache
                   value:
@@ -386,6 +387,9 @@ components:
           example: tms
         use_http_get:
           type: boolean
+        bucket_name:
+          type: string
+          example: bucket-name
     redisCache:
       type: object
       required:
