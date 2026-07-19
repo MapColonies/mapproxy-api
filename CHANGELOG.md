@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.14.0](https://github.com/MapColonies/mapproxy-api/compare/v1.13.0...v1.14.0) (2026-07-19)
+
+
+### Features
+
+* add cache type examples and schemas for file, s3, and redis caches ([#172](https://github.com/MapColonies/mapproxy-api/issues/172)) ([866370d](https://github.com/MapColonies/mapproxy-api/commit/866370de7486e83d3020ed731c6297815ced6b1e))
+
 ## [1.13.0](https://github.com/MapColonies/mapproxy-api/compare/v1.12.0...v1.13.0) (2026-07-01)
 
 

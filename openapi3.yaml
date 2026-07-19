@@ -2,7 +2,7 @@ openapi: 3.0.1
 info:
   title: mapproxy-api
   description: rest api service to manage layers in mapproxy
-  version: 1.13.0
+  version: 1.14.0
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
@@ -243,7 +243,8 @@ paths:
                     cacheName: example-layer
                     cache:
                       type: file
-                      directory: /f9f92153-96e1-46fb-a44b-5c1b0955639c/c67ef7fb-a08c-41f8-ba4b-f2ba9a4b9a2a/
+                      directory: >-
+                        /f9f92153-96e1-46fb-a44b-5c1b0955639c/c67ef7fb-a08c-41f8-ba4b-f2ba9a4b9a2a/
                       directory_layout: tms
                 s3:
                   summary: s3 cache
@@ -251,7 +252,8 @@ paths:
                     cacheName: example-layer
                     cache:
                       type: s3
-                      directory: /5eedfc75-861c-42fc-81a9-ab2c0b95c274/d8527f15-5377-4a28-b5ce-92891d897aec/
+                      directory: >-
+                        /5eedfc75-861c-42fc-81a9-ab2c0b95c274/d8527f15-5377-4a28-b5ce-92891d897aec/
                       directory_layout: tms
                       bucket_name: bucket-name
                 redis:
@@ -364,7 +366,8 @@ components:
             - file
         directory:
           type: string
-          example: /f9f92153-96e1-46fb-a44b-5c1b0955639c/c67ef7fb-a08c-41f8-ba4b-f2ba9a4b9a2a/
+          example: >-
+            /f9f92153-96e1-46fb-a44b-5c1b0955639c/c67ef7fb-a08c-41f8-ba4b-f2ba9a4b9a2a/
         directory_layout:
           type: string
           example: tms
@@ -381,7 +384,8 @@ components:
             - s3
         directory:
           type: string
-          example: /5eedfc75-861c-42fc-81a9-ab2c0b95c274/d8527f15-5377-4a28-b5ce-92891d897aec/
+          example: >-
+            /5eedfc75-861c-42fc-81a9-ab2c0b95c274/d8527f15-5377-4a28-b5ce-92891d897aec/
         directory_layout:
           type: string
           example: tms
