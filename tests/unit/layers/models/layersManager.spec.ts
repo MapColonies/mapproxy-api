@@ -4,7 +4,7 @@ import { container } from 'tsyringe';
 import { jsLogger, type Logger } from '@map-colonies/js-logger';
 import { BadRequestError, ConflictError, NotFoundError, NotImplementedError } from '@map-colonies/error-types';
 import { lookup as mimeLookup, TilesMimeFormat } from '@map-colonies/types';
-import { ILayerPostRequest, IMapProxyCache, IMapProxyConfig, IRedisConfig } from '../../../../src/common/interfaces';
+import { ILayerPostRequest, IMapProxyCache, IMapProxyConfig, IRedisConfig, IS3Source } from '../../../../src/common/interfaces';
 import { LayersManager } from '../../../../src/layers/models/layersManager';
 import { mockLayerNameAlreadyExists } from '../../mock/mockLayerNameAlreadyExists';
 import { mockLayerNameIsNotExists } from '../../mock/mockLayerNameIsNotExists';
@@ -247,8 +247,7 @@ describe('layersManager', () => {
       await expect(layersManager.addLayer(mockLayerNameIsNotExists)).toResolve();
 
       const resultJson = await MockConfigProvider.getJson();
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(resultJson.caches[mockLayerNameIsNotExists.name].cache.use_http_get).toBe(true);
+      expect((resultJson.caches[mockLayerNameIsNotExists.name]?.cache as IS3Source).use_http_get).toBe(true);
       expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
 
@@ -267,8 +266,7 @@ describe('layersManager', () => {
       await expect(layersManager.addLayer(mockLayerNameIsNotExists)).toResolve();
 
       const resultJson = await MockConfigProvider.getJson();
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(resultJson.caches[mockLayerNameIsNotExists.name].cache.use_http_get).toBe(false);
+      expect((resultJson.caches[mockLayerNameIsNotExists.name]?.cache as IS3Source).use_http_get).toBe(false);
       expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
   });
@@ -368,10 +366,8 @@ describe('layersManager', () => {
       jest.spyOn(configManager, 'getConfig').mockResolvedValue(mockData());
       //check data
       const data = await MockConfigProvider.getJson();
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(data.caches[mockLayerName].format).toBe(expectedTileMimeFormatPng);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(data.caches[mockRedisLayerName].format).toBe(expectedTileMimeFormatPng);
+      expect(data.caches[mockLayerName]?.format).toBe(expectedTileMimeFormatPng);
+      expect(data.caches[mockRedisLayerName]?.format).toBe(expectedTileMimeFormatPng);
 
       // action
       const action = layersManager.updateLayer(mockLayerName, mockUpdateLayerRequest);
@@ -380,10 +376,8 @@ describe('layersManager', () => {
       expect.assertions(6);
       await expect(action).toResolve();
       const result = await MockConfigProvider.getJson();
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(result.caches[mockLayerName].format).toBe(expectedTileMimeFormatJpeg);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(result.caches[mockRedisLayerName].format).toBe(expectedTileMimeFormatJpeg);
+      expect(result.caches[mockLayerName]?.format).toBe(expectedTileMimeFormatJpeg);
+      expect(result.caches[mockRedisLayerName]?.format).toBe(expectedTileMimeFormatJpeg);
       expect(updateJsonMock).toHaveBeenCalledTimes(1);
     });
 

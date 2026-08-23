@@ -66,7 +66,6 @@ class LayersManager {
 
     // our current only real cache layer, other caches cases are known as the source layers
     const cacheName = isSourceType(cacheType) && cacheType === SourceTypes.REDIS ? getRedisCacheName(layerName) : layerName;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const currentSourceCache: IMapProxyCache | undefined = configJson.caches[cacheName];
 
     if (currentSourceCache === undefined) {
