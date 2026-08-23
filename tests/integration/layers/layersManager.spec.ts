@@ -1,7 +1,7 @@
 import { promises as fsp } from 'node:fs';
 import httpStatusCodes from 'http-status-codes';
 import { container } from 'tsyringe';
-import { ICacheName, ILayerPostRequest, IMapProxyCache } from '../../../src/common/interfaces';
+import { IGetCacheResponse, ILayerPostRequest, IMapProxyCache } from '../../../src/common/interfaces';
 import { mockLayerNameIsNotExists } from '../../unit/mock/mockLayerNameIsNotExists';
 import { mockLayerNameAlreadyExists } from '../../unit/mock/mockLayerNameAlreadyExists';
 import { init as configProviderInit, updateJsonMock } from '../../unit/mock/mockConfigProvider';
@@ -65,14 +65,24 @@ describe('layerManager', () => {
   });
 
   describe('#getLayersCache', () => {
-    it('Happy Path - should return status 200 and the cacheName', async () => {
+    it('Happy Path - should return status 200 and the whole cache', async () => {
       const response = await requestSender.getLayersCache('mockLayerNameExists', 's3');
 
       expect(response.status).toBe(httpStatusCodes.OK);
 
-      const resource = response.body as ICacheName;
+      const resource = response.body as IGetCacheResponse;
       expect(response).toSatisfyApiSpec();
       expect(resource.cacheName).toBe('mockLayerNameExists');
+      expect(resource).toStrictEqual({
+        cacheName: 'mockLayerNameExists',
+        sources: [],
+        grids: ['epsg4326dir'],
+        format: 'image/png',
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        upscale_tiles: 18,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        cache: { type: 's3', directory: '/path/to/s3/directory/tile', directory_layout: 'tms' },
+      });
     });
 
     it('Sad Path - should fail with response status 404 Not Found and layer name is not exists', async () => {

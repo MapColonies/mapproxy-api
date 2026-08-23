@@ -105,12 +105,17 @@ describe('layersManager', () => {
   });
 
   describe('#getCacheByNameAndType', () => {
-    it('should successfully return the cache name', async () => {
+    it('should successfully return the whole cache alongside its name', async () => {
+      /* eslint-disable @typescript-eslint/naming-convention */
       const expectedCache = {
         cacheName: 'mockLayerNameExists',
-        // eslint-disable-next-line @typescript-eslint/naming-convention
+        sources: [],
+        grids: ['epsg4326dir'],
+        format: 'image/png',
+        upscale_tiles: 18,
         cache: { directory: '/path/to/s3/directory/tile', directory_layout: 'tms', type: 's3' },
       };
+      /* eslint-enable @typescript-eslint/naming-convention */
 
       // action
       expect.assertions(2);
@@ -137,12 +142,30 @@ describe('layersManager', () => {
       // expectation;
       await expect(action).rejects.toThrow(new NotFoundError(`cache not found for ${layerName} layer`));
     });
+    it('should fail with not found for a cache that holds no cache source', async () => {
+      // action
+      const layerName = 'combined_layers';
+      expect.assertions(1);
+      const action = layersManager.getCacheByNameAndType(layerName, 's3');
+      // expectation;
+      await expect(action).rejects.toThrow(new NotFoundError(`cache not found for ${layerName} layer`));
+    });
+
+    it('should fail with not found for a cache that is not an object', async () => {
+      // action
+      const layerName = 'mock';
+      expect.assertions(1);
+      const action = layersManager.getCacheByNameAndType(layerName, 's3');
+      // expectation;
+      await expect(action).rejects.toThrow(new NotFoundError(`cache not found for ${layerName} layer`));
+    });
+
     it('should fail with not valid source type', async () => {
       // action
       expect.assertions(1);
       const action = layersManager.getCacheByNameAndType('mockLayerNameExists', 'notValidType');
       // expectation;
-      await expect(action).rejects.toThrow(new NotFoundError(`mockLayerNameExists layer cache not found with requested cache type: notValidType`));
+      await expect(action).rejects.toThrow(new BadRequestError(`mockLayerNameExists layer cache not found with requested cache type: notValidType`));
     });
   });
 

@@ -3,7 +3,7 @@ import { promises as fsp } from 'node:fs';
 import { safeLoad, safeDump, YAMLException } from 'js-yaml';
 import { container } from 'tsyringe';
 import { SERVICES } from '../common/constants';
-import { IFSConfig, IMapProxyJsonDocument } from './interfaces';
+import { IFSConfig, IMapProxyCache, IMapProxyJsonDocument } from './interfaces';
 import { SourceTypes } from './enums';
 
 // read mapproxy yaml config file and convert it into a json object
@@ -59,6 +59,20 @@ export function getRedisCacheName(layerName: string): string {
  */
 export function isLayerNameSuffixRedis(layerName: string): boolean {
   return layerName.endsWith('-redis');
+}
+
+/**
+ * Check if an entry of the mapproxy 'caches' section is a well formed cache, holding a cache source.
+ * Hand edited configurations may hold entries that are not objects at all, or objects with no 'cache' section.
+ * @param cache entry taken from the mapproxy 'caches' section
+ * @return boolean - if the entry can be treated as a cache holding a cache source.
+ */
+export function isMapProxyCache(cache: unknown): cache is IMapProxyCache {
+  if (typeof cache !== 'object' || cache === null) {
+    return false;
+  }
+  const cacheSource: unknown = (cache as Record<string, unknown>).cache;
+  return typeof cacheSource === 'object' && cacheSource !== null;
 }
 
 export function adjustTilesPath(tilesPath: string, cacheSource: SourceTypes): string {

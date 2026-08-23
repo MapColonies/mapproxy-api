@@ -246,6 +246,12 @@ paths:
                       directory: >-
                         /f9f92153-96e1-46fb-a44b-5c1b0955639c/c67ef7fb-a08c-41f8-ba4b-f2ba9a4b9a2a/
                       directory_layout: tms
+                    sources: []
+                    grids:
+                      - epsg4326dir
+                    format: image/png
+                    upscale_tiles: 18
+                    minimize_meta_requests: true
                 s3:
                   summary: s3 cache
                   value:
@@ -256,6 +262,12 @@ paths:
                         /5eedfc75-861c-42fc-81a9-ab2c0b95c274/d8527f15-5377-4a28-b5ce-92891d897aec/
                       directory_layout: tms
                       bucket_name: bucket-name
+                    sources: []
+                    grids:
+                      - epsg4326dir
+                    format: image/png
+                    upscale_tiles: 18
+                    minimize_meta_requests: true
                 redis:
                   summary: redis cache
                   value:
@@ -267,6 +279,25 @@ paths:
                       password: password
                       username: ''
                       default_ttl: 86400
+                    sources:
+                      - example-layer
+                    grids:
+                      - epsg4326dir
+                    format: image/png
+                geopackage:
+                  summary: geopackage cache
+                  value:
+                    cacheName: example-layer
+                    cache:
+                      type: geopackage
+                      filename: /path/to/tiles.gpkg
+                      table_name: tiles
+                    sources: []
+                    grids:
+                      - epsg4326dir
+                    format: image/png
+                    upscale_tiles: 18
+                    minimize_meta_requests: true
         '400':
           description: Not valid request
           content:
@@ -423,25 +454,78 @@ components:
         default_ttl:
           type: integer
           example: 86400
+    gpkgCache:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          enum:
+            - geopackage
+        filename:
+          type: string
+          description: >-
+            Path to the geopackage file. Defaults to cachename.gpkg. Ignored
+            when levels is true.
+          example: /path/to/tiles.gpkg
+        table_name:
+          type: string
+          description: >-
+            Table the tiles are stored in. Defaults to cachename_gridname.
+          example: tiles
+        levels:
+          type: boolean
+          description: >-
+            Store each level in a separate geopackage under directory. Defaults
+            to false.
+        directory:
+          type: string
+          description: Directory of the geopackage files, used only when levels is true.
     getCacheResponse:
       type: object
+      description: >-
+        A mapproxy cache, as it is written in the configuration, alongside its
+        name. Properties other than cacheName are the cache entry itself, so
+        options that are not listed here may also be present.
       required:
         - cacheName
         - cache
       properties:
         cacheName:
           type: string
+          example: example-layer
         cache:
           oneOf:
             - $ref: '#/components/schemas/fileCache'
             - $ref: '#/components/schemas/s3Cache'
             - $ref: '#/components/schemas/redisCache'
+            - $ref: '#/components/schemas/gpkgCache'
           discriminator:
             propertyName: type
             mapping:
               file: '#/components/schemas/fileCache'
               s3: '#/components/schemas/s3Cache'
               redis: '#/components/schemas/redisCache'
+              geopackage: '#/components/schemas/gpkgCache'
+        sources:
+          type: array
+          items:
+            type: string
+        grids:
+          type: array
+          items:
+            type: string
+          example:
+            - epsg4326dir
+        format:
+          type: string
+          example: image/png
+        upscale_tiles:
+          type: number
+          example: 18
+        minimize_meta_requests:
+          type: boolean
     getConfigResponse:
       type: object
       properties:

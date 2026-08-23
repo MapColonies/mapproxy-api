@@ -116,13 +116,8 @@ export interface IRedisSource extends ICacheSource {
   default_ttl: number;
 }
 
-export interface ICacheName {
+export interface IGetCacheResponse extends IMapProxyCache {
   cacheName: string;
-}
-
-export interface ICacheObject {
-  cacheName: string;
-  cache: IRedisSource | IS3Source | IFSSource;
 }
 
 export interface IGpkgSource extends ICacheSource {

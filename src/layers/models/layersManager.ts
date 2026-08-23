@@ -17,10 +17,7 @@ import type {
   ICacheProvider,
   ICacheSource,
   IRedisConfig,
-  ICacheObject,
-  IRedisSource,
-  IS3Source,
-  IFSSource,
+  IGetCacheResponse,
 } from '../../common/interfaces';
 import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
 import { S3Source } from '../../common/cacheProviders/S3Source';
@@ -29,7 +26,7 @@ import { FSSource } from '../../common/cacheProviders/fsSource';
 import { isSourceType, SourceTypes, sourceTypeValues } from '../../common/enums';
 import { RedisSource } from '../../common/cacheProviders/redisSource';
 import { ConfigsManager } from '../../configs/models/configsManager';
-import { getRedisCacheName, getRedisCacheOriginalName, isLayerNameSuffixRedis } from '../../common/utils';
+import { getRedisCacheName, getRedisCacheOriginalName, isLayerNameSuffixRedis, isMapProxyCache } from '../../common/utils';
 
 @injectable()
 class LayersManager {
@@ -54,7 +51,7 @@ class LayersManager {
   }
 
   @withSpanAsyncV4
-  public async getCacheByNameAndType(layerName: string, cacheType: string): Promise<ICacheObject> {
+  public async getCacheByNameAndType(layerName: string, cacheType: string): Promise<IGetCacheResponse> {
     const configJson = await this.configProvider.getJson();
     const requestedLayer = configJson.layers.find((layer) => layer.name === layerName);
 
@@ -66,25 +63,22 @@ class LayersManager {
 
     // our current only real cache layer, other caches cases are known as the source layers
     const cacheName = isSourceType(cacheType) && cacheType === SourceTypes.REDIS ? getRedisCacheName(layerName) : layerName;
-    const currentSourceCache: IMapProxyCache | undefined = configJson.caches[cacheName];
+    const requestedCache = configJson.caches[cacheName];
 
-    if (currentSourceCache === undefined) {
+    // a missing entry, an entry that is not an object, or an entry with no cache source, are all unusable as a cache
+    if (!isMapProxyCache(requestedCache)) {
       const errorMsg = `cache not found for ${layerName} layer`;
       this.logger.warn({ msg: errorMsg, layerName, cacheType });
       throw new NotFoundError(errorMsg);
     }
-    if (currentSourceCache.cache.type !== cacheType) {
+    if (requestedCache.cache.type !== cacheType) {
       const errorMsg = `${layerName} layer cache not found with requested cache type: ${cacheType}`;
       this.logger.warn({ msg: errorMsg, layerName, cacheType });
       throw new BadRequestError(errorMsg);
     }
 
-    type AvailableSources = IRedisSource | IS3Source | IFSSource;
-
-    return {
-      cacheName: cacheName,
-      cache: currentSourceCache.cache as AvailableSources,
-    };
+    // the whole cache is returned as it is written in the configuration, the cache name is ours and always wins
+    return { ...requestedCache, cacheName };
   }
 
   @withSpanAsyncV4
