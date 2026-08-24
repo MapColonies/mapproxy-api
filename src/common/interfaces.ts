@@ -120,12 +120,6 @@ export interface ICacheName {
   cacheName: string;
 }
 
-/**
- * The response of GET /layer/{layerName}/{cacheType}: the Cache name, and the Cache spread
- * verbatim over it. Only the Cache name and the Cache Source are declared, because they are
- * all that is verified — every other key is whatever the configuration held, so a consumer
- * must narrow rather than trust.
- */
 export type IGetCacheResponse = ICacheName & Pick<IMapProxyCache, 'cache'> & Record<string, unknown>;
 
 export interface IGpkgSource extends ICacheSource {
@@ -145,7 +139,7 @@ export interface IMapProxyCache {
   grids: string[];
   format: string;
   upscale_tiles?: number;
-  cache: ICacheSource;
+  cache?: ICacheSource;
   minimize_meta_requests?: boolean;
 }
 
