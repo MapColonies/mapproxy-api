@@ -124,15 +124,15 @@ describe('layerManager', () => {
       expect(response.body).toEqual({ message: notFoundErrorMessage });
     });
 
-    it('Sad Path - should fail with response status 400 when the Cache is of another Cache Type', async () => {
+    it('Sad Path - should fail with response status 404 when the Cache is of another Cache Type', async () => {
       const mockLayerName = 'mockLayerNameExists';
       const cacheType = 'file';
       const response = await requestSender.getLayersCache(mockLayerName, cacheType);
-      const badRequestMessage = `${mockLayerName} layer cache not found with requested cache type: ${cacheType}`;
+      const notFoundErrorMessage = `${mockLayerName} layer cache not found with requested cache type: ${cacheType}`;
 
       expect(response).toSatisfyApiSpec();
-      expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
-      expect(response.body).toEqual({ message: badRequestMessage });
+      expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
+      expect(response.body).toEqual({ message: notFoundErrorMessage });
     });
 
     it('Sad Path - should fail with response status 404 when the Layer has no Cache under the resolved name', async () => {
@@ -145,24 +145,24 @@ describe('layerManager', () => {
       expect(response.body).toEqual({ message: notFoundErrorMessage });
     });
 
-    it('Sad Path - should fail with response status 400 when the configuration entry is not an object', async () => {
+    it('Sad Path - should fail with response status 404 when the configuration entry is not an object', async () => {
       const mockLayerName = 'mock';
       const response = await requestSender.getLayersCache(mockLayerName, 's3');
-      const badRequestMessage = `${mockLayerName} layer cache not found with requested cache type: s3`;
+      const notFoundErrorMessage = `${mockLayerName} layer cache not found with requested cache type: s3`;
 
       expect(response).toSatisfyApiSpec();
-      expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
-      expect(response.body).toEqual({ message: badRequestMessage });
+      expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
+      expect(response.body).toEqual({ message: notFoundErrorMessage });
     });
 
-    it('Sad Path - should fail with response status 400 when the configuration entry holds no Cache Source', async () => {
+    it('Sad Path - should fail with response status 404 when the configuration entry holds no Cache Source', async () => {
       const mockLayerName = 'combined_layers';
       const response = await requestSender.getLayersCache(mockLayerName, 's3');
-      const badRequestMessage = `${mockLayerName} layer cache not found with requested cache type: s3`;
+      const notFoundErrorMessage = `${mockLayerName} layer cache not found with requested cache type: s3`;
 
       expect(response).toSatisfyApiSpec();
-      expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
-      expect(response.body).toEqual({ message: badRequestMessage });
+      expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
+      expect(response.body).toEqual({ message: notFoundErrorMessage });
     });
 
     it('Sad Path - should fail with error not valid type format', async () => {

@@ -143,12 +143,12 @@ describe('layersManager', () => {
       await expect(action).rejects.toThrow(new NotFoundError(`cache not found for ${layerName} layer`));
     });
 
-    it('should fail with bad request when the Cache Type cannot be confirmed', async () => {
+    it('should fail with not found when the Cache Type cannot be confirmed', async () => {
       // action
       expect.assertions(1);
       const action = layersManager.getCacheByNameAndType('mockLayerNameExists', 'notValidType');
       // expectation;
-      await expect(action).rejects.toThrow(new BadRequestError(`mockLayerNameExists layer cache not found with requested cache type: notValidType`));
+      await expect(action).rejects.toThrow(new NotFoundError(`mockLayerNameExists layer cache not found with requested cache type: notValidType`));
     });
   });
 

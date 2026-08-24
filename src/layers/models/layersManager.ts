@@ -70,10 +70,12 @@ class LayersManager {
       this.logger.warn({ msg: errorMsg, layerName, cacheType });
       throw new NotFoundError(errorMsg);
     }
+    // Nothing about the request is malformed: the Layer and the Cache Type are both well formed
+    // and the Cache Type is in the enum. There is simply no Cache of that Cache Type to address.
     if (readCacheType(requestedCache) !== cacheType) {
       const errorMsg = `${layerName} layer cache not found with requested cache type: ${cacheType}`;
       this.logger.warn({ msg: errorMsg, layerName, cacheType, requestedCache });
-      throw new BadRequestError(errorMsg);
+      throw new NotFoundError(errorMsg);
     }
 
     return {
