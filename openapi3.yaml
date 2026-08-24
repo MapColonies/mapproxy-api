@@ -241,6 +241,12 @@ paths:
                   summary: file cache
                   value:
                     cacheName: example-layer
+                    sources: []
+                    grids:
+                      - epsg4326dir
+                    format: image/png
+                    upscale_tiles: 18
+                    minimize_meta_requests: true
                     cache:
                       type: file
                       directory: >-
@@ -250,16 +256,43 @@ paths:
                   summary: s3 cache
                   value:
                     cacheName: example-layer
+                    sources: []
+                    grids:
+                      - epsg4326dir
+                    format: image/png
+                    upscale_tiles: 18
+                    minimize_meta_requests: true
                     cache:
                       type: s3
                       directory: >-
                         /5eedfc75-861c-42fc-81a9-ab2c0b95c274/d8527f15-5377-4a28-b5ce-92891d897aec/
                       directory_layout: tms
                       bucket_name: bucket-name
+                geopackage:
+                  summary: geopackage cache
+                  value:
+                    cacheName: example-layer
+                    sources: []
+                    grids:
+                      - epsg4326dir
+                    format: image/png
+                    upscale_tiles: 18
+                    minimize_meta_requests: true
+                    cache:
+                      type: geopackage
+                      filename: /path/to/tiles/directory/example-layer.gpkg
+                      table_name: example-layer
                 redis:
-                  summary: redis cache
+                  summary: >-
+                    redis cache, resolved by the '-redis' suffix. It carries no
+                    upscale_tiles and no minimize_meta_requests.
                   value:
                     cacheName: example-layer-redis
+                    sources:
+                      - example-layer
+                    grids:
+                      - epsg4326dir
+                    format: image/png
                     cache:
                       host: mapproxy-redis-master
                       port: 6379
@@ -355,10 +388,12 @@ components:
             - image/jpeg
     fileCache:
       type: object
+      description: >-
+        A file cache source. Only `type` is guaranteed; a cache source missing an
+        optional field is still a valid response.
       required:
         - type
-        - directory
-        - directory_layout
+      additionalProperties: true
       properties:
         type:
           type: string
@@ -373,10 +408,12 @@ components:
           example: tms
     s3Cache:
       type: object
+      description: >-
+        An s3 cache source. Only `type` is guaranteed; a cache source missing an
+        optional field is still a valid response.
       required:
         - type
-        - directory
-        - directory_layout
+      additionalProperties: true
       properties:
         type:
           type: string
@@ -396,11 +433,12 @@ components:
           example: bucket-name
     redisCache:
       type: object
+      description: >-
+        A redis cache source. Only `type` is guaranteed; a cache source missing an
+        optional field is still a valid response.
       required:
         - type
-        - host
-        - port
-        - default_ttl
+      additionalProperties: true
       properties:
         type:
           type: string
@@ -423,25 +461,72 @@ components:
         default_ttl:
           type: integer
           example: 86400
+    geopackageCache:
+      type: object
+      description: >-
+        A geopackage cache source. Only `type` is guaranteed; a cache source missing
+        an optional field is still a valid response.
+      required:
+        - type
+      additionalProperties: true
+      properties:
+        type:
+          type: string
+          enum:
+            - geopackage
+        filename:
+          type: string
+          example: /path/to/tiles/directory/amsterdam_5cm.gpkg
+        table_name:
+          type: string
+          example: amsterdam_5cm
     getCacheResponse:
       type: object
+      description: >-
+        The whole cache as written in the mapproxy configuration, alongside its name.
+        Only `cacheName` and `cache` are guaranteed: the cache is returned verbatim, so
+        mapproxy options this service does not model are present too, and options a cache
+        genuinely lacks are absent rather than null or defaulted.
       required:
         - cacheName
         - cache
+      additionalProperties: true
       properties:
         cacheName:
           type: string
+          description: >-
+            The resolved cache name, which for a redis request is the '-redis' suffixed
+            name rather than the requested layer name.
+          example: example-layer
+        sources:
+          type: array
+          items:
+            type: string
+        grids:
+          type: array
+          items:
+            type: string
+        format:
+          type: string
+          example: image/png
+        upscale_tiles:
+          type: number
+          example: 18
+        minimize_meta_requests:
+          type: boolean
         cache:
           oneOf:
             - $ref: '#/components/schemas/fileCache'
             - $ref: '#/components/schemas/s3Cache'
             - $ref: '#/components/schemas/redisCache'
+            - $ref: '#/components/schemas/geopackageCache'
           discriminator:
             propertyName: type
             mapping:
               file: '#/components/schemas/fileCache'
               s3: '#/components/schemas/s3Cache'
               redis: '#/components/schemas/redisCache'
+              geopackage: '#/components/schemas/geopackageCache'
     getConfigResponse:
       type: object
       properties:
