@@ -114,6 +114,25 @@ describe('layerManager', () => {
       expect(response.body).toHaveProperty('cache.region', 'us-east-1');
     });
 
+    it('Happy Path - should return status 200 and the whole Cache of a geopackage Cache', async () => {
+      const response = await requestSender.getLayersCache('gpkgExists', 'geopackage');
+
+      expect(response.status).toBe(httpStatusCodes.OK);
+      expect(response).toSatisfyApiSpec();
+      expect(response.body).toEqual({
+        cacheName: 'gpkgExists',
+        sources: [],
+        grids: ['epsg4326dir'],
+        format: 'image/png',
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        upscale_tiles: 18,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        minimize_meta_requests: true,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        cache: { type: 'geopackage', filename: '/path/to/tiles/directory/gpkgExists.gpkg', table_name: 'gpkgExists' },
+      });
+    });
+
     it('Sad Path - should fail with response status 404 Not Found and layer name is not exists', async () => {
       const mockLayerName = 'mockLayerNameIsNotExists';
       const response = await requestSender.getLayersCache(mockLayerName, 's3');
