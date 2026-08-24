@@ -1,7 +1,7 @@
 import { promises as fsp } from 'node:fs';
 import httpStatusCodes from 'http-status-codes';
 import { container } from 'tsyringe';
-import { ICacheName, ILayerPostRequest, IMapProxyCache } from '../../../src/common/interfaces';
+import { ILayerPostRequest, IMapProxyCache } from '../../../src/common/interfaces';
 import { mockLayerNameIsNotExists } from '../../unit/mock/mockLayerNameIsNotExists';
 import { mockLayerNameAlreadyExists } from '../../unit/mock/mockLayerNameAlreadyExists';
 import { init as configProviderInit, updateJsonMock } from '../../unit/mock/mockConfigProvider';
@@ -65,14 +65,53 @@ describe('layerManager', () => {
   });
 
   describe('#getLayersCache', () => {
-    it('Happy Path - should return status 200 and the cacheName', async () => {
+    it('Happy Path - should return status 200 and the whole Cache of an s3 Cache', async () => {
       const response = await requestSender.getLayersCache('mockLayerNameExists', 's3');
 
       expect(response.status).toBe(httpStatusCodes.OK);
-
-      const resource = response.body as ICacheName;
       expect(response).toSatisfyApiSpec();
-      expect(resource.cacheName).toBe('mockLayerNameExists');
+      expect(response.body).toEqual({
+        cacheName: 'mockLayerNameExists',
+        sources: [],
+        grids: ['epsg4326dir'],
+        format: 'image/png',
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        upscale_tiles: 18,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        cache: { type: 's3', directory: '/path/to/s3/directory/tile', directory_layout: 'tms' },
+      });
+    });
+
+    it('Happy Path - should resolve a redis request to the -redis Cache and return it whole', async () => {
+      const response = await requestSender.getLayersCache('redisExists', 'redis');
+
+      expect(response.status).toBe(httpStatusCodes.OK);
+      expect(response).toSatisfyApiSpec();
+      expect(response.body).toEqual({
+        cacheName: 'redisExists-redis',
+        sources: ['redisExists'],
+        grids: ['epsg4326dir'],
+        format: 'image/png',
+        cache: {
+          host: 'raster-mapproxy-redis-master',
+          port: 6379,
+          username: 'mapcolonies',
+          password: 'mapcolonies',
+          prefix: 'mcrl:',
+          type: 'redis',
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          default_ttl: 86400,
+        },
+      });
+    });
+
+    it('Happy Path - should return mapproxy options this service does not model, verbatim', async () => {
+      const response = await requestSender.getLayersCache('NameIsAlreadyExists', 's3');
+
+      expect(response.status).toBe(httpStatusCodes.OK);
+      expect(response).toSatisfyApiSpec();
+      expect(response.body).toHaveProperty('link_single_color_images', true);
+      expect(response.body).toHaveProperty('cache.region', 'us-east-1');
     });
 
     it('Sad Path - should fail with response status 404 Not Found and layer name is not exists', async () => {
@@ -83,6 +122,47 @@ describe('layerManager', () => {
       expect(response).toSatisfyApiSpec();
       expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
       expect(response.body).toEqual({ message: notFoundErrorMessage });
+    });
+
+    it('Sad Path - should fail with response status 400 when the Cache is of another Cache Type', async () => {
+      const mockLayerName = 'mockLayerNameExists';
+      const cacheType = 'file';
+      const response = await requestSender.getLayersCache(mockLayerName, cacheType);
+      const badRequestMessage = `${mockLayerName} layer cache not found with requested cache type: ${cacheType}`;
+
+      expect(response).toSatisfyApiSpec();
+      expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
+      expect(response.body).toEqual({ message: badRequestMessage });
+    });
+
+    it('Sad Path - should fail with response status 404 when the Layer has no Cache under the resolved name', async () => {
+      const mockLayerName = 'noCacheForLayer';
+      const response = await requestSender.getLayersCache(mockLayerName, 's3');
+      const notFoundErrorMessage = `cache not found for ${mockLayerName} layer`;
+
+      expect(response).toSatisfyApiSpec();
+      expect(response.status).toBe(httpStatusCodes.NOT_FOUND);
+      expect(response.body).toEqual({ message: notFoundErrorMessage });
+    });
+
+    it('Sad Path - should fail with response status 400 when the configuration entry is not an object', async () => {
+      const mockLayerName = 'mock';
+      const response = await requestSender.getLayersCache(mockLayerName, 's3');
+      const badRequestMessage = `${mockLayerName} layer cache not found with requested cache type: s3`;
+
+      expect(response).toSatisfyApiSpec();
+      expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
+      expect(response.body).toEqual({ message: badRequestMessage });
+    });
+
+    it('Sad Path - should fail with response status 400 when the configuration entry holds no Cache Source', async () => {
+      const mockLayerName = 'combined_layers';
+      const response = await requestSender.getLayersCache(mockLayerName, 's3');
+      const badRequestMessage = `${mockLayerName} layer cache not found with requested cache type: s3`;
+
+      expect(response).toSatisfyApiSpec();
+      expect(response.status).toBe(httpStatusCodes.BAD_REQUEST);
+      expect(response.body).toEqual({ message: badRequestMessage });
     });
 
     it('Sad Path - should fail with error not valid type format', async () => {

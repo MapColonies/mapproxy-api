@@ -105,9 +105,14 @@ describe('layersManager', () => {
   });
 
   describe('#getCacheByNameAndType', () => {
-    it('should successfully return the cache name', async () => {
+    it('should successfully return the whole Cache and its name', async () => {
       const expectedCache = {
         cacheName: 'mockLayerNameExists',
+        sources: [],
+        grids: ['epsg4326dir'],
+        format: 'image/png',
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        upscale_tiles: 18,
         // eslint-disable-next-line @typescript-eslint/naming-convention
         cache: { directory: '/path/to/s3/directory/tile', directory_layout: 'tms', type: 's3' },
       };
@@ -137,12 +142,13 @@ describe('layersManager', () => {
       // expectation;
       await expect(action).rejects.toThrow(new NotFoundError(`cache not found for ${layerName} layer`));
     });
-    it('should fail with not valid source type', async () => {
+
+    it('should fail with bad request when the Cache Type cannot be confirmed', async () => {
       // action
       expect.assertions(1);
       const action = layersManager.getCacheByNameAndType('mockLayerNameExists', 'notValidType');
       // expectation;
-      await expect(action).rejects.toThrow(new NotFoundError(`mockLayerNameExists layer cache not found with requested cache type: notValidType`));
+      await expect(action).rejects.toThrow(new BadRequestError(`mockLayerNameExists layer cache not found with requested cache type: notValidType`));
     });
   });
 

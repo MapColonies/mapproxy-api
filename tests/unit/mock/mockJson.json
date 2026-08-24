@@ -32,17 +32,18 @@
       "grids": ["epsg4326dir"],
       "format": "image/png",
       "upscale_tiles": 18,
+      "link_single_color_images": true,
       "cache": {
         "type": "s3",
         "directory": "/path/to/s3/directory/tile",
-        "directory_layout": "tms"
+        "directory_layout": "tms",
+        "region": "us-east-1"
       }
     },
     "redisExists-redis": {
       "sources": ["redisExists"],
       "grids": ["epsg4326dir"],
       "format": "image/png",
-      "upscale_tiles": 18,
       "cache": {
         "host": "raster-mapproxy-redis-master",
         "port": 6379,
@@ -85,6 +86,11 @@
       "name": "noCacheForLayer",
       "title": "title",
       "sources": ["source"]
+    },
+    {
+      "name": "combined_layers",
+      "title": "title",
+      "sources": ["mock"]
     },
     {
       "name": "mock2",
