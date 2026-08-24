@@ -82,7 +82,7 @@ export interface IRedisConfig {
 export interface IMapProxyJsonDocument {
   services: JsonObject;
   layers: IMapProxyLayer[];
-  caches: IMapProxyCache;
+  caches: Record<string, IMapProxyCache>;
   grids: JsonObject;
   globals: IMapProxyGlobalConfig;
 }
