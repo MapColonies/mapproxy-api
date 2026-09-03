@@ -61,21 +61,6 @@ export function isLayerNameSuffixRedis(layerName: string): boolean {
   return layerName.endsWith('-redis');
 }
 
-/**
- * Lift the Cache Type out of an untrusted configuration entry.
- *
- * This is the one place that reads a `caches` entry without trusting its type: production
- * configurations hold entries that are not well formed Caches. Nothing else about the entry is
- * inspected or asserted, so the codebase carries no notion of a malformed Cache.
- * @param cache an entry of the configuration's `caches` section, as read
- * @return string - the entry's Cache Type, or undefined if the entry does not state one
- */
-export function readCacheType(cache: unknown): string | undefined {
-  const cacheSource = (cache as { cache?: unknown } | null | undefined)?.cache;
-  const cacheType = (cacheSource as { type?: unknown } | null | undefined)?.type;
-  return typeof cacheType === 'string' ? cacheType : undefined;
-}
-
 export function adjustTilesPath(tilesPath: string, cacheSource: SourceTypes): string {
   const fsConfig = container.resolve<IFSConfig>(SERVICES.FS);
   switch (cacheSource) {

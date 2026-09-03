@@ -355,8 +355,11 @@ components:
             - JPEG
     getLayerResponse:
       type: object
+      description: >-
+        A cache as written in the mapproxy configuration. `cache`, the cache source, is
+        absent on configuration entries that are not well formed caches, so it is not
+        required.
       required:
-        - cache
         - grids
         - sources
         - upscale_tiles
