@@ -26,7 +26,7 @@ import { FSSource } from '../../common/cacheProviders/fsSource';
 import { isSourceType, SourceTypes, sourceTypeValues } from '../../common/enums';
 import { RedisSource } from '../../common/cacheProviders/redisSource';
 import { ConfigsManager } from '../../configs/models/configsManager';
-import { getRedisCacheName, getRedisCacheOriginalName, isLayerNameSuffixRedis } from '../../common/utils';
+import { getRedisCacheName, getRedisCacheOriginalName, isLayerNameSuffixRedis, readCacheType } from '../../common/utils';
 
 @injectable()
 class LayersManager {
@@ -71,15 +71,20 @@ class LayersManager {
       throw new NotFoundError(errorMsg);
     }
 
-    if (requestedCache.cache?.type !== cacheType) {
+    // Nothing about the request is malformed: the Layer and the Cache Type are both well formed
+    // and the Cache Type is in the enum. There is simply no Cache of that Cache Type to address.
+    const foundCacheType = readCacheType(requestedCache);
+
+    if (foundCacheType !== cacheType) {
       const errorMsg = `${layerName} layer cache not found with requested cache type: ${cacheType}`;
-      this.logger.warn({ msg: errorMsg, layerName, cacheType, requestedCache });
+      // The Cache itself is never logged: a redis Cache Source carries credentials.
+      this.logger.warn({ msg: errorMsg, layerName, cacheType, cacheName, foundCacheType });
       throw new NotFoundError(errorMsg);
     }
 
     return {
-      cacheName: cacheName,
       ...requestedCache,
+      cacheName,
     };
   }
 
