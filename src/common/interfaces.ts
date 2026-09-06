@@ -145,10 +145,6 @@ export interface IMapProxyCache {
   grids: string[];
   format: string;
   upscale_tiles?: number;
-  /**
-   * Absent on configuration entries that are not well formed Caches. Production configurations
-   * hold such entries, so every read must narrow rather than assume a Cache Source is there.
-   */
   cache?: ICacheSource;
   minimize_meta_requests?: boolean;
 }
