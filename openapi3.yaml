@@ -2,7 +2,7 @@ openapi: 3.0.1
 info:
   title: mapproxy-api
   description: rest api service to manage layers in mapproxy
-  version: 1.14.0
+  version: 1.15.0
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
@@ -356,9 +356,9 @@ components:
     getLayerResponse:
       type: object
       description: >-
-        A cache as written in the mapproxy configuration. `cache`, the cache source, is
-        absent on configuration entries that are not well formed caches, so it is not
-        required.
+        A cache as written in the mapproxy configuration. `cache`, the cache
+        source, is absent on configuration entries that are not well formed
+        caches, so it is not required.
       required:
         - grids
         - sources
@@ -392,8 +392,8 @@ components:
     fileCache:
       type: object
       description: >-
-        A file cache source. Only `type` is guaranteed; a cache source missing an
-        optional field is still a valid response.
+        A file cache source. Only `type` is guaranteed; a cache source missing
+        an optional field is still a valid response.
       required:
         - type
       additionalProperties: true
@@ -437,8 +437,8 @@ components:
     redisCache:
       type: object
       description: >-
-        A redis cache source. Only `type` is guaranteed; a cache source missing an
-        optional field is still a valid response.
+        A redis cache source. Only `type` is guaranteed; a cache source missing
+        an optional field is still a valid response.
       required:
         - type
       additionalProperties: true
@@ -467,8 +467,8 @@ components:
     geopackageCache:
       type: object
       description: >-
-        A geopackage cache source. Only `type` is guaranteed; a cache source missing
-        an optional field is still a valid response.
+        A geopackage cache source. Only `type` is guaranteed; a cache source
+        missing an optional field is still a valid response.
       required:
         - type
       additionalProperties: true
@@ -486,10 +486,11 @@ components:
     getCacheResponse:
       type: object
       description: >-
-        The whole cache as written in the mapproxy configuration, alongside its name.
-        Only `cacheName` and `cache` are guaranteed: the cache is returned verbatim, so
-        mapproxy options this service does not model are present too, and options a cache
-        genuinely lacks are absent rather than null or defaulted.
+        The whole cache as written in the mapproxy configuration, alongside its
+        name. Only `cacheName` and `cache` are guaranteed: the cache is returned
+        verbatim, so mapproxy options this service does not model are present
+        too, and options a cache genuinely lacks are absent rather than null or
+        defaulted.
       required:
         - cacheName
         - cache
@@ -498,8 +499,8 @@ components:
         cacheName:
           type: string
           description: >-
-            The resolved cache name, which for a redis request is the '-redis' suffixed
-            name rather than the requested layer name.
+            The resolved cache name, which for a redis request is the '-redis'
+            suffixed name rather than the requested layer name.
           example: example-layer
         sources:
           type: array
