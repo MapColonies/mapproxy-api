@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.15.0](https://github.com/MapColonies/mapproxy-api/compare/v1.14.0...v1.15.0) (2026-09-06)
+
+
+### Features
+
+* return the whole Cache from GET /layer/{layerName}/{cacheType} ([#175](https://github.com/MapColonies/mapproxy-api/issues/175)) ([af1b958](https://github.com/MapColonies/mapproxy-api/commit/af1b9588eff56fd4cd9d7e3a6efb71d0d507ef4f))
+
 ## [1.14.0](https://github.com/MapColonies/mapproxy-api/compare/v1.13.0...v1.14.0) (2026-07-19)
 
 
