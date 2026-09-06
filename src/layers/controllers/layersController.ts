@@ -3,12 +3,12 @@ import type { RequestHandler } from 'express';
 import httpStatus from 'http-status-codes';
 import { injectable, inject } from 'tsyringe';
 import { SERVICES } from '../../common/constants';
-import type { ICacheName, ILayerPostRequest, IMapProxyCache } from '../../common/interfaces';
+import type { IGetCacheResponse, ILayerPostRequest, IMapProxyCache } from '../../common/interfaces';
 import { LayersManager } from '../models/layersManager';
 
 type CreateLayerHandler = RequestHandler<undefined, ILayerPostRequest, ILayerPostRequest>;
 type GetLayerHandler = RequestHandler<{ name: string }, IMapProxyCache, IMapProxyCache>;
-type GetCacheHandler = RequestHandler<{ layerName: string; cacheType: string }, ICacheName>;
+type GetCacheHandler = RequestHandler<{ layerName: string; cacheType: string }, IGetCacheResponse>;
 type UpdateLayerHandler = RequestHandler<{ name: string }, ILayerPostRequest, ILayerPostRequest>;
 type DeleteLayerHandler = RequestHandler<undefined, string[] | void, undefined, { layerNames: string[] }>;
 @injectable()

@@ -17,10 +17,7 @@ import type {
   ICacheProvider,
   ICacheSource,
   IRedisConfig,
-  ICacheObject,
-  IRedisSource,
-  IS3Source,
-  IFSSource,
+  IGetCacheResponse,
 } from '../../common/interfaces';
 import { isLayerNameExists } from '../../common/validations/isLayerNameExists';
 import { S3Source } from '../../common/cacheProviders/S3Source';
@@ -54,7 +51,7 @@ class LayersManager {
   }
 
   @withSpanAsyncV4
-  public async getCacheByNameAndType(layerName: string, cacheType: string): Promise<ICacheObject> {
+  public async getCacheByNameAndType(layerName: string, cacheType: string): Promise<IGetCacheResponse> {
     const configJson = await this.configProvider.getJson();
     const requestedLayer = configJson.layers.find((layer) => layer.name === layerName);
 
@@ -66,25 +63,28 @@ class LayersManager {
 
     // our current only real cache layer, other caches cases are known as the source layers
     const cacheName = isSourceType(cacheType) && cacheType === SourceTypes.REDIS ? getRedisCacheName(layerName) : layerName;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const currentSourceCache: IMapProxyCache | undefined = configJson.caches[cacheName];
+    const requestedCache: IMapProxyCache | undefined = configJson.caches[cacheName];
 
-    if (currentSourceCache === undefined) {
+    if (requestedCache === undefined) {
       const errorMsg = `cache not found for ${layerName} layer`;
       this.logger.warn({ msg: errorMsg, layerName, cacheType });
       throw new NotFoundError(errorMsg);
     }
-    if (currentSourceCache.cache.type !== cacheType) {
+
+    // Nothing about the request is malformed: the Layer and the Cache Type are both well formed
+    // and the Cache Type is in the enum. There is simply no Cache of that Cache Type to address.
+    const foundCacheType = requestedCache.cache?.type;
+
+    if (foundCacheType !== cacheType) {
       const errorMsg = `${layerName} layer cache not found with requested cache type: ${cacheType}`;
-      this.logger.warn({ msg: errorMsg, layerName, cacheType });
-      throw new BadRequestError(errorMsg);
+      // The Cache itself is never logged: a redis Cache Source carries credentials.
+      this.logger.warn({ msg: errorMsg, layerName, cacheType, cacheName, foundCacheType });
+      throw new NotFoundError(errorMsg);
     }
 
-    type AvailableSources = IRedisSource | IS3Source | IFSSource;
-
     return {
-      cacheName: cacheName,
-      cache: currentSourceCache.cache as AvailableSources,
+      ...requestedCache,
+      cacheName,
     };
   }
 
