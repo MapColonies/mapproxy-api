@@ -54,6 +54,18 @@
         "default_ttl": 86400
       }
     },
+    "gpkgExists": {
+      "sources": [],
+      "grids": ["epsg4326dir"],
+      "format": "image/png",
+      "upscale_tiles": 18,
+      "minimize_meta_requests": true,
+      "cache": {
+        "type": "geopackage",
+        "filename": "/path/to/tiles/directory/gpkgExists.gpkg",
+        "table_name": "gpkgExists"
+      }
+    },
     "redisExists": {
       "sources": [],
       "grids": ["epsg4326dir"],
@@ -96,6 +108,11 @@
       "name": "mock2",
       "title": "title",
       "sources": ["source"]
+    },
+    {
+      "name": "gpkgExists",
+      "title": "title",
+      "sources": ["gpkgExists"]
     },
     {
       "name": "redisExists",
