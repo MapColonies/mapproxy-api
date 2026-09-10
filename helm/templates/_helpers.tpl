@@ -103,23 +103,35 @@ Returns the cloud provider image pull secret name from global if exists or from 
 {{- end -}}
 
 {{/*
-Returns the tracing url from global if exists or from the chart's values
+Returns the tracing url from global if set, otherwise from the chart's values
 */}}
 {{- define "mapproxy-api.tracingUrl" -}}
-{{- if .Values.global.tracing.url }}
-    {{- .Values.global.tracing.url -}}
-{{- else if .Values.cloudProvider -}}
-    {{- .Values.env.tracing.url -}}
+{{- if .Values.global.telemetry.tracing.url }}
+    {{- .Values.global.telemetry.tracing.url -}}
+{{- else if .Values.telemetry.tracing.url -}}
+    {{- .Values.telemetry.tracing.url -}}
 {{- end -}}
 {{- end -}}
 
 {{/*
-Returns the tracing url from global if exists or from the chart's values
+Returns the opentelemetry logging url from global if set, otherwise from the chart's values
 */}}
-{{- define "mapproxy-api.metricsUrl" -}}
-{{- if .Values.global.metrics.url }}
-    {{- .Values.global.metrics.url -}}
-{{- else -}}
-    {{- .Values.env.metrics.url -}}
+{{- define "mapproxy-api.opentelemetryLoggingUrl" -}}
+{{- if .Values.global.telemetry.logger.opentelemetryOptions.url }}
+    {{- .Values.global.telemetry.logger.opentelemetryOptions.url -}}
+{{- else if .Values.telemetry.logger.opentelemetryOptions.url -}}
+    {{- .Values.telemetry.logger.opentelemetryOptions.url -}}
 {{- end -}}
+{{- end -}}
+
+{{/*
+Renders a map of resource attributes as key=value,key=value for OTEL_RESOURCE_ATTRIBUTES.
+Usage: {{ include "mapproxy-api.otelResourceAttributes" .resourceAttributes }}
+*/}}
+{{- define "mapproxy-api.otelResourceAttributes" -}}
+{{- $attributes := list }}
+{{- range $key, $value := . }}
+{{- $attributes = append $attributes (printf "%s=%s" $key (toString $value)) }}
+{{- end }}
+{{- join "," $attributes }}
 {{- end -}}
