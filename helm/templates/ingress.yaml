@@ -39,6 +39,6 @@ spec:
           service:
             name: {{ $serviceName }}
             port:
-              number: {{ .Values.env.port }}
+              number: {{ .Values.server.port }}
     host: {{ $ingressHost }}
 {{- end -}}

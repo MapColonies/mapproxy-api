@@ -1,7 +1,9 @@
 global:
   cloudProvider: {}
-  tracing: {}
-  openTelemetryOptions: {}  
+  telemetry:
+    tracing: {}
+    logger:
+      opentelemetryOptions: {}
   environment: ""
   storage:
     mapproxyConfigProvider: "" #  -> 'DB' | 'FS' | 'S3'
@@ -59,6 +61,7 @@ cloudProvider:
 image:
   repository: mapproxy-api
   tag: 'latest'
+  pullPolicy: IfNotPresent
 
 storage:
   mapproxyConfigProvider: "" #  -> 'DB' | 'FS' | 'S3'
@@ -78,40 +81,48 @@ db:
   name: ""
   port: 5432
   sslEnabled: false
-  schema: ""
+  schema: "MapproxyConfig"
   dbRejectUnauthorized: false
   secrets:
     useExternal: false
     externalSecretName: ""
 
 configManagement:
-  offlineMode: false
+  offlineMode: true
   name: 'mapproxy-api'
   version: 'latest'
   serverUrl: 'http://localhost:8080/api'
 
-tracing:
-  enabled: false
-  url: ''
-  # add pod annotations
-  # example:
-  # podAnnotations:
-  # annotation1: annotation-value-1
-  # annotation2: annotation-value-2
+# add pod annotations
+# example:
+# podAnnotations:
+# annotation1: annotation-value-1
+# annotation2: annotation-value-2
 podAnnotations: {}
 
-env:
+server:
   port: 80
   targetPort: 8080
   protocol: TCP
-  logLevel: warn
-  logPrettyPrintEnabled: false
-  openTelemetryOptions:
-    enabled: false
-    url: ''
-    resourceAttributes: {}
   responseCompressionEnabled: true
   requestPayloadLimit: 1mb
+
+telemetry:
+  logger:
+    level: warn
+    prettyPrint: false
+    opentelemetryOptions:
+      enabled: true
+      url: http://localhost:4317
+      # Rendered as OTEL_RESOURCE_ATTRIBUTES in "key=value,key=value" format
+      # resourceAttributes:
+      #   service.namespace: namespace
+      #   deployment.environment: dev
+  tracing:
+    enabled: true
+    url: http://localhost:55681/v1/traces
+
+env:
   mapproxyCache:
     grids: WorldCRS84
     upscaleTiles: 18
