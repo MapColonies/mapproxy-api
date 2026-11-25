@@ -1,8 +1,10 @@
 {{- $chartName := include "mapproxy-api.name" . -}}
 {{- $configmapName := include "configmap.fullname" . }}
 {{- $storage := (include "common.storage.merged" .) | fromYaml }}
-{{- $tracing := (include "common.tracing.merged" .) | fromYaml }}
-{{- $openTelemetryOptions := (include "common.openTelemetryOptions.merged" .) | fromYaml }}
+{{- $server := .Values.server -}}
+{{- $telemetry := .Values.telemetry -}}
+{{- $tracingUrl := include "mapproxy-api.tracingUrl" . -}}
+{{- $opentelemetryLoggingUrl := include "mapproxy-api.opentelemetryLoggingUrl" . -}}
 {{- $redis := (include "common.redis.merged" .) | fromYaml }}
 
 {{- if .Values.enabled -}}
@@ -11,21 +13,27 @@ kind: ConfigMap
 metadata:
   name: {{ $configmapName }}
 data:
-  REQUEST_PAYLOAD_LIMIT: {{ .Values.env.requestPayloadLimit | quote }}
-  RESPONSE_COMPRESSION_ENABLED: {{ .Values.env.responseCompressionEnabled | quote }}
-  LOG_LEVEL: {{ .Values.env.logLevel | quote }}
-  LOG_PRETTY_PRINT_ENABLED: {{ .Values.env.logPrettyPrintEnabled | quote }}
-  {{- with $openTelemetryOptions }}
+  {{- with $server }}
+  REQUEST_PAYLOAD_LIMIT: {{ .requestPayloadLimit | quote }}
+  RESPONSE_COMPRESSION_ENABLED: {{ .responseCompressionEnabled | quote }}
+  {{- end }}
+  {{- with $telemetry }}
+  LOG_LEVEL: {{ .logger.level | quote }}
+  LOG_PRETTY_PRINT_ENABLED: {{ .logger.prettyPrint | quote }}
+  {{- with .logger.opentelemetryOptions }}
   OPENTELEMETRY_LOGGING_ENABLED: {{ .enabled | quote }}
-  {{ if .enabled }}
-  OPENTELEMETRY_LOGGING_URL: {{ .url | quote }}
-  OPENTELEMETRY_RESOURCE_ATTRIBUTES: {{ .resourceAttributes | toJson | quote }}
+  {{- if .enabled }}
+  OTLP_LOGGER_ENDPOINT_URL: {{ $opentelemetryLoggingUrl | quote }}
+  {{- if .resourceAttributes }}
+  OTEL_RESOURCE_ATTRIBUTES: {{ include "mapproxy-api.otelResourceAttributes" .resourceAttributes | quote }}
   {{- end }}
   {{- end }}
-  TELEMETRY_TRACING_ENABLED: {{ $tracing.enabled | quote }}
-  {{ if $tracing.enabled }}
-  TELEMETRY_TRACING_URL: {{ $tracing.url }}
-  {{ end }}
+  {{- end }}
+  TELEMETRY_TRACING_ENABLED: {{ .tracing.enabled | quote }}
+  {{- if .tracing.enabled }}
+  TELEMETRY_TRACING_URL: {{ $tracingUrl | quote }}
+  {{- end }}
+  {{- end }}
   MAPPROXY_CONFIG_PROVIDER: {{ quote $storage.mapproxyConfigProvider }}
   MAPPROXY_CACHE_GRIDS: {{ quote .Values.env.mapproxyCache.grids }}
   MAPPROXY_CACHE_UPSCALE_TILES: {{ quote .Values.env.mapproxyCache.upscaleTiles }}

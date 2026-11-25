@@ -18,9 +18,9 @@ spec:
   type: NodePort
   {{- end }}
   ports:
-    - port: {{ .Values.env.port }}
-      targetPort: {{ .Values.env.targetPort }}
-      protocol: {{ .Values.env.protocol }}
+    - port: {{ .Values.server.port }}
+      targetPort: {{ .Values.server.targetPort }}
+      protocol: {{ .Values.server.protocol }}
       name: http
       {{- if eq $cloudProviderFlavor "minikube" }}
       nodePort: {{ .Values.nodePort }}

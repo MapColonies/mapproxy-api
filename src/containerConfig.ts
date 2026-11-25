@@ -26,7 +26,7 @@ export const registerExternalValues = async (options?: RegisterOptions): Promise
   const mapproxyConfig = configInstance.get('mapproxy') as IMapProxyConfig;
   const redisConfig = configInstance.get('redis') as IRedisConfig;
 
-  const logger = await jsLogger({ ...loggerConfig, prettyPrint: loggerConfig.prettyPrint, mixin: getOtelMixin() });
+  const logger = await jsLogger({ ...loggerConfig, mixin: getOtelMixin() });
 
   const tracer = trace.getTracer(SERVICE_NAME);
   const metricsRegistry = new Registry();
