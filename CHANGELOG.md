@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.15.1](https://github.com/MapColonies/mapproxy-api/compare/v1.15.0...v1.15.1) (2026-11-25)
+
+
+### Bug Fixes
+
+* **helm:** add mclabels to pod template labels ([#180](https://github.com/MapColonies/mapproxy-api/issues/180)) ([e8625e2](https://github.com/MapColonies/mapproxy-api/commit/e8625e2dcef4eaf297baa4b9a07a1a6b2d72252d))
+
 ## [1.15.0](https://github.com/MapColonies/mapproxy-api/compare/v1.14.0...v1.15.0) (2026-09-06)
 
 
