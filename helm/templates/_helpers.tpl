@@ -32,6 +32,7 @@ Common labels
 */}}
 {{- define "mapproxy-api.labels" -}}
 helm.sh/chart: {{ include "mapproxy-api.chart" . }}
+{{ include "mapproxy-api.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}

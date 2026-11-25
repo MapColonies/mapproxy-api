@@ -41,7 +41,6 @@ spec:
         app: {{ $chartName }}
         release: {{ $releaseName }}
         run: {{ $releaseName }}-{{ $chartName }}
-        {{- include "mapproxy-api.selectorLabels" . | nindent 8 }}
         {{- include "mapproxy-api.labels" . | nindent 8 }}
       annotations:
         {{- if .Values.resetOnConfigChange }}
